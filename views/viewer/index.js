@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { ActivityIndicator, Colors } from 'react-native-paper'
 import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
 
@@ -53,8 +54,13 @@ export function view_viewer({ navigation, route }) {
   }
   return (
     <View>
+      <Text>{data.file_url}</Text>
       <View style={s_img.container}>
-        <Image style={s_img.img} source={{ uri: data.file_url }}></Image>
+        {data.file_url ? (
+          <Image style={s_img.img} source={{ uri: data.file_url }} />
+        ) : (
+          <ActivityIndicator animating={true} color={Colors.red800} />
+        )}
       </View>
       <View style={s_tag.container}>
         <Text>this is tag container</Text>

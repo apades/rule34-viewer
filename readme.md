@@ -3,3 +3,6 @@
 
 # router
 [React Navigation](https://reactnavigation.org/)
+
+# viewer
+[react-native-image-viewer](https://github.com/ascoders/react-native-image-viewer)

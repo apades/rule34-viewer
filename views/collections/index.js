@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { FAB } from 'react-native-paper'
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 let collects = ['dacad', 'km-15']
 
-const MyComponent = () => (
-  <FAB style={s.fab} small icon="plus" onPress={() => console.log('Pressed')} />
-)
-const s = StyleSheet.create({
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-})
-
 export function view_collections({ navigation, route }) {
+  // let [stor, setStor] = useState('')
+  // useEffect(() => {
+  //   async function main() {
+  //     let data = await AsyncStorage.getItem('test')
+  //     console.log('test stor', data)
+  //     if (!data) AsyncStorage.setItem('test', 'i have test')
+  //   }
+  //   main()
+  // })
+
   return (
     <View style={{ flex: 1 }}>
       {collects.map((c) => (
@@ -31,7 +30,6 @@ export function view_collections({ navigation, route }) {
           </Text>
         </TouchableOpacity>
       ))}
-      <MyComponent />
     </View>
   )
 }

@@ -1,7 +1,7 @@
 import request from '../utils/reuqest'
 import { parserXml } from '../utils/utils'
 
-export default async function imgList_o(option = {}) {
+export async function imgList_o(option = {}) {
   let dataList
   try {
     let data = await request(

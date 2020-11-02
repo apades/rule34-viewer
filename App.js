@@ -1,39 +1,41 @@
-import { StatusBar } from 'expo-status-bar'
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import request from './utils/reuqest'
+import * as React from 'react'
+import { View, Text, Button } from 'react-native'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
 
-export default function App() {
-  let [dataList, setDataList] = useState([])
-
-  useEffect(() => {
-    request(
-      'https://rule34.xxx/index.php?page=dapi&s=post&tags=dacad&q=index&json=1&limit=10'
-    ).then((res) => {
-      setDataList(res)
-    })
-  }, [])
-
+function HomeScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working oss hahahbbbssp!</Text>
-      <Text>asdjkls</Text>
-      {dataList.map((d) => (
-        <View>
-          <Text>{d.image}</Text>
-        </View>
-      ))}
-      <Text>{dataList.length}</Text>
-      <StatusBar style="auto" />
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Home Screen</Text>
+      <Button
+        title="Go to Details"
+        onPress={() => {
+          navigation.push('Details')
+        }}
+      />
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-})
+function DetailsScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Details Screen</Text>
+    </View>
+  )
+}
+
+const Stack = createStackNavigator()
+
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  )
+}
+
+export default App

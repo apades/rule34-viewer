@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
+import { generRandomId } from '../utils/utils'
 import imgList_o from './api/list_o'
 
 export default function App() {

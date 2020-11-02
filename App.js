@@ -26,7 +26,7 @@ function App() {
   return (
     <View style={{ flex: 1 }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="gallery">
+        <Stack.Navigator initialRouteName="collections">
           <Stack.Screen name="collections" component={view_collections} />
           <Stack.Screen
             name="gallery"

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { ActivityIndicator, Colors } from 'react-native-paper'
 import { imgList_o } from '../../api/list_o'
@@ -57,9 +57,9 @@ export function view_viewer({ navigation, route }) {
       <Text>{data.file_url}</Text>
       <View style={s_img.container}>
         {data.file_url ? (
-          <Image style={s_img.img} source={{ uri: data.file_url }} />
+          <Image  style={s_img.img} source={{ uri: data.file_url }} />
         ) : (
-          <ActivityIndicator animating={true} color={Colors.red800} />
+          <ActivityIndicator animating={true}  />
         )}
       </View>
       <View style={s_tag.container}>
@@ -74,13 +74,15 @@ const s_tag = StyleSheet.create({
   tag: {},
 })
 
+let width = Dimensions.get('window').width
 const s_img = StyleSheet.create({
   container: {
-    ..._style.wh(200),
+    ..._style.wh(width),
     ..._style.center(),
     backgroundColor: '#6cf',
   },
   img: {
-    ..._style.wh(10),
+    ..._style.wh(width),
+    resizeMode:'contain'
   },
 })

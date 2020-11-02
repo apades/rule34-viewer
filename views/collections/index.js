@@ -3,6 +3,7 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { generRandomId } from '../../utils/utils'
 
 let collects = ['dacad', 'km-15']
 

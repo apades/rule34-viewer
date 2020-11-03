@@ -1,4 +1,5 @@
 import Constants from 'expo-constants'
+import { Dimensions } from 'react-native'
 
 export const _env = Constants.manifest.extra
 
@@ -7,3 +8,9 @@ export const ip = Constants.linkingUri.match(
 )[0]
 
 export const isDev = process.env.NODE_ENV === 'development'
+
+let data = Dimensions.get('screen')
+export const _screen = {
+  width: data.width,
+  height: data.height,
+}

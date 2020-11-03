@@ -24,6 +24,7 @@
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.4.tar.gz",
     "react-native-gesture-handler": "~1.7.0",
+    "react-native-image-zoom-viewer": "^3.0.1",
     "react-native-paper": "^4.3.0",
     "react-native-reanimated": "^1.13.1",
     "react-native-safe-area-context": "3.1.4",
@@ -35,8 +36,8 @@
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
-    "cross-env": "^7.0.2",
     "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.2",
     "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.14.0",
     "eslint-config-react-app": "^6.0.0",

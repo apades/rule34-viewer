@@ -26,4 +26,43 @@ export const _style = {
     }
     return rs
   },
+  margin(str = '10') {
+    let arr = str.split(' ').map((a) => +a)
+    /** @type {ViewStyle} */
+    var rs = {}
+    switch (arr.length) {
+      case 1:
+        rs = {
+          margin: str,
+        }
+        break
+      case 2:
+        rs = {
+          marginTop: arr[0],
+          marginBottom: arr[0],
+          marginLeft: arr[1],
+          marginRight: arr[1],
+        }
+        break
+      case 3:
+        rs = {
+          marginTop: arr[0],
+          marginLeft: arr[1],
+          marginRight: arr[1],
+          marginBottom: arr[2],
+        }
+        break
+      case 4:
+        rs = {
+          marginTop: arr[0],
+          marginRight: arr[1],
+          marginBottom: arr[2],
+          marginLeft: arr[3],
+        }
+        break
+      default:
+        break
+    }
+    return rs
+  },
 }

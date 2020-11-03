@@ -1,3 +1,4 @@
+import { isDev } from '../utils/env'
 import request from '../utils/request'
 import { parserXml } from '../utils/utils'
 
@@ -14,14 +15,26 @@ function resolveData(data) {
 export async function imgList_o(option = {}) {
   let dataList
   try {
-    let data = await request('http://192.168.199.145:3001/getList', {
-      params: {
-        ...option,
-      },
-    })
-    dataList = data
-    // dataList = resolveData(data)
+    if (isDev) {
+      console.log('dev')
+      dataList = await request('/getList', {
+        params: {
+          ...option,
+        },
+      })
+    } else {
+      let data = await request(
+        'https://rule34.xxx/index.php?page=dapi&s=post&q=index',
+        {
+          params: {
+            ...option,
+          },
+        },
+      )
+      dataList = resolveData(data)
+    }
   } catch (error) {
+    console.error('imgList error', error)
     dataList = {
       count: 0,
       offset: 0,

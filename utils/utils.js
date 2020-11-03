@@ -1,9 +1,9 @@
 // import { xml2json } from 'xml-js'
 // import cheerio from 'cheerio'
 // cheerio没法在rn里用
-var cheerio = () => {}
 import { isArray, isPlainObject, random } from 'lodash'
 import XMLParser from 'react-xml-parser'
+var cheerio = () => {}
 
 export function parserXml(xmlStr) {
   let xml = new XMLParser().parseFromString(xmlStr)
@@ -77,7 +77,6 @@ export function loadHtml(html) {
   return query
 }
 
-
 export function throttle(fn, time) {
   let save = true
   return function () {
@@ -91,6 +90,6 @@ export function throttle(fn, time) {
 }
 
 // expo hot reload生成list会报key问题
-export function generRandomId(id){
-  return random(0,10000) + id
+export function generRandomId(id) {
+  return random(0, 10000) + id
 }

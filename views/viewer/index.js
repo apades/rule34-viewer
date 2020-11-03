@@ -58,7 +58,7 @@ export function view_viewer({ navigation, route }) {
       <Text>{data.file_url}</Text>
       <View style={s_img.container}>
         {data.file_url ? (
-          <Image style={s_img.img} source={{ uri: data.file_url }} />
+          <Image source={{ uri: data.file_url }} style={s_img.img} />
         ) : (
           <ActivityIndicator animating={true} />
         )}

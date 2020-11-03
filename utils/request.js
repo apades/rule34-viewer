@@ -1,8 +1,10 @@
 import Axios from 'axios'
-import { _env } from './env'
+import emojiRegex from 'emoji-regex/text'
+import { _env, ip } from './env'
 
 let request = Axios.create({
   // baseURL: _env.baseURL,
+  baseURL: (_env.proxy_server && `http://${ip}:3001`) || '',
   timeout: 5000,
 })
 
@@ -11,8 +13,8 @@ request.interceptors.response.use(
     return res.data
   },
   (err) => {
-    console.error('axios error', error)
-  }
+    console.error('axios error', err)
+  },
 )
 
 request.interceptors.request.use(
@@ -20,8 +22,8 @@ request.interceptors.request.use(
     return req
   },
   (err) => {
-    console.error('axios请求错误', error)
-  }
+    console.error('axios请求错误', err)
+  },
 )
 
 export default request

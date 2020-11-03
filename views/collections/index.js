@@ -22,13 +22,11 @@ export function view_collections({ navigation, route }) {
     <View style={{ flex: 1 }}>
       {collects.map((c) => (
         <TouchableOpacity
-          style={styles.container}
           key={c}
           onPress={() => navigation.push('gallery', { tags: c })}
+          style={styles.container}
         >
-          <Text style={styles.text} style={{ textAlign: 'center' }}>
-            {c}
-          </Text>
+          <Text style={styles.text}>{c}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -41,6 +39,7 @@ var styles = StyleSheet.create({
     backgroundColor: '#6cf',
   },
   text: {
-    fontSize: 30,
+    // fontSize: 30,
+    textAlign: 'center',
   },
 })

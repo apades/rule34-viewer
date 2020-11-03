@@ -11,7 +11,7 @@ import { view_viewer } from './views/viewer'
 const Stack = createStackNavigator()
 
 const MyComponent = () => (
-  <FAB style={s.fab} small icon="plus" onPress={() => alert('Pressed')} />
+  <FAB icon="plus" onPress={() => alert('Pressed')} small style={s.fab} />
 )
 const s = StyleSheet.create({
   fab: {
@@ -27,15 +27,15 @@ function App() {
     <View style={{ flex: 1 }}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="collections">
-          <Stack.Screen name="collections" component={view_collections} />
+          <Stack.Screen component={view_collections} name="collections" />
           <Stack.Screen
-            name="gallery"
             component={view_gallery}
+            name="gallery"
             options={({ route }) => ({
               title: `tags: ${route.params?.tags || 'dacad'}`,
             })}
           />
-          <Stack.Screen name="viewer" component={view_viewer} />
+          <Stack.Screen component={view_viewer} name="viewer" />
         </Stack.Navigator>
       </NavigationContainer>
       <MyComponent />

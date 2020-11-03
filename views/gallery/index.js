@@ -29,7 +29,7 @@ export function view_gallery({ navigation, route }) {
         let newDataList = [...dataList, ...res.dataList]
         setDataList(newDataList)
         store_setDataList(newDataList)
-      }
+      },
     )
   }, [route.params?.tags, pid])
 
@@ -67,8 +67,8 @@ export function view_gallery({ navigation, route }) {
         >
           <View style={{ ...styles.imgContainer, ...isLast(index) }}>
             <Image
-              style={styles.img}
               source={{ uri: data.preview_url }}
+              style={styles.img}
             ></Image>
           </View>
         </TouchableNativeFeedback>
@@ -80,18 +80,18 @@ export function view_gallery({ navigation, route }) {
       let isLike = false
       return (
         <IconButton
+          icon={isLike ? 'heart' : 'heart-outline'}
           onPress={() => {
             console.log(`like`, item.id)
             // let newLikes =
             // setLike([...likes, item.id])
           }}
           size={15}
-          icon={isLike ? 'heart' : 'heart-outline'}
         ></IconButton>
       )
     }
     return (
-      <View style={styles.itemContainer} key={data.id}>
+      <View key={data.id} style={styles.itemContainer}>
         {/* 图片可触摸区 */}
         <RenderImg />
         {/* 工具区 */}

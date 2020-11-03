@@ -25,5 +25,6 @@ module.exports = {
     camelcase: 0,
     'react/jsx-sort-props': 1,
     'react-hooks/exhaustive-deps': 0,
+    'react-hooks/rules-of-hooks': 0
   },
 }

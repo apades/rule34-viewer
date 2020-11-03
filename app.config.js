@@ -7,13 +7,15 @@ if (process.env.ENV_NAME) {
   envConfig = dotenv.parse(envText)
 }
 
-export default {
+let config = {
   name: 'CoolApp',
   version: '1.0.0',
   extra: {
     ...envConfig,
   },
 }
+
+export default config
 
 // 使用方法
 // import Constants from 'expo-constants'

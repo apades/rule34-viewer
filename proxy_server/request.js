@@ -19,7 +19,7 @@ request.interceptors.response.use(
   (err) => {
     console.error('axios error'.red)
     writeFileSync(resolve(__dirname, './log/axios.log'), err, 'utf8')
-  }
+  },
 )
 
 let request_o = axios.create({
@@ -39,7 +39,7 @@ request_o.interceptors.response.use(
       encoding: 'utf-8',
       flag: 'w+',
     })
-  }
+  },
 )
 
 export { request, request_o }

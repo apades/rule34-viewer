@@ -7,6 +7,7 @@ import { _env } from '../../utils/env'
 
 let collects = ['dacad', 'km-15']
 
+console.log(_env)
 export function view_collections({ navigation, route }) {
   // let [stor, setStor] = useState('')
   // useEffect(() => {

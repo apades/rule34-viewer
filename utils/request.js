@@ -1,7 +1,9 @@
 import Axios from 'axios'
+import { _env } from './env'
 
 let request = Axios.create({
-  timeout:5000
+  // baseURL: _env.baseURL,
+  timeout: 5000,
 })
 
 request.interceptors.response.use(
@@ -9,7 +11,7 @@ request.interceptors.response.use(
     return res.data
   },
   (err) => {
-    console.error('axios error',error)
+    console.error('axios error', error)
   }
 )
 
@@ -18,7 +20,7 @@ request.interceptors.request.use(
     return req
   },
   (err) => {
-    console.error('axios请求错误',error)
+    console.error('axios请求错误', error)
   }
 )
 

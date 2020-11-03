@@ -83,7 +83,7 @@ const s_img = StyleSheet.create({
     backgroundColor: '#6cf',
   },
   img: {
-    ..._style.wh(_env.NSFW ? 10 : width),
+    ..._style.wh(_env.NSFW ? width : 10),
     resizeMode: 'contain',
   },
 })

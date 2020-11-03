@@ -4,27 +4,31 @@ import {
   ScrollView,
   TouchableNativeFeedback,
 } from 'react-native-gesture-handler'
-import { ActivityIndicator, Button } from 'react-native-paper'
+import { ActivityIndicator, Button, IconButton } from 'react-native-paper'
 import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
 import { _env } from '../../utils/env'
+import { store_setDataList, store_clearDataList } from '../../utils/store'
 
-let _dataList = []
 export function view_gallery({ navigation, route }) {
-  let [dataList, setDataList] = useState(_dataList)
+  let [dataList, setDataList] = useState([])
   let [pid, setPid] = useState(1)
+  //
 
   useEffect(() => {
     // reset dataList 关键
     dataList.length = 0
     setDataList(dataList)
     setPid(1)
+    store_clearDataList()
   }, [])
 
   useEffect(() => {
     imgList_o({ tags: route.params?.tags || 'dacad', limit: 20, pid }).then(
       (res) => {
-        setDataList([...dataList, ...res.dataList])
+        let newDataList = [...dataList, ...res.dataList]
+        setDataList(newDataList)
+        store_setDataList(newDataList)
       }
     )
   }, [route.params?.tags, pid])
@@ -45,24 +49,19 @@ export function view_gallery({ navigation, route }) {
     }
   }
 
-  //   return (
-  //     <FlatList
-  //       keyExtractor={(item) => item.id + ~~(Math.random() * 1000)}
-  //       data={dataList}
-  //       renderItem={renderItem}
-  //       onmo={handlerEnd}
-  //     ></FlatList>
-  //   )
   // flex 模拟grid作用
   function isLast(i) {
     /** @type {ViewStyle} */
     let s = {}
     return i + 1 === dataList.length ? s : {}
   }
-  function renderItem({ item, index }) {
+
+  let [likes, setLike] = useState([])
+  function RenderItem({ item, index }) {
     let data = item
-    return (
-      <View style={styles.itemContainer} key={data.id}>
+
+    function RenderImg() {
+      return (
         <TouchableNativeFeedback
           onPress={() => navigation.push('viewer', { id: data.id })}
         >
@@ -73,12 +72,31 @@ export function view_gallery({ navigation, route }) {
             ></Image>
           </View>
         </TouchableNativeFeedback>
+      )
+    }
+    function RenderLike() {
+      // 判断like
+      // let isLike = likes.findIndex((l) => l.id === item.id) !== -1
+      let isLike = false
+      return (
+        <IconButton
+          onPress={() => {
+            console.log(`like`, item.id)
+            // let newLikes =
+            // setLike([...likes, item.id])
+          }}
+          size={15}
+          icon={isLike ? 'heart' : 'heart-outline'}
+        ></IconButton>
+      )
+    }
+    return (
+      <View style={styles.itemContainer} key={data.id}>
+        {/* 图片可触摸区 */}
+        <RenderImg />
+        {/* 工具区 */}
         <View style={styles.tooltipContainer}>
-          <Button
-            onPress={() => console.log(`like`, item.id)}
-            style={styles.btn_like}
-            icon="heart"
-          ></Button>
+          <RenderLike />
         </View>
       </View>
     )
@@ -87,7 +105,7 @@ export function view_gallery({ navigation, route }) {
     <ScrollView onScroll={handlerEnd}>
       {dataList.length ? (
         <View style={styles.container}>
-          {dataList.map((d, index) => renderItem({ item: d, index }))}
+          {dataList.map((d, index) => RenderItem({ item: d, index }))}
         </View>
       ) : (
         <ActivityIndicator animating={true} />
@@ -119,7 +137,7 @@ const styles = StyleSheet.create({
     tintColor: '#6cf',
   },
   img: {
-    ..._style.wh(_env.NSFW ? 10 : width / 2),
+    ..._style.wh(_env.NSFW ? width / 2 : 10),
     resizeMode: 'contain',
   },
   imgContainer: {

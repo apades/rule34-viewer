@@ -1,7 +1,8 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "dev": "expo start",
+    "dev": "cross-env ENV_NAME=dev expo start",
+    "dev_a": "cross-env ENV_NAME=dev_a expo start",
     "and": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -15,24 +16,26 @@
     "add": "^2.0.6",
     "axios": "^0.21.0",
     "cheerio": "^1.0.0-rc.3",
+    "dotenv": "^8.2.0",
     "expo": "~39.0.2",
     "expo-status-bar": "~1.0.2",
     "lodash": "^4.17.20",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.4.tar.gz",
-    "react-native-gesture-handler": "^1.8.0",
+    "react-native-gesture-handler": "~1.7.0",
     "react-native-paper": "^4.3.0",
     "react-native-reanimated": "^1.13.1",
-    "react-native-safe-area-context": "^3.1.8",
-    "react-native-screens": "^2.12.0",
+    "react-native-safe-area-context": "3.1.4",
+    "react-native-screens": "~2.10.1",
     "react-native-web": "~0.13.12",
     "react-xml-parser": "^1.1.8",
     "xml-js": "^1.6.11",
     "yarn": "^1.22.10"
   },
   "devDependencies": {
-    "@babel/core": "~7.9.0"
+    "@babel/core": "~7.9.0",
+    "cross-env": "^7.0.2"
   },
   "private": true
 }

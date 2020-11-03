@@ -1,25 +1,13 @@
-import { StatusBar } from 'expo-status-bar'
-import { random, throttle } from 'lodash'
 import React, { useEffect, useState } from 'react'
+import { Dimensions, Image, StyleSheet, View, ViewStyle } from 'react-native'
 import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View,
-  ViewStyle,
-} from 'react-native'
-import {
-  FlatList,
   ScrollView,
   TouchableNativeFeedback,
-  TouchableOpacity,
 } from 'react-native-gesture-handler'
-import { ActivityIndicator, Button, Colors } from 'react-native-paper'
+import { ActivityIndicator, Button } from 'react-native-paper'
 import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
-import { generRandomId } from '../../utils/utils'
+import { _env } from '../../utils/env'
 
 let _dataList = []
 export function view_gallery({ navigation, route }) {
@@ -41,7 +29,6 @@ export function view_gallery({ navigation, route }) {
     )
   }, [route.params?.tags, pid])
 
-
   function handlerEnd(e) {
     function isCloseToBottom({
       layoutMeasurement,
@@ -57,8 +44,7 @@ export function view_gallery({ navigation, route }) {
       setPid(++pid)
     }
   }
-  
-  
+
   //   return (
   //     <FlatList
   //       keyExtractor={(item) => item.id + ~~(Math.random() * 1000)}
@@ -66,7 +52,7 @@ export function view_gallery({ navigation, route }) {
   //       renderItem={renderItem}
   //       onmo={handlerEnd}
   //     ></FlatList>
-  //   ) 
+  //   )
   // flex 模拟grid作用
   function isLast(i) {
     /** @type {ViewStyle} */
@@ -76,7 +62,7 @@ export function view_gallery({ navigation, route }) {
   function renderItem({ item, index }) {
     let data = item
     return (
-      <View style={styles.itemContainer}  key={data.id}>
+      <View style={styles.itemContainer} key={data.id}>
         <TouchableNativeFeedback
           onPress={() => navigation.push('viewer', { id: data.id })}
         >
@@ -99,11 +85,13 @@ export function view_gallery({ navigation, route }) {
   }
   return (
     <ScrollView onScroll={handlerEnd}>
-      {
-        dataList.length ? <View style={styles.container}>
+      {dataList.length ? (
+        <View style={styles.container}>
           {dataList.map((d, index) => renderItem({ item: d, index }))}
-        </View> : <ActivityIndicator animating={true}  />
-      }
+        </View>
+      ) : (
+        <ActivityIndicator animating={true} />
+      )}
     </ScrollView>
   )
 }
@@ -131,8 +119,8 @@ const styles = StyleSheet.create({
     tintColor: '#6cf',
   },
   img: {
-    ..._style.wh(width / 2),
-    resizeMode: 'contain'
+    ..._style.wh(_env.NSFW ? 10 : width / 2),
+    resizeMode: 'contain',
   },
   imgContainer: {
     ..._style.wh(width / 2),

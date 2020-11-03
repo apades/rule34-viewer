@@ -4,6 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import { ActivityIndicator, Colors } from 'react-native-paper'
 import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
+import { _env } from '../../utils/env'
 
 let dataType = {
   height: '566',
@@ -57,9 +58,9 @@ export function view_viewer({ navigation, route }) {
       <Text>{data.file_url}</Text>
       <View style={s_img.container}>
         {data.file_url ? (
-          <Image  style={s_img.img} source={{ uri: data.file_url }} />
+          <Image style={s_img.img} source={{ uri: data.file_url }} />
         ) : (
-          <ActivityIndicator animating={true}  />
+          <ActivityIndicator animating={true} />
         )}
       </View>
       <View style={s_tag.container}>
@@ -82,7 +83,7 @@ const s_img = StyleSheet.create({
     backgroundColor: '#6cf',
   },
   img: {
-    ..._style.wh(width),
-    resizeMode:'contain'
+    ..._style.wh(_env.NSFW ? 10 : width),
+    resizeMode: 'contain',
   },
 })

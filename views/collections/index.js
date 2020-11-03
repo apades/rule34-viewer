@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { generRandomId } from '../../utils/utils'
+import { _env } from '../../utils/env'
 
 let collects = ['dacad', 'km-15']
 
@@ -17,7 +17,6 @@ export function view_collections({ navigation, route }) {
   //   }
   //   main()
   // })
-
   return (
     <View style={{ flex: 1 }}>
       {collects.map((c) => (

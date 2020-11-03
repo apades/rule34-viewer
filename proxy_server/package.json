@@ -1,0 +1,31 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "sh -c 'npx babel-node $0'",
+    "dev": "nodemon --exec babel-node index.js"
+  },
+  "dependencies": {
+    "@koa/router": "^9.4.0",
+    "apicache": "^1.5.3",
+    "axios": "^0.21.0",
+    "booru": "^2.3.3",
+    "cheerio": "^1.0.0-rc.3",
+    "colors": "^1.4.0",
+    "http-proxy-middleware": "^1.0.6",
+    "https-proxy-agent": "^5.0.0",
+    "koa": "^2.13.0",
+    "koa-connect": "^2.1.0",
+    "koa-logger": "^3.2.1",
+    "lodash": "^4.17.20",
+    "xml-js": "^1.6.11"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/node": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "nodemon": "^2.0.6"
+  }
+}

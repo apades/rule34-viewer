@@ -16,7 +16,7 @@ export async function imgList_o(option = {}) {
   let dataList
   try {
     if (isDev) {
-      console.log('dev')
+      console.log('dev getList')
       dataList = await request('/getList', {
         params: {
           ...option,

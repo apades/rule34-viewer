@@ -2,7 +2,7 @@ import { loadHtml } from '../utils'
 import request from '../utils/reuqest'
 
 export async function detail_site(ctx) {
-  let html = await request({
+  let html = await request('https://rule34.xxx/index.php', {
     params: {
       id: ctx.params.id,
       page: 'post',
@@ -24,7 +24,7 @@ export function resolveData(html) {
   // info
   rs.sources = getter('#stats li:nth-of-type(4) a', 'href')
   rs.date = getter('#stats li:nth-of-type(2)')[0].match(
-    /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/
+    /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/,
   )[0]
   // info
 
@@ -49,7 +49,7 @@ export function resolveData(html) {
           },
         },
       ],
-      true
+      true,
     )
   }
   tags.copyrights = getTagData('.tag-type-copyright')

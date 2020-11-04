@@ -26,6 +26,10 @@ export default function view_gallery({
 }) {
   let [dataList, setDataList] = useState([])
   let [pid, setPid] = useState(1)
+  let [loading, setLoading] = useState(false)
+
+  let init = true
+  let [firstLoad, setFirstLoad] = useState(true)
 
   useEffect(() => {
     // reset dataList 关键
@@ -35,14 +39,18 @@ export default function view_gallery({
     // store_clearDataList()
   }, [])
 
-  let pushEnd = true
   useEffect(() => {
+    setLoading(true)
     imgList_o({ tags: route.params?.tags || 'dacad', limit: 20, pid }).then(
       (res) => {
         let newDataList = [...dataList, ...res.dataList]
         setDataList(newDataList)
         // store_setDataList(newDataList)
-        pushEnd = true
+        if (init) {
+          init = false
+          setFirstLoad(false)
+        }
+        setLoading(false)
       },
     )
   }, [pid])
@@ -110,23 +118,22 @@ export default function view_gallery({
       )
     }
     if (isCloseToBottom(e.nativeEvent)) {
-      if (pushEnd) {
-        pushEnd = false
+      if (!loading) {
         console.log('scroll end')
         setPid(++pid)
       }
     }
   }
   return (
-    <View style={{ height: '100%', position: 'absolute' }}>
-      {dataList.length ? (
+    <View style={{ ..._style.wh('100%'), position: 'absolute' }}>
+      {!firstLoad ? (
         <ScrollView onScroll={handlerScrollEnd}>
           <View style={styles.container}>
             {dataList.map((d, index) => RenderItem({ item: d, index }))}
           </View>
         </ScrollView>
       ) : (
-        <View style={{ height: '100%', ..._style.center() }}>
+        <View style={{ ..._style.wh('100%'), ..._style.center() }}>
           <ActivityIndicator animating={true} />
         </View>
       )}

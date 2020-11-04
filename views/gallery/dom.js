@@ -111,7 +111,7 @@ export default function view_gallery({
     if (isCloseToBottom(e.nativeEvent)) {
       if (pushEnd) {
         pushEnd = false
-        console.log('end')
+        console.log('scroll end')
         setPid(++pid)
       }
     }

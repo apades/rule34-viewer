@@ -13,6 +13,7 @@ import {
 } from 'react-native-gesture-handler'
 import { ActivityIndicator, Button, IconButton } from 'react-native-paper'
 import { imgList_o } from '../../api/list_o'
+import { Comp_seachInput } from '../../components/searchInput'
 import { _style } from '../../style'
 import { _env } from '../../utils/env'
 import { store_setDataList, store_clearDataList } from '../../utils/store'
@@ -44,7 +45,7 @@ export default function view_gallery({
         pushEnd = true
       },
     )
-  }, [route.params?.tags, pid])
+  }, [pid])
 
   // flex 模拟grid作用
   function isLast(i) {
@@ -117,7 +118,7 @@ export default function view_gallery({
     }
   }
   return (
-    <View>
+    <View style={{ height: '100%', position: 'absolute' }}>
       {dataList.length ? (
         <ScrollView onScroll={handlerScrollEnd}>
           <View style={styles.container}>
@@ -129,6 +130,16 @@ export default function view_gallery({
           <ActivityIndicator animating={true} />
         </View>
       )}
+      <View
+        style={{
+          position: 'absolute',
+          width: '100%',
+          alignItems: 'center',
+          top: 10,
+        }}
+      >
+        <Comp_seachInput navigation={navigation} />
+      </View>
     </View>
   )
 }

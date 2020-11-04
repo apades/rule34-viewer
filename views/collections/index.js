@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { _env } from '../../utils/env'
 
-let collects = ['dacad', 'km-15']
+let collects = ['dacad', 'km-15', 'sfw']
 
 export function view_collections({ navigation, route }) {
   // let [stor, setStor] = useState('')

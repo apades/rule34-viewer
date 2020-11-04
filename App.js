@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { FAB } from 'react-native-paper'
 
 import { view_collections } from './views/collections'
-import view_gallery from './views/gallery/dom'
+import view_gallery from './views/gallery'
 import { view_viewer } from './views/viewer'
 
 import reducer from './reducers/index'

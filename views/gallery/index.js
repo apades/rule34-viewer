@@ -1,53 +1,46 @@
 import React, { useEffect, useState } from 'react'
-import { Dimensions, Image, StyleSheet, View, ViewStyle } from 'react-native'
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native'
 import {
   ScrollView,
   TouchableNativeFeedback,
 } from 'react-native-gesture-handler'
 import { ActivityIndicator, Button, IconButton } from 'react-native-paper'
+import { Colors } from 'react-native/Libraries/NewAppScreen'
 import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
 import { _env } from '../../utils/env'
 import { store_setDataList, store_clearDataList } from '../../utils/store'
 
-export function view_gallery({ navigation, route }) {
+export function view_gallery({ navigation, route, likes, likesToggle }) {
   let [dataList, setDataList] = useState([])
   let [pid, setPid] = useState(1)
-  //
 
   useEffect(() => {
     // reset dataList 关键
     dataList.length = 0
     setDataList(dataList)
     setPid(1)
-    store_clearDataList()
+    // store_clearDataList()
   }, [])
 
+  let pushEnd = true
   useEffect(() => {
     imgList_o({ tags: route.params?.tags || 'dacad', limit: 20, pid }).then(
       (res) => {
         let newDataList = [...dataList, ...res.dataList]
         setDataList(newDataList)
-        store_setDataList(newDataList)
+        // store_setDataList(newDataList)
+        pushEnd = true
       },
     )
   }, [route.params?.tags, pid])
-
-  function handlerEnd(e) {
-    function isCloseToBottom({
-      layoutMeasurement,
-      contentOffset,
-      contentSize,
-    }) {
-      return (
-        layoutMeasurement.height + contentOffset.y >= contentSize.height - 1
-      )
-    }
-    if (isCloseToBottom(e.nativeEvent)) {
-      console.log('end')
-      setPid(++pid)
-    }
-  }
 
   // flex 模拟grid作用
   function isLast(i) {
@@ -56,7 +49,7 @@ export function view_gallery({ navigation, route }) {
     return i + 1 === dataList.length ? s : {}
   }
 
-  let [likes, setLike] = useState([])
+  // container item
   function RenderItem({ item, index }) {
     let data = item
 
@@ -76,15 +69,13 @@ export function view_gallery({ navigation, route }) {
     }
     function RenderLike() {
       // 判断like
-      // let isLike = likes.findIndex((l) => l.id === item.id) !== -1
-      let isLike = false
+      let isLike = !!likes[item.id]
       return (
         <IconButton
+          color="#6cf"
           icon={isLike ? 'heart' : 'heart-outline'}
           onPress={() => {
-            console.log(`like`, item.id)
-            // let newLikes =
-            // setLike([...likes, item.id])
+            likesToggle(item.id)
           }}
           size={15}
         ></IconButton>
@@ -101,10 +92,30 @@ export function view_gallery({ navigation, route }) {
       </View>
     )
   }
+
+  // container scroll event
+  function handlerScrollEnd(e) {
+    function isCloseToBottom({
+      layoutMeasurement,
+      contentOffset,
+      contentSize,
+    }) {
+      return (
+        layoutMeasurement.height + contentOffset.y >= contentSize.height - 1
+      )
+    }
+    if (isCloseToBottom(e.nativeEvent)) {
+      if (pushEnd) {
+        pushEnd = false
+        console.log('end')
+        setPid(++pid)
+      }
+    }
+  }
   return (
     <View>
       {dataList.length ? (
-        <ScrollView onScroll={handlerEnd}>
+        <ScrollView onScroll={handlerScrollEnd}>
           <View style={styles.container}>
             {dataList.map((d, index) => RenderItem({ item: d, index }))}
           </View>

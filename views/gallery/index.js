@@ -102,15 +102,19 @@ export function view_gallery({ navigation, route }) {
     )
   }
   return (
-    <ScrollView onScroll={handlerEnd}>
+    <View>
       {dataList.length ? (
-        <View style={styles.container}>
-          {dataList.map((d, index) => RenderItem({ item: d, index }))}
-        </View>
+        <ScrollView onScroll={handlerEnd}>
+          <View style={styles.container}>
+            {dataList.map((d, index) => RenderItem({ item: d, index }))}
+          </View>
+        </ScrollView>
       ) : (
-        <ActivityIndicator animating={true} />
+        <View style={{ height: '100%', ..._style.center() }}>
+          <ActivityIndicator animating={true} />
+        </View>
       )}
-    </ScrollView>
+    </View>
   )
 }
 

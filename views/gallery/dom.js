@@ -16,14 +16,9 @@ import { imgList_o } from '../../api/list_o'
 import { Comp_seachInput } from '../../components/searchInput'
 import { _style } from '../../style'
 import { _env } from '../../utils/env'
-import { store_setDataList, store_clearDataList } from '../../utils/store'
+import { dom, RenderGalleryItem } from './item'
 
-export default function view_gallery({
-  navigation,
-  route,
-  likes,
-  likesToggle,
-}) {
+export default function view_gallery({ navigation, route, likesToggle }) {
   let [dataList, setDataList] = useState([])
   let [pid, setPid] = useState(1)
   let [loading, setLoading] = useState(false)
@@ -36,7 +31,6 @@ export default function view_gallery({
     dataList.length = 0
     setDataList(dataList)
     setPid(1)
-    // store_clearDataList()
   }, [])
 
   useEffect(() => {
@@ -45,7 +39,6 @@ export default function view_gallery({
       (res) => {
         let newDataList = [...dataList, ...res.dataList]
         setDataList(newDataList)
-        // store_setDataList(newDataList)
         if (init) {
           init = false
           setFirstLoad(false)
@@ -60,50 +53,6 @@ export default function view_gallery({
     /** @type {ViewStyle} */
     let s = {}
     return i + 1 === dataList.length ? s : {}
-  }
-
-  // container item
-  function RenderItem({ item, index }) {
-    let data = item
-
-    function RenderImg() {
-      return (
-        <TouchableNativeFeedback
-          onPress={() => navigation.push('viewer', { id: data.id })}
-        >
-          <View style={{ ...styles.imgContainer, ...isLast(index) }}>
-            <Image
-              source={{ uri: data.preview_url }}
-              style={styles.img}
-            ></Image>
-          </View>
-        </TouchableNativeFeedback>
-      )
-    }
-    function RenderLike() {
-      // 判断like
-      let isLike = !!likes[item.id]
-      return (
-        <IconButton
-          color="#6cf"
-          icon={isLike ? 'heart' : 'heart-outline'}
-          onPress={() => {
-            likesToggle(item.id)
-          }}
-          size={15}
-        ></IconButton>
-      )
-    }
-    return (
-      <View key={data.id} style={styles.itemContainer}>
-        {/* 图片可触摸区 */}
-        <RenderImg />
-        {/* 工具区 */}
-        <View style={styles.tooltipContainer}>
-          <RenderLike />
-        </View>
-      </View>
-    )
   }
 
   // container scroll event
@@ -129,7 +78,24 @@ export default function view_gallery({
       {!firstLoad ? (
         <ScrollView onScroll={handlerScrollEnd}>
           <View style={styles.container}>
-            {dataList.map((d, index) => RenderItem({ item: d, index }))}
+            {dataList.map((d, index) => {
+              return (
+                <View key={d.id}>
+                  <RenderGalleryItem
+                    index={index}
+                    item={d}
+                    likesToggle={likesToggle}
+                    navigation={navigation}
+                  />
+                </View>
+              )
+              // return dom({
+              //   item: d,
+              //   index,
+              //   navigation,
+              //   likesToggle,
+              // })
+            })}
           </View>
         </ScrollView>
       ) : (

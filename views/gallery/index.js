@@ -3,9 +3,7 @@ import dom from './dom'
 
 export default connect(
   (state) => {
-    return {
-      likes: state.likes,
-    }
+    return {}
   },
   (dispatch) => ({
     likesToggle: (id) => dispatch({ type: 'likes_toggle', id }),

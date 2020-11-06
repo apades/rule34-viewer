@@ -39,6 +39,7 @@ function App() {
               name="gallery"
               options={({ route }) => ({
                 title: `tags: ${route.params?.tags || 'dacad'}`,
+                header: () => {},
               })}
             />
             <Stack.Screen component={view_viewer} name="viewer" />

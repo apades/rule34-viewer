@@ -21,17 +21,21 @@ export function dom({ item, index, getLike, likesToggle, navigation }) {
   }
   function RenderLike() {
     let [like, setLike] = useState(getLike(item.id))
+
+    let width = 15
     // 判断like
     return (
-      <IconButton
-        color="#6cf"
-        icon={like ? 'heart' : 'heart-outline'}
-        onPress={() => {
-          likesToggle(item.id)
-          setLike(!like)
-        }}
-        size={15}
-      ></IconButton>
+      <View style={_style.wh(width)}>
+        <IconButton
+          color="#6cf"
+          icon={like ? 'heart' : 'heart-outline'}
+          onPress={() => {
+            likesToggle(item.id)
+            setLike(!like)
+          }}
+          size={width}
+        />
+      </View>
     )
   }
   return (
@@ -81,6 +85,6 @@ const styles = StyleSheet.create({
 
 export const RenderGalleryItem = connect((state) => {
   return {
-    getLike: (id) => state.likes[id],
+    getLike: (id) => state.likes.imgs[id],
   }
 })(dom)

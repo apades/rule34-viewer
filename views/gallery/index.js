@@ -1,11 +1,13 @@
 import { connect } from 'react-redux'
 import dom from './dom'
 
-export default connect(
+var Gallery = connect(
   (state) => {
     return {}
   },
   (dispatch) => ({
-    likesToggle: (id) => dispatch({ type: 'likes_toggle', id }),
+    likesToggle: (id) => dispatch({ type: 'likes/img_toggle', id }),
   }),
 )(dom)
+
+export default Gallery

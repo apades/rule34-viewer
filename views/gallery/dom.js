@@ -89,12 +89,6 @@ export default function view_gallery({ navigation, route, likesToggle }) {
                   />
                 </View>
               )
-              // return dom({
-              //   item: d,
-              //   index,
-              //   navigation,
-              //   likesToggle,
-              // })
             })}
           </View>
         </ScrollView>

@@ -11,6 +11,7 @@ import { view_viewer } from './views/viewer'
 import reducer from './reducers/index'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
+import GalleryHeader, { GalleryHeaderRight } from './views/gallery/header'
 
 const Stack = createStackNavigator()
 
@@ -39,7 +40,10 @@ function App() {
               name="gallery"
               options={({ route }) => ({
                 title: `tags: ${route.params?.tags || 'dacad'}`,
-                header: () => {},
+                headerTitle: () => (
+                  <GalleryHeader tag={route.params?.tags || 'dacad'} />
+                ),
+                headerRight: () => <GalleryHeaderRight />,
               })}
             />
             <Stack.Screen component={view_viewer} name="viewer" />

@@ -7,7 +7,7 @@ if (process.env.ENV_NAME) {
   envConfig = dotenv.parse(envText)
 }
 
-console.log('env', envConfig)
+// console.log('env', envConfig)
 
 let config = {
   name: 'CoolApp',

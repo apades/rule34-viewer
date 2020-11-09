@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import {
+  useFocusEffect,
+  useIsFocused,
+  useRoute,
+} from '@react-navigation/native'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
@@ -7,7 +12,18 @@ import { _env } from '../../utils/env'
 
 let collects = ['dacad', 'km-15', 'sfw']
 
-function dom({ navigation, route, likes }) {
+function dom({ navigation, getLikes }) {
+  let focus = useIsFocused()
+  let [likes, setLikes] = useState(getLikes())
+  // let likes = getLikes()
+  // useFocusEffect(() => {
+  //   // likes = getLikes()
+  //   console.log('focus', getLikes())
+
+  // })
+  useEffect(() => {
+    setLikes(getLikes())
+  }, [focus])
   return (
     <View style={{ flex: 1 }}>
       {collects.map((c) => (
@@ -20,8 +36,12 @@ function dom({ navigation, route, likes }) {
         </TouchableOpacity>
       ))}
       <View>
-        <Text>likes</Text>
-        {Object.keys(likes).map((like) => (
+        <Text>imgs</Text>
+        {Object.keys(likes.imgs).map((like) => (
+          <Text key={like}>{like}</Text>
+        ))}
+        <Text>tags</Text>
+        {Object.keys(likes.tags).map((like) => (
           <Text key={like}>{like}</Text>
         ))}
       </View>
@@ -41,5 +61,5 @@ var styles = StyleSheet.create({
 })
 
 export const view_collections = connect((state) => ({
-  likes: state.likes,
+  getLikes: () => state.likes,
 }))(dom)

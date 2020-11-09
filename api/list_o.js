@@ -1,3 +1,4 @@
+import test_dataList from '../test/list'
 import { isDev } from '../utils/env'
 import request from '../utils/request'
 import { parserXml } from '../utils/utils'
@@ -14,6 +15,8 @@ function resolveData(data) {
 
 export async function imgList_o(option = {}) {
   let dataList
+  // test
+  // return new Promise.resolve(test_dataList)
   try {
     if (isDev) {
       dataList = await request('/getList', {

@@ -18,7 +18,8 @@ import { _style } from '../../style'
 import { _env } from '../../utils/env'
 import { dom, RenderGalleryItem } from './item'
 
-export default function view_gallery({ navigation, route, likesToggle }) {
+export default function view_gallery(props) {
+  let { navigation, route, likesToggle } = props
   let [dataList, setDataList] = useState([])
   let [pid, setPid] = useState(1)
   let [loading, setLoading] = useState(false)
@@ -26,11 +27,14 @@ export default function view_gallery({ navigation, route, likesToggle }) {
   let init = true
   let [firstLoad, setFirstLoad] = useState(true)
 
+  let { resetImgList, pushImgList } = props
   useEffect(() => {
     // reset dataList 关键
     dataList.length = 0
     setDataList(dataList)
     setPid(1)
+
+    resetImgList()
   }, [])
 
   useEffect(() => {
@@ -39,6 +43,8 @@ export default function view_gallery({ navigation, route, likesToggle }) {
       (res) => {
         let newDataList = [...dataList, ...res.dataList]
         setDataList(newDataList)
+
+        pushImgList(res)
         if (init) {
           init = false
           setFirstLoad(false)
@@ -134,7 +140,8 @@ const styles = StyleSheet.create({
     tintColor: '#6cf',
   },
   img: {
-    ..._style.wh(_env.NSFW ? width / 2 : 10),
+    // ..._style.wh(_env.NSFW ? width / 2 : 10),
+    ..._style.wh(width),
     resizeMode: 'contain',
   },
   imgContainer: {

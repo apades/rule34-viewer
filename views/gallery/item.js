@@ -11,7 +11,7 @@ export function dom({ item, index, getLike, likesToggle, navigation }) {
   function RenderImg() {
     return (
       <TouchableNativeFeedback
-        onPress={() => navigation.push('viewer', { id: item.id })}
+        onPress={() => navigation.push('viewer', { id: item.id, index })}
       >
         <View style={{ ...styles.imgContainer }}>
           <Image source={{ uri: item.preview_url }} style={styles.img}></Image>
@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
     tintColor: '#6cf',
   },
   img: {
-    ..._style.wh(_env.NSFW ? width / 2 : 10),
+    // ..._style.wh(_env.NSFW ? width / 2 : 10),
+    ..._style.wh(width),
     resizeMode: 'contain',
   },
   imgContainer: {

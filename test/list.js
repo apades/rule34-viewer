@@ -1,4 +1,4 @@
-let config = {
+let test_dataList = {
   count: '935',
   offset: '0',
   dataList: [
@@ -148,4 +148,4 @@ let config = {
   ],
 }
 
-export default config
+export default test_dataList

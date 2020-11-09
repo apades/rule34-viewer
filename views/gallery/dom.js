@@ -79,6 +79,16 @@ export default function view_gallery(props) {
       }
     }
   }
+
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'flex-start',
+    },
+  })
   return (
     <View style={{ ..._style.wh('100%'), position: 'absolute' }}>
       {!firstLoad ? (
@@ -116,37 +126,3 @@ export default function view_gallery(props) {
     </View>
   )
 }
-
-// 获取屏幕宽度
-let width = Dimensions.get('window').width
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-  },
-  itemContainer: {
-    position: 'relative',
-  },
-  tooltipContainer: {
-    position: 'absolute',
-    bottom: 15,
-    ..._style.wh('100%', 15),
-  },
-  btn_like: {
-    ..._style.wh(10),
-    tintColor: '#6cf',
-  },
-  img: {
-    // ..._style.wh(_env.NSFW ? width / 2 : 10),
-    ..._style.wh(width),
-    resizeMode: 'contain',
-  },
-  imgContainer: {
-    ..._style.wh(width / 2),
-    ..._style.border(),
-    ..._style.center(),
-  },
-})

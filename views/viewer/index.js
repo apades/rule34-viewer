@@ -4,13 +4,12 @@ import {
   Image,
   Modal,
   StyleSheet,
-  Text,
   TouchableHighlight,
   TouchableWithoutFeedback,
   View,
 } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { ActivityIndicator, Button, Colors } from 'react-native-paper'
+import { ActivityIndicator, Button, Text, Colors } from 'react-native-paper'
 import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
 import { _env, _screen } from '../../utils/env'
@@ -47,9 +46,6 @@ let dataType = {
 function dom(props) {
   let { navigation, route } = props
   let index = route.params?.index
-
-  let { dataList, count } = props
-  let imageUrls = dataList.map((d) => ({ url: d.file_url }))
 
   function RenderTagContainer({ tagStr = '' }) {
     let arr = tagStr.split(' ')
@@ -105,6 +101,8 @@ function dom(props) {
 
   let [showInfo, setShowInfo] = useState(false)
   let [visible, setVisible] = useState(true)
+  let { dataList, count, pid } = props
+  let imageUrls = dataList.map((d) => ({ url: d.file_url }))
   return (
     <View style={{ position: 'relative' }}>
       <Modal
@@ -128,6 +126,13 @@ function dom(props) {
           onSwipeDown={() => {
             console.log('onSwipeDown')
           }}
+          renderHeader={() => (
+            <View>
+              <Text
+                style={{ color: 'red' }}
+              >{`pid:${pid} length:${dataList.length}`}</Text>
+            </View>
+          )}
           renderIndicator={(index) => (
             <View style={{ position: 'absolute', top: 10, left: 10 }}>
               <Text style={{ color: '#6cf' }}>{`${index}/${count}`}</Text>
@@ -144,4 +149,5 @@ function dom(props) {
 export const view_viewer = connect((state) => ({
   dataList: state.imgList.dataList,
   count: state.imgList.count,
+  pid: state.imgList.pid,
 }))(dom)

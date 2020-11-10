@@ -13,8 +13,7 @@ var Gallery = connect(
     pushImgList: (data) =>
       dispatch({
         type: 'imgList/push',
-        dataList: data.dataList,
-        count: data.count,
+        ...data,
       }),
   }),
 )(dom)

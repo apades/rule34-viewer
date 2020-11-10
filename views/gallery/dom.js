@@ -45,7 +45,7 @@ export default function view_gallery(props) {
         let newDataList = [...dataList, ...res.dataList]
         setDataList(newDataList)
 
-        pushImgList(res)
+        pushImgList({ ...res, pid })
         if (init) {
           init = false
           setFirstLoad(false)

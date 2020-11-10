@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   },
   imgContainer: {
     ..._style.wh(width / 2),
-    ..._style.border(),
+    // ..._style.border(),
     ..._style.center(),
   },
 })

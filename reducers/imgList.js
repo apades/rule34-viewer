@@ -8,9 +8,9 @@ const imgList = (state = init, action) => {
     case 'imgList/reset':
       return init
     case 'imgList/push':
-      state.dataList.push(...action.dataList)
+      let arr = [...state.dataList, ...action.dataList]
       state.count = action.count
-      return { ...state }
+      return { ...state, dataList: [...arr] }
     default:
       return state
   }

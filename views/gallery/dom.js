@@ -12,10 +12,11 @@ import {
   TouchableNativeFeedback,
 } from 'react-native-gesture-handler'
 import { ActivityIndicator, Button, IconButton } from 'react-native-paper'
+import { FlatGrid } from 'react-native-super-grid'
 import { imgList_o } from '../../api/list_o'
 import { Comp_seachInput } from '../../components/searchInput'
 import { _style } from '../../style'
-import { _env } from '../../utils/env'
+import { _env, _screen } from '../../utils/env'
 import { dom, RenderGalleryItem } from './item'
 
 export default function view_gallery(props) {
@@ -92,22 +93,18 @@ export default function view_gallery(props) {
   return (
     <View style={{ ..._style.wh('100%'), position: 'absolute' }}>
       {!firstLoad ? (
-        <ScrollView onScroll={handlerScrollEnd}>
-          <View style={styles.container}>
-            {dataList.map((d, index) => {
-              return (
-                <View key={d.id}>
-                  <RenderGalleryItem
-                    index={index}
-                    item={d}
-                    likesToggle={likesToggle}
-                    navigation={navigation}
-                  />
-                </View>
-              )
-            })}
-          </View>
-        </ScrollView>
+        <FlatGrid
+          data={dataList}
+          onScroll={handlerScrollEnd}
+          renderItem={({ item, index }) => (
+            <RenderGalleryItem
+              index={index}
+              item={item}
+              likesToggle={likesToggle}
+              navigation={navigation}
+            />
+          )}
+        />
       ) : (
         <View style={{ ..._style.wh('100%'), ..._style.center() }}>
           <ActivityIndicator animating={true} />

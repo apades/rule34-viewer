@@ -8,6 +8,8 @@
 ## viewer
 [react-native-image-viewer](https://github.com/ascoders/react-native-image-viewer)
 
+## grid-view
+[gridView](https://www.npmjs.com/package/react-native-super-grid)
 
 # api
 ## 遇到的问题

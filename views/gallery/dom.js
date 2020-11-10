@@ -21,7 +21,7 @@ import { dom, RenderGalleryItem } from './item'
 export default function view_gallery(props) {
   let { navigation, route, likesToggle } = props
   let [dataList, setDataList] = useState([])
-  let [pid, setPid] = useState(1)
+  let [pid, setPid] = useState(0)
   let [loading, setLoading] = useState(false)
 
   let init = true
@@ -32,7 +32,7 @@ export default function view_gallery(props) {
     // reset dataList 关键
     dataList.length = 0
     setDataList(dataList)
-    setPid(1)
+    setPid(0)
 
     resetImgList()
   }, [])

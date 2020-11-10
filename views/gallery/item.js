@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
     tintColor: '#6cf',
   },
   img: {
-    // ..._style.wh(_env.NSFW ? width / 2 : 10),
-    ..._style.wh(width),
+    ..._style.wh(_env.NSFW ? width / 2 : 10),
+    // ..._style.wh(width),
     resizeMode: 'contain',
   },
   imgContainer: {

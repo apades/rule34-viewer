@@ -4,8 +4,9 @@ import {
   useRoute,
 } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { Divider, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
 
 import { _env } from '../../utils/env'
@@ -40,6 +41,7 @@ function dom({ navigation, getLikes }) {
         {Object.keys(likes.imgs).map((like) => (
           <Text key={like}>{like}</Text>
         ))}
+        <Divider />
         <Text>tags</Text>
         {Object.keys(likes.tags).map((like) => (
           <Text key={like}>{like}</Text>

@@ -3,7 +3,9 @@ import dom from './dom'
 
 var Gallery = connect(
   (state) => {
-    return {}
+    return {
+      imgDataList: state.imgList.dataList,
+    }
   },
   (dispatch) => ({
     likesToggle: (id) => dispatch({ type: 'likes/img_toggle', id }),

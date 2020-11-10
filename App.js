@@ -10,8 +10,10 @@ import { view_viewer } from './views/viewer'
 
 import reducer from './reducers/index'
 import { createStore } from 'redux'
-import { Provider } from 'react-redux'
+import { connect, Provider } from 'react-redux'
 import GalleryHeader, { GalleryHeaderRight } from './views/gallery/header'
+import { useEffect } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Stack = createStackNavigator()
 
@@ -28,29 +30,65 @@ const s = StyleSheet.create({
 })
 let store = createStore(reducer)
 
+function _RenderRouter(props) {
+  // init store
+  useEffect(() => {
+    console.log('init store')
+    _initStore()
+  }, [])
+
+  let { likes, initLikes } = props
+  async function _initStore() {
+    let [tags, imgs] = await Promise.all([
+      AsyncStorage.getItem('tagLikes'),
+      AsyncStorage.getItem('imgLikes'),
+    ])
+    tags = JSON.parse(tags)
+    imgs = JSON.parse(imgs)
+    // console.log(tags, imgs)
+    initLikes({ tags, imgs })
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="collections">
+          <Stack.Screen component={view_collections} name="collections" />
+          <Stack.Screen
+            component={view_gallery}
+            name="gallery"
+            options={({ route }) => ({
+              title: `tags: ${route.params?.tags || 'dacad'}`,
+              headerTitle: () => (
+                <GalleryHeader tag={route.params?.tags || 'dacad'} />
+              ),
+              headerRight: () => <GalleryHeaderRight />,
+            })}
+          />
+          <Stack.Screen component={view_viewer} name="viewer" />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <MyComponent />
+    </View>
+  )
+}
+const RenderRouter = connect(
+  (state) => {
+    return {
+      likes: state.likes,
+    }
+  },
+  (dispatch) => {
+    return {
+      initLikes: (initData) => dispatch({ type: 'likes/init', ...initData }),
+    }
+  },
+)(_RenderRouter)
+
 function App() {
   return (
     <Provider store={store}>
-      <View style={{ flex: 1 }}>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="collections">
-            <Stack.Screen component={view_collections} name="collections" />
-            <Stack.Screen
-              component={view_gallery}
-              name="gallery"
-              options={({ route }) => ({
-                title: `tags: ${route.params?.tags || 'dacad'}`,
-                headerTitle: () => (
-                  <GalleryHeader tag={route.params?.tags || 'dacad'} />
-                ),
-                headerRight: () => <GalleryHeaderRight />,
-              })}
-            />
-            <Stack.Screen component={view_viewer} name="viewer" />
-          </Stack.Navigator>
-        </NavigationContainer>
-        <MyComponent />
-      </View>
+      <RenderRouter />
     </Provider>
   )
 }

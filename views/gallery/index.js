@@ -5,6 +5,7 @@ var Gallery = connect(
   (state) => {
     return {
       imgDataList: state.imgList.dataList,
+      imgLikes: state.likes.imgs,
     }
   },
   (dispatch) => ({

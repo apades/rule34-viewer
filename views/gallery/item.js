@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { _style } from '../../style'
 import { _env } from '../../utils/env'
 
-export function dom({ item, index, getLike, likesToggle, navigation }) {
+export function dom({ item, index, isLike, likesToggle, navigation }) {
   //   let isLike = false
   console.log('render', index)
   function RenderImg() {
@@ -21,7 +21,8 @@ export function dom({ item, index, getLike, likesToggle, navigation }) {
     )
   }
   function RenderLike() {
-    let [like, setLike] = useState(getLike(item.id))
+    let [like, setLike] = useState(isLike)
+    // let like = false
 
     let width = 15
     // 判断like
@@ -87,6 +88,6 @@ const styles = StyleSheet.create({
 
 export const RenderGalleryItem = connect((state) => {
   return {
-    getLike: (id) => state.likes.imgs[id],
+    // getLike: (id) => state.likes.imgs[id],
   }
 })(dom)

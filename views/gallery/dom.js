@@ -29,7 +29,7 @@ export default function view_gallery(props) {
   let init = true
   let [firstLoad, setFirstLoad] = useState(true)
 
-  let { resetImgList, pushImgList } = props
+  let { resetImgList, pushImgList, imgLikes } = props
   useEffect(() => {
     // reset dataList 关键
     dataList.length = 0
@@ -95,6 +95,7 @@ export default function view_gallery(props) {
           renderItem={({ item, index }) => (
             <RenderGalleryItem
               index={index}
+              isLike={!!imgLikes[item.id]}
               item={item}
               likesToggle={likesToggle}
               navigation={navigation}

@@ -8,6 +8,7 @@ import { _env } from '../../utils/env'
 
 export function dom({ item, index, getLike, likesToggle, navigation }) {
   //   let isLike = false
+  console.log('render', index)
   function RenderImg() {
     return (
       <TouchableNativeFeedback

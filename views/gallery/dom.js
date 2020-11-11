@@ -20,6 +20,7 @@ import { _env, _screen } from '../../utils/env'
 import { dom, RenderGalleryItem } from './item'
 
 export default function view_gallery(props) {
+  console.log('--- render gallery ---')
   let { navigation, route, likesToggle } = props
   let [dataList, setDataList] = useState([])
   let [pid, setPid] = useState(0)
@@ -35,10 +36,11 @@ export default function view_gallery(props) {
     setDataList(dataList)
     setPid(0)
 
+    loadData()
     resetImgList()
   }, [])
 
-  useEffect(() => {
+  function loadData() {
     setLoading(true)
     imgList_o({ tags: route.params?.tags || 'dacad', limit: 20, pid }).then(
       (res) => {
@@ -53,13 +55,6 @@ export default function view_gallery(props) {
         setLoading(false)
       },
     )
-  }, [pid])
-
-  // flex 模拟grid作用
-  function isLast(i) {
-    /** @type {ViewStyle} */
-    let s = {}
-    return i + 1 === dataList.length ? s : {}
   }
 
   // container scroll event
@@ -77,6 +72,7 @@ export default function view_gallery(props) {
       if (!loading) {
         console.log('scroll end')
         setPid(++pid)
+        loadData()
       }
     }
   }

@@ -1,17 +1,13 @@
+import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { IconButton, TextInput } from 'react-native-paper'
 import { _style } from '../style'
 
-export function Comp_seachInput({
-  tag,
-  navigation,
-  route,
-  getLike,
-  likesToggle,
-}) {
+export function Comp_seachInput({ tag, route, getLike, likesToggle }) {
   // let [like, setLike] = useState(getLike(item.id))
   let [text, setText] = useState('')
+  let navigation = useNavigation()
 
   let cHeight = 40,
     cWidth = '100%'

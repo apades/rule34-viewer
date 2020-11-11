@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { View, Text, Button, StyleSheet } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, useNavigation } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { FAB } from 'react-native-paper'
 
@@ -14,6 +14,7 @@ import { connect, Provider } from 'react-redux'
 import GalleryHeader, { GalleryHeaderRight } from './views/gallery/header'
 import { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Comp_seachInput } from './components/searchInput'
 
 const Stack = createStackNavigator()
 
@@ -49,8 +50,10 @@ function _RenderRouter(props) {
     initLikes({ tags, imgs })
   }
 
+  let navigation = useNavigation()
+
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="collections">
           <Stack.Screen component={view_collections} name="collections" />
@@ -68,6 +71,7 @@ function _RenderRouter(props) {
         </Stack.Navigator>
       </NavigationContainer>
       <MyComponent />
+      <Comp_seachInput navigation={navigation} />
     </View>
   )
 }

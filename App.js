@@ -58,7 +58,6 @@ function _RenderRouter(props) {
             component={view_gallery}
             name="gallery"
             options={({ route }) => ({
-              title: `tags: ${route.params?.tags || 'dacad'}`,
               headerTitle: () => (
                 <GalleryHeader tag={route.params?.tags || 'dacad'} />
               ),

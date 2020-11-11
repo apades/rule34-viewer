@@ -1,9 +1,12 @@
+import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { IconButton } from 'react-native-paper'
 import { connect } from 'react-redux'
+import { Comp_seachInput } from '../../components/searchInput'
 
-function dom({ getLike, tag, likesToggle }) {
+function dom(props) {
+  let { getLike, tag, likesToggle } = props
   let [like, setLike] = useState(getLike(tag))
   // let like = getLike(tag)
 
@@ -13,18 +16,32 @@ function dom({ getLike, tag, likesToggle }) {
       alignItems: 'center',
     },
   })
+
+  function RenderTitle() {
+    return (
+      <>
+        <Text>{tag}</Text>
+        <IconButton
+          color="#6cf"
+          icon={like ? 'heart' : 'heart-outline'}
+          onPress={() => {
+            likesToggle(tag)
+            setLike(!like)
+          }}
+          size={15}
+        />
+      </>
+    )
+  }
+
+  let navigation = useNavigation()
   return (
     <View style={styles.container}>
-      <Text>{tag}</Text>
-      <IconButton
-        color="#6cf"
-        icon={like ? 'heart' : 'heart-outline'}
-        onPress={() => {
-          likesToggle(tag)
-          setLike(!like)
-        }}
-        size={15}
-      />
+      {props.searching ? (
+        <Comp_seachInput navigation={navigation} />
+      ) : (
+        <RenderTitle />
+      )}
     </View>
   )
 }
@@ -32,6 +49,7 @@ function dom({ getLike, tag, likesToggle }) {
 let GalleryHeader = connect(
   (state) => ({
     getLike: (tag) => state.likes.tags[tag],
+    searching: state.search.searching,
   }),
   (dispatch) => ({
     likesToggle: (tag) => dispatch({ type: 'likes/tag_toggle', tag }),
@@ -40,6 +58,29 @@ let GalleryHeader = connect(
 
 export default GalleryHeader
 
-export function GalleryHeaderRight() {
-  return <IconButton icon="magnify" onPress={() => console.log('search')} />
-}
+export const GalleryHeaderRight = connect(
+  (state) => ({
+    searching: state.search.searching,
+  }),
+  (dispatch) => ({
+    searchToggle: () => dispatch({ type: 'search/toggle' }),
+  }),
+)(function ({ searchToggle, searching }) {
+  return searching ? (
+    <IconButton
+      icon="close"
+      onPress={() => {
+        searchToggle()
+        console.log('close search')
+      }}
+    />
+  ) : (
+    <IconButton
+      icon="magnify"
+      onPress={() => {
+        searchToggle()
+        console.log('open search')
+      }}
+    />
+  )
+})

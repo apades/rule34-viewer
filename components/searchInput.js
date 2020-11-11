@@ -14,7 +14,7 @@ export function Comp_seachInput({
   let [text, setText] = useState('')
 
   let cHeight = 40,
-    cWidth = '70%'
+    cWidth = '100%'
   const styles = StyleSheet.create({
     container: {
       ..._style.wh(cWidth, cHeight),

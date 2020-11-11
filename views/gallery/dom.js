@@ -115,7 +115,7 @@ export default function view_gallery(props) {
           top: 10,
         }}
       >
-        <Comp_seachInput navigation={navigation} />
+        {/* <Comp_seachInput navigation={navigation} /> */}
       </View>
     </View>
   )

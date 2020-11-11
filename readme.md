@@ -45,9 +45,12 @@
    2. 从`/imgLisg/:tags/:page`到`/imgDetail/:tags/:id`，默认显示`:id`item，左右滑动以`:tags`dataList上下切换，回退直接到`/imgLisg/:tags/:page`，**这里滑动不记录router**，这里需要reducer记录下来`:tags`的dataList
       - 需要提前把`:tags`的dataList记录到reducer中，detail页读取到某个节点，开始请求上/下一页的`:tags`的dataList
 
-# 优化目标
+# 发现的bug
 ## <del>多次刷新</del>
 ```js
 getLike: (id) => state.likes.imgs[id],
 ```
 这个导致了重新把列表刷新了一遍
+
+## gallery搜索切换
+从gallery搜索的tag进去新的gallery，在进去这个新tag的viewer后，返回旧的gallery的viewer会报错

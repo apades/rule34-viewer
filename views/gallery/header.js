@@ -20,16 +20,20 @@ function dom(props) {
   function RenderTitle() {
     return (
       <>
-        <Text>{searchText}</Text>
-        <IconButton
-          color="#6cf"
-          icon={like ? 'heart' : 'heart-outline'}
-          onPress={() => {
-            likesToggle(searchText)
-            setLike(!like)
-          }}
-          size={15}
-        />
+        <Text>{searchText || 'home'}</Text>
+        {searchText.length ? (
+          <IconButton
+            color="#6cf"
+            icon={like ? 'heart' : 'heart-outline'}
+            onPress={() => {
+              likesToggle(searchText)
+              setLike(!like)
+            }}
+            size={15}
+          />
+        ) : (
+          <></>
+        )}
       </>
     )
   }

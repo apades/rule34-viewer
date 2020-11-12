@@ -52,7 +52,7 @@ var Gallery = connect(
 
   function loadData() {
     setLoading(true)
-    imgList_o({ tags: searchText || 'dacad', limit: 20, pid }).then((res) => {
+    imgList_o({ tags: searchText, limit: 20, pid }).then((res) => {
       let newDataList = [...dataList, ...res.dataList]
       setDataList(newDataList)
 

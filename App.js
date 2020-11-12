@@ -15,6 +15,7 @@ import GalleryHeader, { GalleryHeaderRight } from './views/gallery/header'
 import { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Comp_seachInput } from './components/searchInput'
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 
 const Stack = createStackNavigator()
 
@@ -30,6 +31,8 @@ const s = StyleSheet.create({
   },
 })
 let store = createStore(reducer)
+
+let tab = createMaterialBottomTabNavigator()
 
 function _RenderRouter(props) {
   // init store
@@ -49,11 +52,10 @@ function _RenderRouter(props) {
     // console.log(tags, imgs)
     initLikes({ tags, imgs })
   }
-
   return (
     <View style={{ flex: 1, position: 'relative' }}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="collections">
+      {/* <NavigationContainer>
+        <Stack.Navigator initialRouteName="gallery">
           <Stack.Screen component={view_collections} name="collections" />
           <Stack.Screen
             component={view_gallery}
@@ -68,7 +70,27 @@ function _RenderRouter(props) {
           <Stack.Screen component={view_viewer} name="viewer" />
         </Stack.Navigator>
       </NavigationContainer>
-      <MyComponent />
+      <MyComponent /> */}
+      <NavigationContainer>
+        <tab.Navigator>
+          <tab.Screen
+            component={view_collections}
+            name="collections"
+            options={{
+              tabBarIcon: 'heart',
+              tabBarLabel: 'collects',
+            }}
+          />
+          <Stack.Screen
+            component={view_gallery}
+            name="gallery"
+            options={{
+              tabBarIcon: 'view-list',
+              tabBarLabel: 'list',
+            }}
+          />
+        </tab.Navigator>
+      </NavigationContainer>
     </View>
   )
 }

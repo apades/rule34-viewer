@@ -9,6 +9,7 @@ export const Comp_seachInput = connect(
   (state) => ({}),
   (dispatch) => ({
     search: (text) => dispatch({ type: 'search/input', text }),
+    close: () => dispatch({ type: 'search/toggle', searching: false }),
   }),
 )(function (props) {
   let [text, setText] = useState('')
@@ -27,7 +28,7 @@ export const Comp_seachInput = connect(
     },
   })
 
-  let { search } = props
+  let { search, close } = props
   return (
     <View style={styles.container}>
       <TextInput
@@ -35,6 +36,7 @@ export const Comp_seachInput = connect(
         onSubmitEditing={() => {
           console.log('seach', text)
           search(text)
+          close()
         }}
         style={styles.input}
         value={text}

@@ -6,8 +6,8 @@ import { connect } from 'react-redux'
 import { Comp_seachInput } from '../../components/searchInput'
 
 function dom(props) {
-  let { getLike, tag, likesToggle } = props
-  let [like, setLike] = useState(getLike(tag))
+  let { getLike, tag, likesToggle, searchText } = props
+  let [like, setLike] = useState(getLike(searchText))
   // let like = getLike(tag)
 
   let styles = StyleSheet.create({
@@ -20,12 +20,12 @@ function dom(props) {
   function RenderTitle() {
     return (
       <>
-        <Text>{tag}</Text>
+        <Text>{searchText}</Text>
         <IconButton
           color="#6cf"
           icon={like ? 'heart' : 'heart-outline'}
           onPress={() => {
-            likesToggle(tag)
+            likesToggle(searchText)
             setLike(!like)
           }}
           size={15}
@@ -50,6 +50,7 @@ let GalleryHeader = connect(
   (state) => ({
     getLike: (tag) => state.likes.tags[tag],
     searching: state.search.searching,
+    searchText: state.search.text,
   }),
   (dispatch) => ({
     likesToggle: (tag) => dispatch({ type: 'likes/tag_toggle', tag }),

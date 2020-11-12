@@ -7,6 +7,7 @@ import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
 import { RenderGalleryItem } from './item'
 
+let init = true
 var Gallery = connect(
   (state) => {
     return {
@@ -25,25 +26,29 @@ var Gallery = connect(
       }),
   }),
 )(function (props) {
-  console.log('--- render gallery ---')
+  console.log(`--- render ${props.searchText} gallery ---`)
   let { navigation, route, likesToggle } = props
   let [dataList, setDataList] = useState([])
-  let [pid, setPid] = useState(0)
+  let pid = 0
   let [loading, setLoading] = useState(false)
 
-  let init = true
   let [firstLoad, setFirstLoad] = useState(true)
 
   let { resetImgList, pushImgList, imgLikes, searchText } = props
   useEffect(() => {
+    initState()
+
+    loadData()
+  }, [searchText])
+
+  function initState() {
     // reset dataList 关键
     dataList.length = 0
     setDataList(dataList)
-    setPid(0)
-
-    loadData()
+    pid = 0
+    init = true
     resetImgList()
-  }, [searchText])
+  }
 
   function loadData() {
     setLoading(true)
@@ -53,6 +58,7 @@ var Gallery = connect(
 
       pushImgList({ ...res, pid })
       if (init) {
+        console.log('init')
         init = false
         setFirstLoad(false)
       }
@@ -74,7 +80,7 @@ var Gallery = connect(
     if (isCloseToBottom(e.nativeEvent)) {
       if (!loading) {
         console.log('scroll end')
-        setPid(++pid)
+        pid++
         loadData()
       }
     }
@@ -90,7 +96,7 @@ var Gallery = connect(
     },
   })
   return (
-    <View style={{ ..._style.wh('100%'), position: 'absolute' }}>
+    <View style={{ ..._style.wh('100%'), position: 'relative' }}>
       {!firstLoad ? (
         <FlatGrid
           data={dataList}

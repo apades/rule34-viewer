@@ -38,7 +38,7 @@ export const view_collections = connect(
     setLikes(getLikes())
   }, [focus])
 
-  let collects = ['Nintendo', 'dacad', 'km-15', ...Object.keys(likes.tags)]
+  let collects = ['Nintendo', 'km-15', ...Object.keys(likes.tags)]
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>

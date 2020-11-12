@@ -6,7 +6,7 @@ let init = {
 const search = (state = init, action) => {
   switch (action.type) {
     case 'search/toggle':
-      return { ...state, searching: !state.searching }
+      return { ...state, searching: action.searching ?? !state.searching }
     case 'search/input':
       return { ...state, text: action.text }
     default:

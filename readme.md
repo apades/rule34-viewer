@@ -52,5 +52,5 @@ getLike: (id) => state.likes.imgs[id],
 ```
 这个导致了重新把列表刷新了一遍
 
-## gallery搜索切换
+## <del>gallery搜索切换</del>
 从gallery搜索的tag进去新的gallery，在进去这个新tag的viewer后，返回旧的gallery的viewer会报错

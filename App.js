@@ -50,8 +50,6 @@ function _RenderRouter(props) {
     initLikes({ tags, imgs })
   }
 
-  let navigation = useNavigation()
-
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer>
@@ -71,7 +69,6 @@ function _RenderRouter(props) {
         </Stack.Navigator>
       </NavigationContainer>
       <MyComponent />
-      <Comp_seachInput navigation={navigation} />
     </View>
   )
 }

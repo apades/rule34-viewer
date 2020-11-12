@@ -1,13 +1,17 @@
 import { useNavigation } from '@react-navigation/native'
-import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
-import { IconButton, TextInput } from 'react-native-paper'
+import React, { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { TextInput } from 'react-native-paper'
+import { connect } from 'react-redux'
 import { _style } from '../style'
 
-export function Comp_seachInput({ tag, route, getLike, likesToggle }) {
-  // let [like, setLike] = useState(getLike(item.id))
+export const Comp_seachInput = connect(
+  (state) => ({}),
+  (dispatch) => ({
+    search: (text) => dispatch({ type: 'search/input', text }),
+  }),
+)(function (props) {
   let [text, setText] = useState('')
-  let navigation = useNavigation()
 
   let cHeight = 40,
     cWidth = '100%'
@@ -23,20 +27,18 @@ export function Comp_seachInput({ tag, route, getLike, likesToggle }) {
     },
   })
 
+  let { search } = props
   return (
     <View style={styles.container}>
       <TextInput
         onChangeText={(t) => setText(t)}
         onSubmitEditing={() => {
           console.log('seach', text)
-          navigation.push('gallery', { tags: text })
+          search(text)
         }}
         style={styles.input}
         value={text}
       />
-      {/* <View style={_style.wh(cHeight)}>
-        <IconButton icon={like ? 'heart' : 'heart-outline'} size={cHeight} />
-      </View> */}
     </View>
   )
-}
+})

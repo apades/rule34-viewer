@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
-import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import React, { useState } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 import { IconButton } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { Comp_seachInput } from '../../components/searchInput'
@@ -66,20 +66,12 @@ export const GalleryHeaderRight = connect(
     searchToggle: () => dispatch({ type: 'search/toggle' }),
   }),
 )(function ({ searchToggle, searching }) {
-  return searching ? (
+  return (
     <IconButton
-      icon="close"
+      icon={searching ? 'close' : 'magnify'}
       onPress={() => {
         searchToggle()
-        console.log('close search')
-      }}
-    />
-  ) : (
-    <IconButton
-      icon="magnify"
-      onPress={() => {
-        searchToggle()
-        console.log('open search')
+        console.log(`${searching ? 'close' : 'open'} search`)
       }}
     />
   )

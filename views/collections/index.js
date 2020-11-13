@@ -49,9 +49,7 @@ export const view_collections = connect(
             key={collect}
             onPress={() => {
               search(collect)
-              navigation.push
-                ? navigation.push('gallery')
-                : navigation.jumpTo('gallery')
+              navigation.jumpTo('gallery')
             }}
             style={styles.container}
           >

@@ -90,7 +90,9 @@ const GalleryHeader = connect(
   }),
 )(function (props) {
   let { searchText, getLike, likesToggle } = props
-  let [like, setLike] = useState(getLike(searchText))
+  let like = getLike(searchText)
+
+  let navigation = useNavigation()
   return (
     <Appbar.Header>
       <Appbar.Content title={searchText || 'home'} />
@@ -99,7 +101,6 @@ const GalleryHeader = connect(
           icon={like ? 'heart' : 'heart-outline'}
           onPress={() => {
             likesToggle(searchText)
-            setLike(!like)
           }}
         />
       ) : (
@@ -109,7 +110,7 @@ const GalleryHeader = connect(
       <Appbar.Action
         icon="magnify"
         onPress={() => {
-          console.log('to search')
+          navigation.push('search')
         }}
       />
     </Appbar.Header>

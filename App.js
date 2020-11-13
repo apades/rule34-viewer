@@ -1,21 +1,17 @@
-import * as React from 'react'
-import { View, Text, Button, StyleSheet } from 'react-native'
-import { NavigationContainer, useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
+import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import * as React from 'react'
+import { useEffect } from 'react'
+import { StyleSheet, View } from 'react-native'
 import { FAB } from 'react-native-paper'
-
+import { connect, Provider } from 'react-redux'
+import { createStore } from 'redux'
+import reducer from './reducers/index'
 import { view_collections } from './views/collections'
 import view_gallery from './views/gallery'
-import { view_viewer } from './views/viewer'
-
-import reducer from './reducers/index'
-import { createStore } from 'redux'
-import { connect, Provider } from 'react-redux'
-import GalleryHeader, { GalleryHeaderRight } from './views/gallery/header'
-import { useEffect } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Comp_seachInput } from './components/searchInput'
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
+import Search from './views/search'
 
 const Stack = createStackNavigator()
 
@@ -31,8 +27,6 @@ const s = StyleSheet.create({
   },
 })
 let store = createStore(reducer)
-
-let tab = createMaterialBottomTabNavigator()
 
 function _RenderRouter(props) {
   // init store
@@ -52,26 +46,10 @@ function _RenderRouter(props) {
     // console.log(tags, imgs)
     initLikes({ tags, imgs })
   }
-  return (
-    <View style={{ flex: 1, position: 'relative' }}>
-      {/* <NavigationContainer>
-        <Stack.Navigator initialRouteName="gallery">
-          <Stack.Screen component={view_collections} name="collections" />
-          <Stack.Screen
-            component={view_gallery}
-            name="gallery"
-            options={({ route }) => ({
-              headerTitle: () => (
-                <GalleryHeader tag={route.params?.tags || 'dacad'} />
-              ),
-              headerRight: () => <GalleryHeaderRight />,
-            })}
-          />
-          <Stack.Screen component={view_viewer} name="viewer" />
-        </Stack.Navigator>
-      </NavigationContainer>
-      <MyComponent /> */}
-      <NavigationContainer>
+  function HomeComponent() {
+    let tab = createMaterialBottomTabNavigator()
+    return (
+      <NavigationContainer independent={true}>
         <tab.Navigator>
           <tab.Screen
             component={view_collections}
@@ -91,6 +69,25 @@ function _RenderRouter(props) {
           />
         </tab.Navigator>
       </NavigationContainer>
+    )
+  }
+  return (
+    <View style={{ flex: 1, position: 'relative' }}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="home">
+          <Stack.Screen
+            component={HomeComponent}
+            name="home"
+            options={{ header: () => null }}
+          />
+          <Stack.Screen
+            component={Search}
+            name="search"
+            options={{ header: () => null }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <MyComponent />
     </View>
   )
 }

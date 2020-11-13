@@ -36,7 +36,8 @@ export const Comp_seachInput = connect(
         onSubmitEditing={() => {
           console.log('seach', text)
           search(text)
-          close()
+          props.onSubmitEditing(text)
+          // close()
         }}
         style={styles.input}
         value={text}

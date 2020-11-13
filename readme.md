@@ -31,17 +31,17 @@
 # 功能
 
 1. tags
-   1. [x]收藏
+   1. [x] 收藏
    2. 新数量提醒
 2. item
-   1. [x]收藏
+   1. [x] 收藏
    2. 收藏分类
-3. 收藏本地存储化
+3. [x] 收藏本地存储化
 4. 搜索
    1. 历史列表
    2. header优化
 5. img浏览
-   1. 接入gallery点击
+   1. [x] 接入gallery点击
    2. 从`/imgLisg/:tags/:page`到`/imgDetail/:tags/:id`，默认显示`:id`item，左右滑动以`:tags`dataList上下切换，回退直接到`/imgLisg/:tags/:page`，**这里滑动不记录router**，这里需要reducer记录下来`:tags`的dataList
       - 需要提前把`:tags`的dataList记录到reducer中，detail页读取到某个节点，开始请求上/下一页的`:tags`的dataList
 
@@ -60,4 +60,5 @@ getLike: (id) => state.likes.imgs[id],
 
 ## fristLoad bug
 应该更`搜索bug`相关联，现在他也一直卡住加载中状态
+
 问题出在了`navigation.replace('home', { redirect: 'gallery' })`地方

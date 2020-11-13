@@ -57,3 +57,6 @@ getLike: (id) => state.likes.imgs[id],
 
 ## 搜索bug
 使用搜索进入新的gallery会**叠加一次**gallery的loadData，从collect进去就没问题
+
+## fristLoad bug
+应该更`搜索bug`相关联，现在他也一直卡住加载中状态

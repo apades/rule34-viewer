@@ -11,7 +11,8 @@ export default function Search(props) {
       <View style={{ width: '80%' }}>
         <Comp_seachInput
           onSubmitEditing={() => {
-            navigation.replace('home', { redirect: 'gallery' })
+            // navigation.replace('home', { redirect: 'gallery' })
+            navigation.goBack()
           }}
         />
       </View>

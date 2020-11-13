@@ -60,3 +60,4 @@ getLike: (id) => state.likes.imgs[id],
 
 ## fristLoad bug
 应该更`搜索bug`相关联，现在他也一直卡住加载中状态
+问题出在了`navigation.replace('home', { redirect: 'gallery' })`地方

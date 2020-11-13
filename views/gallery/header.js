@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { IconButton } from 'react-native-paper'
+import { Appbar, IconButton } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { Comp_seachInput } from '../../components/searchInput'
 
@@ -50,7 +50,7 @@ function dom(props) {
   )
 }
 
-let GalleryHeader = connect(
+export const GalleryTitle = connect(
   (state) => ({
     getLike: (tag) => state.likes.tags[tag],
     searching: state.search.searching,
@@ -60,8 +60,6 @@ let GalleryHeader = connect(
     likesToggle: (tag) => dispatch({ type: 'likes/tag_toggle', tag }),
   }),
 )(dom)
-
-export default GalleryHeader
 
 export const GalleryHeaderRight = connect(
   (state) => ({
@@ -81,3 +79,41 @@ export const GalleryHeaderRight = connect(
     />
   )
 })
+
+const GalleryHeader = connect(
+  (state) => ({
+    searchText: state.search.text,
+    getLike: (tag) => state.likes.tags[tag],
+  }),
+  (dispatch) => ({
+    likesToggle: (tag) => dispatch({ type: 'likes/tag_toggle', tag }),
+  }),
+)(function (props) {
+  let { searchText, getLike, likesToggle } = props
+  let [like, setLike] = useState(getLike(searchText))
+  return (
+    <Appbar.Header>
+      <Appbar.Content title={searchText || 'home'} />
+      {searchText.length ? (
+        <Appbar.Action
+          icon={like ? 'heart' : 'heart-outline'}
+          onPress={() => {
+            likesToggle(searchText)
+            setLike(!like)
+          }}
+        />
+      ) : (
+        <></>
+      )}
+
+      <Appbar.Action
+        icon="magnify"
+        onPress={() => {
+          console.log('to search')
+        }}
+      />
+    </Appbar.Header>
+  )
+})
+
+export default GalleryHeader

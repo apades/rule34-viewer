@@ -86,7 +86,7 @@ function _RenderRouter(props) {
             name="gallery"
             options={{
               tabBarIcon: 'view-list',
-              tabBarLabel: 'list',
+              tabBarLabel: 'gallery',
             }}
           />
         </tab.Navigator>

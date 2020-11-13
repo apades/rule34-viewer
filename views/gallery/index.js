@@ -7,6 +7,7 @@ import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
 import { RenderGalleryItem } from './item'
 import { View_viewer } from '../viewer'
+import GalleryHeader from './header'
 
 let init = true
 var Gallery = connect(
@@ -93,6 +94,7 @@ var Gallery = connect(
   }
   return (
     <View style={{ ..._style.wh('100%'), position: 'relative' }}>
+      <GalleryHeader />
       {!firstLoad ? (
         <FlatGrid
           data={dataList}

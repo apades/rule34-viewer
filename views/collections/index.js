@@ -35,7 +35,9 @@ export const view_collections = connect(
   let [likes, setLikes] = useState(getLikes())
 
   useEffect(() => {
-    setLikes(getLikes())
+    let likes = getLikes()
+    setLikes(likes)
+    console.log('likes', Object.keys(likes.tags))
   }, [focus])
 
   let collects = ['Nintendo', 'km-15', ...Object.keys(likes.tags)]

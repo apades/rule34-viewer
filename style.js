@@ -1,6 +1,16 @@
 import { StyleSheet, ViewStyle } from 'react-native'
 
 export const _style = {
+  dec(top = 0, left = top) {
+    return {
+      position: 'absolute',
+      top,
+      left,
+      backgroundColor: '#666',
+      color: 'red',
+      zIndex: 100000000,
+    }
+  },
   wh(width, height = width) {
     /** @type {ViewStyle} */
     var rs = {

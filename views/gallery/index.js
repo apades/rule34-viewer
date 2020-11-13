@@ -1,13 +1,14 @@
 import { connect } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { ActivityIndicator } from 'react-native-paper'
+import { ActivityIndicator, Text } from 'react-native-paper'
 import { FlatGrid } from 'react-native-super-grid'
 import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
 import { RenderGalleryItem } from './item'
 import { View_viewer } from '../viewer'
 import GalleryHeader from './header'
+import DebugInfo from '../../components/debugInfo'
 
 let init = true
 var Gallery = connect(
@@ -115,6 +116,9 @@ var Gallery = connect(
         </View>
       )}
       <RenderViewer />
+      <DebugInfo>
+        <Text>length:{dataList.length}</Text>
+      </DebugInfo>
     </View>
   )
 })

@@ -8,6 +8,7 @@ import { Image, StyleSheet, View } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { Divider, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
+import DebugInfo from '../../components/debugInfo'
 import search from '../../reducers/search'
 
 import { _env } from '../../utils/env'
@@ -37,7 +38,6 @@ export const view_collections = connect(
   useEffect(() => {
     let likes = getLikes()
     setLikes(likes)
-    console.log('likes', Object.keys(likes.tags))
   }, [focus])
 
   let collects = ['Nintendo', 'km-15', ...Object.keys(likes.tags)]
@@ -63,6 +63,9 @@ export const view_collections = connect(
           ))}
         </View>
       </ScrollView>
+      <DebugInfo>
+        <Text>tags:{Object.keys(likes.tags)}</Text>
+      </DebugInfo>
     </View>
   )
 })

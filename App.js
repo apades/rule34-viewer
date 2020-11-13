@@ -90,7 +90,7 @@ function _RenderRouter(props) {
           />
         </Stack.Navigator>
       </NavigationContainer>
-      <MyComponent />
+      {/* <MyComponent /> */}
     </View>
   )
 }

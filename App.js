@@ -1,6 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
-import { NavigationContainer, useRoute } from '@react-navigation/native'
+import {
+  NavigationContainer,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import * as React from 'react'
 import { useEffect } from 'react'
@@ -46,14 +50,12 @@ function _RenderRouter(props) {
     // console.log(tags, imgs)
     initLikes({ tags, imgs })
   }
+
   function HomeComponent() {
     let tab = createMaterialBottomTabNavigator()
-    let params = useRoute().params
-    console.log('params', params)
-
     return (
       <NavigationContainer independent={true}>
-        <tab.Navigator initialRouteName={params?.redirect ?? 'collections'}>
+        <tab.Navigator initialRouteName="collections">
           <tab.Screen
             component={view_collections}
             name="collections"

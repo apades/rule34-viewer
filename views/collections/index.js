@@ -40,7 +40,7 @@ export const view_collections = connect(
     setLikes(likes)
   }, [focus])
 
-  let collects = ['Nintendo', 'km-15', ...Object.keys(likes.tags)]
+  let collects = Object.keys(likes.tags)
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>
@@ -64,7 +64,7 @@ export const view_collections = connect(
         </View>
       </ScrollView>
       <DebugInfo>
-        <Text>tags:{Object.keys(likes.tags)}</Text>
+        <Text>tags:{Object.keys(likes.tags).join(',')}</Text>
       </DebugInfo>
     </View>
   )

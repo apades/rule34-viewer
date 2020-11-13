@@ -4,16 +4,48 @@ import { TouchableNativeFeedback } from 'react-native-gesture-handler'
 import { ActivityIndicator, Button, IconButton } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { _style } from '../../style'
-import { _env } from '../../utils/env'
+import { _env, _screen } from '../../utils/env'
 
-export function dom({ item, index, isLike, likesToggle, navigation }) {
-  //   let isLike = false
+export const RenderGalleryItem = connect(
+  (state) => ({}),
+  (dispatch) => ({
+    setIndex: (index) => dispatch({ type: 'imgList/setIndex', index }),
+  }),
+)(function (props) {
+  let { item, index, isLike, likesToggle, navigation } = props
   console.log('render', index)
+
+  // 获取屏幕宽度
+  let width = _screen.width
+  const styles = StyleSheet.create({
+    itemContainer: {
+      position: 'relative',
+    },
+    tooltipContainer: {
+      position: 'absolute',
+      bottom: 15,
+      ..._style.wh('100%', 15),
+    },
+    btn_like: {
+      ..._style.wh(10),
+      tintColor: '#6cf',
+    },
+    img: {
+      ..._style.wh(_env.NSFW ? width / 2 : 10),
+      // ..._style.wh(width),
+      resizeMode: 'contain',
+    },
+    imgContainer: {
+      ..._style.wh(width / 2),
+      // ..._style.border(),
+      ..._style.center(),
+    },
+  })
+
   function RenderImg() {
+    let { setIndex } = props
     return (
-      <TouchableNativeFeedback
-        onPress={() => navigation.push('viewer', { id: item.id, index })}
-      >
+      <TouchableNativeFeedback onPress={() => setIndex(index)}>
         <View style={{ ...styles.imgContainer }}>
           <Image source={{ uri: item.preview_url }} style={styles.img}></Image>
         </View>
@@ -50,44 +82,4 @@ export function dom({ item, index, isLike, likesToggle, navigation }) {
       </View>
     </View>
   )
-}
-
-// 获取屏幕宽度
-let width = Dimensions.get('window').width
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-  },
-  itemContainer: {
-    position: 'relative',
-  },
-  tooltipContainer: {
-    position: 'absolute',
-    bottom: 15,
-    ..._style.wh('100%', 15),
-  },
-  btn_like: {
-    ..._style.wh(10),
-    tintColor: '#6cf',
-  },
-  img: {
-    ..._style.wh(_env.NSFW ? width / 2 : 10),
-    // ..._style.wh(width),
-    resizeMode: 'contain',
-  },
-  imgContainer: {
-    ..._style.wh(width / 2),
-    // ..._style.border(),
-    ..._style.center(),
-  },
 })
-
-export const RenderGalleryItem = connect((state) => {
-  return {
-    // getLike: (id) => state.likes.imgs[id],
-  }
-})(dom)

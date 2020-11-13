@@ -6,6 +6,7 @@ import { FlatGrid } from 'react-native-super-grid'
 import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
 import { RenderGalleryItem } from './item'
+import { View_viewer } from '../viewer'
 
 let init = true
 var Gallery = connect(
@@ -48,6 +49,7 @@ var Gallery = connect(
     pid = 0
     init = true
     resetImgList()
+    setFirstLoad(true)
   }
 
   function loadData() {
@@ -86,15 +88,9 @@ var Gallery = connect(
     }
   }
 
-  const styles = StyleSheet.create({
-    container: {
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'flex-start',
-    },
-  })
+  function RenderViewer() {
+    return <View_viewer />
+  }
   return (
     <View style={{ ..._style.wh('100%'), position: 'relative' }}>
       {!firstLoad ? (
@@ -116,14 +112,7 @@ var Gallery = connect(
           <ActivityIndicator animating={true} />
         </View>
       )}
-      <View
-        style={{
-          position: 'absolute',
-          width: '100%',
-          alignItems: 'center',
-          top: 10,
-        }}
-      ></View>
+      <RenderViewer />
     </View>
   )
 })

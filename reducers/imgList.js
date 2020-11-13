@@ -2,6 +2,7 @@ let init = {
   count: 0,
   pid: 0,
   tag: '',
+  index: -1,
   dataList: [],
 }
 
@@ -18,6 +19,8 @@ const imgList = (state = init, action) => {
 
       Object.assign(state, { ..._data })
       return { ...state, dataList: [...arr] }
+    case 'imgList/setIndex':
+      return { ...state, index: action.index }
     default:
       return state
   }

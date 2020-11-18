@@ -46,19 +46,23 @@
       - 需要提前把`:tags`的dataList记录到reducer中，detail页读取到某个节点，开始请求上/下一页的`:tags`的dataList
 
 # 发现的bug
-## <del>多次刷新</del>
+## ~~多次刷新~~
 ```js
 getLike: (id) => state.likes.imgs[id],
 ```
 这个导致了重新把列表刷新了一遍
 
-## <del>gallery搜索切换</del>
+## ~~gallery搜索切换~~
 从gallery搜索的tag进去新的gallery，在进去这个新tag的viewer后，返回旧的gallery的viewer会报错
 
-## 搜索bug
+## ~~navigation的bug~~
+> 先暂时用了不好的方法解决了
+> `navigation.goBack()`
+
+### 搜索bug
 使用搜索进入新的gallery会**叠加一次**gallery的loadData，从collect进去就没问题
 
-## fristLoad bug
+### fristLoad bug
 应该更`搜索bug`相关联，现在他也一直卡住加载中状态
 
 问题出在了`navigation.replace('home', { redirect: 'gallery' })`地方

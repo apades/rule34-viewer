@@ -16,6 +16,7 @@ import reducer from './reducers/index'
 import { view_collections } from './views/collections'
 import view_gallery from './views/gallery'
 import Search from './views/search'
+import Setting from './views/setting'
 
 const Stack = createStackNavigator()
 
@@ -70,6 +71,14 @@ function _RenderRouter(props) {
             options={{
               tabBarIcon: 'view-list',
               tabBarLabel: 'gallery',
+            }}
+          />
+          <Stack.Screen
+            component={Setting}
+            name="Setting"
+            options={{
+              tabBarIcon: 'settings',
+              tabBarLabel: 'setting',
             }}
           />
         </tab.Navigator>

@@ -26,6 +26,9 @@ const likes = (state = init, action) => {
       else state.tags[action.tag] = true
       AsyncStorage.setItem('tagLikes', JSON.stringify(state.tags))
       return state
+    case 'likes/clear':
+      state[action.key] = {}
+      return { ...state }
     default:
       return state
   }

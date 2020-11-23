@@ -1,11 +1,14 @@
 import { connect } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { ActivityIndicator } from 'react-native-paper'
+import { ActivityIndicator, Text } from 'react-native-paper'
 import { FlatGrid } from 'react-native-super-grid'
 import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
 import { RenderGalleryItem } from './item'
+import { View_viewer } from '../viewer'
+import GalleryHeader from './header'
+import DebugInfo from '../../components/debugInfo'
 
 let init = true
 var Gallery = connect(
@@ -17,7 +20,8 @@ var Gallery = connect(
     }
   },
   (dispatch) => ({
-    likesToggle: (id) => dispatch({ type: 'likes/img_toggle', id }),
+    likesToggle: (data) =>
+      dispatch({ type: 'likes/img_toggle', id: data.id, data }),
     resetImgList: () => dispatch({ type: 'imgList/reset' }),
     pushImgList: (data) =>
       dispatch({
@@ -48,10 +52,19 @@ var Gallery = connect(
     pid = 0
     init = true
     resetImgList()
+    setFirstLoad(true)
   }
 
   function loadData() {
     setLoading(true)
+    if (searchText === 'img-likes') {
+      let dataList = Object.values(imgLikes)
+      setDataList(dataList)
+      init = false
+      setFirstLoad(false)
+      pushImgList({ count: dataList.length, dataList, pid: 0 })
+      return
+    }
     imgList_o({ tags: searchText, limit: 20, pid }).then((res) => {
       let newDataList = [...dataList, ...res.dataList]
       setDataList(newDataList)
@@ -86,17 +99,12 @@ var Gallery = connect(
     }
   }
 
-  const styles = StyleSheet.create({
-    container: {
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'flex-start',
-    },
-  })
+  function RenderViewer() {
+    return <View_viewer />
+  }
   return (
     <View style={{ ..._style.wh('100%'), position: 'relative' }}>
+      <GalleryHeader />
       {!firstLoad ? (
         <FlatGrid
           data={dataList}
@@ -116,14 +124,10 @@ var Gallery = connect(
           <ActivityIndicator animating={true} />
         </View>
       )}
-      <View
-        style={{
-          position: 'absolute',
-          width: '100%',
-          alignItems: 'center',
-          top: 10,
-        }}
-      ></View>
+      <RenderViewer />
+      <DebugInfo>
+        <Text>length:{dataList.length}</Text>
+      </DebugInfo>
     </View>
   )
 })

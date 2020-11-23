@@ -43,9 +43,13 @@ let dataType = {
   preview_height: '106',
 }
 
-function dom(props) {
-  let { navigation, route } = props
-  let index = route.params?.index
+export const View_viewer = connect((state) => ({
+  dataList: state.imgList.dataList,
+  count: state.imgList.count,
+  pid: state.imgList.pid,
+  index: state.imgList.index,
+}))(function (props) {
+  let { navigation, route, index, dispatch } = props
 
   function RenderTagContainer({ tagStr = '' }) {
     let arr = tagStr.split(' ')
@@ -100,15 +104,14 @@ function dom(props) {
   }
 
   let [showInfo, setShowInfo] = useState(false)
-  let [visible, setVisible] = useState(true)
+  let visible = index !== -1
   let { dataList, count, pid } = props
   let imageUrls = dataList.map((d) => ({ url: d.file_url }))
   return (
     <View style={{ position: 'relative' }}>
       <Modal
         onRequestClose={() => {
-          setVisible(false)
-          navigation.goBack()
+          dispatch({ type: 'imgList/setIndex', index: -1 })
         }}
         transparent={true}
         visible={visible}
@@ -117,14 +120,8 @@ function dom(props) {
           imageUrls={imageUrls}
           index={index}
           loadingRender={() => <ActivityIndicator animating={true} />}
-          onChange={(index) => {
-            console.log('changing')
-          }}
           onClick={() => {
             setShowInfo(!showInfo)
-          }}
-          onSwipeDown={() => {
-            console.log('onSwipeDown')
           }}
           renderHeader={() => (
             <View>
@@ -144,10 +141,4 @@ function dom(props) {
       </Modal>
     </View>
   )
-}
-
-export const view_viewer = connect((state) => ({
-  dataList: state.imgList.dataList,
-  count: state.imgList.count,
-  pid: state.imgList.pid,
-}))(dom)
+})

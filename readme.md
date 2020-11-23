@@ -14,7 +14,7 @@
 # api
 ## 遇到的问题
 
-- `sample_url`和`file_url`指向不同的url
+<!-- - `sample_url`和`file_url`指向不同的url
 - **[false]上面两个有些不是真实图片地址**
   - [x] 可能需要单独写个爬虫，目前页面是php，img标签已经暴露了url，直接指向图片
   - 还是上面的问题，**有些还有更高清的选项，需要把这部分单独弄出来**
@@ -26,7 +26,7 @@
       - **图片上了反爬虫！！！**
       - `sample_url`和`file_url`其中有一个是指向图片的
       - 好像发现了`/detail/:id`中爬到的原始url，把**顶级域名去了**就可以一直获取
-        - 不行，但好像又发现**可能需要改变header参数，如`referen`**
+        - 不行，但好像又发现**可能需要改变header参数，如`referen`** -->
 
 # 功能
 
@@ -37,26 +37,34 @@
    1. [x] 收藏
    2. 收藏分类
 3. [x] 收藏本地存储化
-4. 搜索
-   1. 历史列表
-   2. header优化
-5. img浏览
+4. img浏览
    1. [x] 接入gallery点击
    2. 从`/imgLisg/:tags/:page`到`/imgDetail/:tags/:id`，默认显示`:id`item，左右滑动以`:tags`dataList上下切换，回退直接到`/imgLisg/:tags/:page`，**这里滑动不记录router**，这里需要reducer记录下来`:tags`的dataList
       - [x]基本功能
       - 需要提前把`:tags`的dataList记录到reducer中，detail页读取到某个节点，开始请求上/下一页的`:tags`的dataList
-6. view-collections
+5. view-collections
    1. [x]重构tags显示
    2. [x]增加img-likes显示
    3. 增加tags新数量提醒
       1. 本地浏览最新的记录
       2. 请求根据差数显示在tags的chip里
-7. view-viewer
+6. view-viewer
    1. tag-container
    2. 高级tag功能
-8. view-setting
+7. view-setting
    1. 设置开启高级tag功能
 
+## 1.0 基本功能
+1. [x]tag、img收藏
+2. [x]搜索tag
+3. 显示详情的img，以及他的附带信息
+4. [x]本地存储
+
+## 1.0+ 功能
+1. 搜索历史列表
+2. 接入其他接口或者服务端渲染页面的高级功能
+3. 新数量提醒
+4. tag、img分类
 # 发现的bug
 ## ~~多次刷新~~
 ```js

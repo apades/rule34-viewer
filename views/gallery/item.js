@@ -66,7 +66,7 @@ export const RenderGalleryItem = connect(
           color="#6cf"
           icon={like ? 'heart' : 'heart-outline'}
           onPress={() => {
-            likesToggle(item.id)
+            likesToggle(item)
             setLike(!like)
           }}
           size={width}

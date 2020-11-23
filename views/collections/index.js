@@ -6,7 +6,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react'
 import { Image, StyleSheet, View, StatusBar } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
-import { Badge, Chip, Divider, Text } from 'react-native-paper'
+import { Badge, Button, Chip, Divider, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
 import DebugInfo from '../../components/debugInfo'
 import search from '../../reducers/search'
@@ -87,10 +87,19 @@ export const view_collections = connect(
           ))}
         </View>
         <View>
-          <Text>imgs</Text>
+          {/* <Text>imgs</Text>
           {Object.keys(likes.imgs).map((like) => (
             <Text key={like}>{like}</Text>
-          ))}
+          ))} */}
+          <Button
+            mode="contained"
+            onPress={() => {
+              search('img-likes')
+              navigation.jumpTo('gallery')
+            }}
+          >
+            img likes
+          </Button>
         </View>
       </ScrollView>
       {/* <DebugInfo>

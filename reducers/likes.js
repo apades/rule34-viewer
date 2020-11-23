@@ -17,7 +17,7 @@ const likes = (state = init, action) => {
       return { ...state }
     case 'likes/img_toggle':
       if (state.imgs[action.id]) delete state.imgs[action.id]
-      else state.imgs[action.id] = true
+      else state.imgs[action.id] = action.data
       // 这样不让他更新全部
       AsyncStorage.setItem('imgLikes', JSON.stringify(state.imgs))
       return state

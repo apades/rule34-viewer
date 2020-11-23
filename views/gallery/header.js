@@ -18,10 +18,12 @@ function dom(props) {
   })
 
   function RenderTitle() {
+    console.log('searchText', searchText, searchText !== 'img-likes')
+    let showLikeBtn = searchText.length && searchText !== 'img-likes'
     return (
       <>
         <Text>{searchText || 'home'}</Text>
-        {searchText.length ? (
+        {showLikeBtn ? (
           <IconButton
             color="#6cf"
             icon={like ? 'heart' : 'heart-outline'}
@@ -93,10 +95,13 @@ const GalleryHeader = connect(
   let like = getLike(searchText)
 
   let navigation = useNavigation()
+
+  // console.log('searchText', searchText, searchText !== 'img-likes')
+  let showLikeBtn = searchText.length && searchText !== 'img-likes'
   return (
     <Appbar.Header>
       <Appbar.Content title={searchText || 'home'} />
-      {searchText.length ? (
+      {showLikeBtn ? (
         <Appbar.Action
           icon={like ? 'heart' : 'heart-outline'}
           onPress={() => {

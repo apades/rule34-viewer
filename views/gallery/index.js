@@ -20,7 +20,8 @@ var Gallery = connect(
     }
   },
   (dispatch) => ({
-    likesToggle: (id) => dispatch({ type: 'likes/img_toggle', id }),
+    likesToggle: (data) =>
+      dispatch({ type: 'likes/img_toggle', id: data.id, data }),
     resetImgList: () => dispatch({ type: 'imgList/reset' }),
     pushImgList: (data) =>
       dispatch({
@@ -56,6 +57,14 @@ var Gallery = connect(
 
   function loadData() {
     setLoading(true)
+    if (searchText === 'img-likes') {
+      let dataList = Object.values(imgLikes)
+      setDataList(dataList)
+      init = false
+      setFirstLoad(false)
+      pushImgList({ count: dataList.length, dataList, pid: 0 })
+      return
+    }
     imgList_o({ tags: searchText, limit: 20, pid }).then((res) => {
       let newDataList = [...dataList, ...res.dataList]
       setDataList(newDataList)

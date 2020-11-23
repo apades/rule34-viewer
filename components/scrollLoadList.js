@@ -1,12 +1,10 @@
 import React, { useState } from 'react'
 import { Component } from 'react'
 import {} from 'react-native'
-import { FlatGrid } from 'react-native-super-grid'
+import { FlatGrid, FlatGridProps } from 'react-native-super-grid'
 
 /**
- * @typedef {object} scrollLoadListProps
- * @property {object} navigation    路由组件
- * @property {object} route         路由组件
+ * @typedef {object} props
  *
  * @property {function(callbackData):Promise<any[]>}    handleLoadData
  *
@@ -15,6 +13,7 @@ import { FlatGrid } from 'react-native-super-grid'
  * @property {function(callbackData):Component}         renderEmpty
  * @property {function(callbackData):Component}         renderError
  *
+ * @typedef {props & FlatGridProps} scrollLoadListProps
  */
 
 /**
@@ -58,10 +57,4 @@ export default function scrollLoadList(props) {
   return <FlatGrid />
 }
 
-scrollLoadList({
-  async handleLoadData({ page }) {
-    return new Promise((res) => {
-      res([])
-    })
-  },
-})
+scrollLoadList({})

@@ -43,10 +43,19 @@
 5. img浏览
    1. [x] 接入gallery点击
    2. 从`/imgLisg/:tags/:page`到`/imgDetail/:tags/:id`，默认显示`:id`item，左右滑动以`:tags`dataList上下切换，回退直接到`/imgLisg/:tags/:page`，**这里滑动不记录router**，这里需要reducer记录下来`:tags`的dataList
+      - [x]基本功能
       - 需要提前把`:tags`的dataList记录到reducer中，detail页读取到某个节点，开始请求上/下一页的`:tags`的dataList
-6. collections
+6. view-collections
    1. [x]重构tags显示
-   2. 增加img-likes显示
+   2. [x]增加img-likes显示
+   3. 增加tags新数量提醒
+      1. 本地浏览最新的记录
+      2. 请求根据差数显示在tags的chip里
+7. view-viewer
+   1. tag-container
+   2. 高级tag功能
+8. view-setting
+   1. 设置开启高级tag功能
 
 # 发现的bug
 ## ~~多次刷新~~

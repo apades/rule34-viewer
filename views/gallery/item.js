@@ -24,6 +24,8 @@ export const RenderGalleryItem = connect(
     tooltipContainer: {
       position: 'absolute',
       bottom: 15,
+      alignItems: 'flex-end',
+      justifyContent: 'flex-end',
       ..._style.wh('100%', 15),
     },
     btn_like: {
@@ -56,10 +58,10 @@ export const RenderGalleryItem = connect(
     let [like, setLike] = useState(isLike)
     // let like = false
 
-    let width = 15
+    let width = 25
     // 判断like
     return (
-      <View style={_style.wh(width)}>
+      <View style={{ ..._style.wh(width), right: 15 }}>
         <IconButton
           color="#6cf"
           icon={like ? 'heart' : 'heart-outline'}

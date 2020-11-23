@@ -44,6 +44,9 @@
    1. [x] 接入gallery点击
    2. 从`/imgLisg/:tags/:page`到`/imgDetail/:tags/:id`，默认显示`:id`item，左右滑动以`:tags`dataList上下切换，回退直接到`/imgLisg/:tags/:page`，**这里滑动不记录router**，这里需要reducer记录下来`:tags`的dataList
       - 需要提前把`:tags`的dataList记录到reducer中，detail页读取到某个节点，开始请求上/下一页的`:tags`的dataList
+6. collections
+   1. [x]重构tags显示
+   2. 增加img-likes显示
 
 # 发现的bug
 ## ~~多次刷新~~

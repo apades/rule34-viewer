@@ -4,14 +4,15 @@ import {
   useRoute,
 } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Image, StyleSheet, View } from 'react-native'
+import { Image, StyleSheet, View, StatusBar } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
-import { Divider, Text } from 'react-native-paper'
+import { Badge, Chip, Divider, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
 import DebugInfo from '../../components/debugInfo'
 import search from '../../reducers/search'
+import { _style } from '../../style'
 
-import { _env } from '../../utils/env'
+import { isDev, _env } from '../../utils/env'
 
 var styles = StyleSheet.create({
   container: {
@@ -41,21 +42,50 @@ export const view_collections = connect(
   }, [focus])
 
   let collects = Object.keys(likes.tags)
+
+  if (isDev)
+    collects.push(
+      ...[
+        'test1',
+        'test2',
+        't3',
+        'test5',
+        'asdasdasda',
+        'bbbbbbbbbbbbbbbb',
+        'ccccc',
+      ],
+    )
   return (
     <View style={{ flex: 1 }}>
+      <View
+        style={{ height: StatusBar.currentHeight, backgroundColor: '#fff' }}
+      ></View>
       <ScrollView>
-        {collects.map((collect) => (
-          <TouchableOpacity
-            key={collect}
-            onPress={() => {
-              search(collect)
-              navigation.jumpTo('gallery')
-            }}
-            style={styles.container}
-          >
-            <Text style={styles.text}>{collect}</Text>
-          </TouchableOpacity>
-        ))}
+        <View
+          style={{
+            alignItems: 'baseline',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginTop: 10,
+          }}
+        >
+          {collects.map((collect) => (
+            <View key={collect} style={{ position: 'relative' }}>
+              <Chip
+                onPress={() => {
+                  search(collect)
+                  navigation.jumpTo('gallery')
+                }}
+                style={{ ..._style.margin('5 2') }}
+              >
+                <Text>{collect}</Text>
+              </Chip>
+              <View style={{ position: 'absolute', right: 0, top: -1 }}>
+                <Badge size={15}>1</Badge>
+              </View>
+            </View>
+          ))}
+        </View>
         <View>
           <Text>imgs</Text>
           {Object.keys(likes.imgs).map((like) => (
@@ -63,9 +93,9 @@ export const view_collections = connect(
           ))}
         </View>
       </ScrollView>
-      <DebugInfo>
+      {/* <DebugInfo>
         <Text>tags:{Object.keys(likes.tags).join(',')}</Text>
-      </DebugInfo>
+      </DebugInfo> */}
     </View>
   )
 })

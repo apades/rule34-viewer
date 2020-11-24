@@ -40,12 +40,14 @@ var Gallery = connect(
 
   let { resetImgList, pushImgList, imgLikes, searchText } = props
   useEffect(() => {
+    console.log('change')
     initState()
 
-    loadData()
+    loadData(0)
   }, [searchText])
 
   function initState() {
+    console.log('initState')
     // reset dataList 关键
     dataList.length = 0
     setDataList(dataList)
@@ -55,7 +57,7 @@ var Gallery = connect(
     setFirstLoad(true)
   }
 
-  function loadData() {
+  function loadData(pid) {
     setLoading(true)
     if (searchText === 'img-likes') {
       let dataList = Object.values(imgLikes)
@@ -93,8 +95,9 @@ var Gallery = connect(
     if (isCloseToBottom(e.nativeEvent)) {
       if (!loading) {
         console.log('scroll end', pid)
-        setPid((pid) => pid + 1)
-        loadData()
+        // pid = pid + 1
+        loadData(pid + 1)
+        setPid(pid + 1)
       }
     }
   }

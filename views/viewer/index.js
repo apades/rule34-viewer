@@ -138,7 +138,8 @@ export const View_viewer = connect((state) => ({
   }
 
   let [showInfo, setShowInfo] = useState(false)
-  let visible = index !== -1
+  // let visible = index !== -1
+  let visible = false
   let { dataList, count, pid } = props
   let imageUrls = dataList.map((d) => ({ url: d.file_url }))
   return (

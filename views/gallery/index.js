@@ -127,7 +127,7 @@ var Gallery = connect(
           <ActivityIndicator animating={true} />
         </View>
       )}
-      <RenderViewer />
+      {/* <RenderViewer /> */}
       <DebugInfo>
         <Text>length:{dataList.length}</Text>
       </DebugInfo>

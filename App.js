@@ -14,6 +14,7 @@ import { connect, Provider } from 'react-redux'
 import { createStore } from 'redux'
 import reducer from './reducers/index'
 import { view_collections } from './views/collections'
+import Detail from './views/detail'
 import view_gallery from './views/gallery'
 import Search from './views/search'
 import Setting from './views/setting'
@@ -97,6 +98,11 @@ function _RenderRouter(props) {
           <Stack.Screen
             component={Search}
             name="search"
+            options={{ header: () => null }}
+          />
+          <Stack.Screen
+            component={Detail}
+            name="detail"
             options={{ header: () => null }}
           />
         </Stack.Navigator>

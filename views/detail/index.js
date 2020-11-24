@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import AutoHeightImage from 'react-native-auto-height-image'
-import { Image, View } from 'react-native'
+import { Image, ScrollView, View } from 'react-native'
 import { FAB, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { _env, _screen } from '../../utils/env'
 import statuBarLayout from '../../layout/statuBar'
+import ChipList from '../../components/chipList'
 
 const Detail = connect((state) => ({
   dataList: state.imgList.dataList,
@@ -16,7 +17,8 @@ const Detail = connect((state) => ({
   let { navigation, route, dispatch } = props
 
   let { dataList, index } = props
-  let data = dataList[index]
+  let data = dataList[index] || {}
+
   let uri = data.file_url
   let ImageEl = _env.NSFW ? (
     <AutoHeightImage source={{ uri }} width={_screen.width} />
@@ -44,14 +46,31 @@ const Detail = connect((state) => ({
     )
   }
 
+  function RenderTagsContainer() {
+    let dataList = data?.tags?.split(' ').filter((str) => str !== '')
+    // console.log(data)
+    return (
+      <View>
+        {ChipList({
+          dataList,
+          onPress(text) {
+            // console.log(d)
+            dispatch({ type: 'search/input', text })
+            navigation.goBack()
+          },
+        })}
+      </View>
+    )
+  }
+
   return statuBarLayout({
     style: { position: 'relative' },
     children: () => (
       <>
-        {ImageEl}
-        <View>
-          <Text>this is tags container</Text>
-        </View>
+        <ScrollView>
+          {ImageEl}
+          {RenderTagsContainer()}
+        </ScrollView>
         {RenderLike()}
       </>
     ),

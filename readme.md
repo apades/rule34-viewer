@@ -87,3 +87,9 @@ getLike: (id) => state.likes.imgs[id],
 应该更`搜索bug`相关联，现在他也一直卡住加载中状态
 
 问题出在了`navigation.replace('home', { redirect: 'gallery' })`地方
+
+## 从detail->gallery的问题
+detail的like到gallery里，like显示不正常
+
+## 功能性bug
+由于用的search-text reducer，只能存在一个gallery页，从detail的tag到gallery无法返回到之前的detail

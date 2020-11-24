@@ -9,7 +9,13 @@ import {
   View,
 } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { ActivityIndicator, Button, Text, Colors } from 'react-native-paper'
+import {
+  ActivityIndicator,
+  Button,
+  Text,
+  Colors,
+  IconButton,
+} from 'react-native-paper'
 import { imgList_o } from '../../api/list_o'
 import { _style } from '../../style'
 import { _env, _screen } from '../../utils/env'
@@ -48,6 +54,7 @@ export const View_viewer = connect((state) => ({
   count: state.imgList.count,
   pid: state.imgList.pid,
   index: state.imgList.index,
+  imgLikes: state.likes.imgs,
 }))(function (props) {
   let { navigation, route, index, dispatch } = props
 
@@ -103,6 +110,33 @@ export const View_viewer = connect((state) => ({
     )
   }
 
+  let [_index, setIndex] = useState(index)
+  let { imgLikes } = props
+  function RenderFooter() {
+    let data = dataList[_index]
+    let [like, setLike] = useState(imgLikes[data?.id])
+    return (
+      <View
+        style={{
+          bottom: 30,
+          width: '100%',
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+        }}
+      >
+        <IconButton
+          color="#6cf"
+          icon={like ? 'heart' : 'heart-outline'}
+          onPress={() => {
+            // dispatch({ type: 'likes/img_toggle', id: data.id, data })
+            setLike((like) => !like)
+          }}
+          size={40}
+        />
+      </View>
+    )
+  }
+
   let [showInfo, setShowInfo] = useState(false)
   let visible = index !== -1
   let { dataList, count, pid } = props
@@ -120,9 +154,12 @@ export const View_viewer = connect((state) => ({
           imageUrls={imageUrls}
           index={index}
           loadingRender={() => <ActivityIndicator animating={true} />}
-          onClick={() => {
-            setShowInfo(!showInfo)
-          }}
+          onChange={(index) => setIndex(index)}
+          // onClick={(a, b, c, d) => {
+          //   console.log(a, b, c, d)
+          //   setShowInfo(!showInfo)
+          // }}
+          renderFooter={() => <RenderFooter />}
           renderHeader={() => (
             <View>
               <Text

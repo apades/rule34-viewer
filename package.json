@@ -1,4 +1,7 @@
 {
+  "name": "rule34-viewer",
+  "version": "1.0.0",
+  "license": "MIT",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "dev": "cross-env ENV_NAME=dev expo start",

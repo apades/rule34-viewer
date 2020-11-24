@@ -11,8 +11,7 @@
 ## grid-view
 [gridView](https://www.npmjs.com/package/react-native-super-grid)
 
-# api
-## 遇到的问题
+# 遇到的问题
 
 <!-- - `sample_url`和`file_url`指向不同的url
 - **[false]上面两个有些不是真实图片地址**
@@ -28,6 +27,8 @@
       - 好像发现了`/detail/:id`中爬到的原始url，把**顶级域名去了**就可以一直获取
         - 不行，但好像又发现**可能需要改变header参数，如`referen`** -->
 
+- 觉得viewer应该改成pixiv那样的，就能比较好显示tag
+- 然后再加个view-imgDetail
 # 功能
 
 1. tags

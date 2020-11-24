@@ -33,7 +33,7 @@ var Gallery = connect(
   console.log(`--- render ${props.searchText} gallery ---`)
   let { navigation, route, likesToggle } = props
   let [dataList, setDataList] = useState([])
-  let pid = 0
+  let [pid, setPid] = useState(0)
   let [loading, setLoading] = useState(false)
 
   let [firstLoad, setFirstLoad] = useState(true)
@@ -49,7 +49,7 @@ var Gallery = connect(
     // reset dataList 关键
     dataList.length = 0
     setDataList(dataList)
-    pid = 0
+    setPid(0)
     init = true
     resetImgList()
     setFirstLoad(true)
@@ -92,8 +92,8 @@ var Gallery = connect(
     }
     if (isCloseToBottom(e.nativeEvent)) {
       if (!loading) {
-        console.log('scroll end')
-        pid++
+        console.log('scroll end', pid)
+        setPid((pid) => pid + 1)
         loadData()
       }
     }

@@ -92,7 +92,7 @@ const GalleryHeader = connect(
   }),
 )(function (props) {
   let { searchText, getLike, likesToggle } = props
-  let like = getLike(searchText)
+  let [like, setLike] = useState(getLike(searchText))
 
   let navigation = useNavigation()
 
@@ -106,6 +106,7 @@ const GalleryHeader = connect(
           icon={like ? 'heart' : 'heart-outline'}
           onPress={() => {
             likesToggle(searchText)
+            setLike((like) => !like)
           }}
         />
       ) : (

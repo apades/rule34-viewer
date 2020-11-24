@@ -34,7 +34,9 @@ var Gallery = connect(
   let { navigation, route, likesToggle } = props
   let [dataList, setDataList] = useState([])
   let [pid, setPid] = useState(0)
-  let [loading, setLoading] = useState(false)
+  // let [loading, setLoading] = useState(false)
+  let loading = false,
+    setLoading = () => {}
 
   let [firstLoad, setFirstLoad] = useState(true)
 
@@ -105,6 +107,22 @@ var Gallery = connect(
   function RenderViewer() {
     return <View_viewer />
   }
+  function RenderLoading() {
+    let [_loading, _setLoading] = useState(false)
+    loading = _loading
+    setLoading = _setLoading
+
+    return _loading && !firstLoad ? (
+      <View
+        style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 1000 }}
+      >
+        <ActivityIndicator animating={true} />
+      </View>
+    ) : (
+      <></>
+    )
+  }
+
   return (
     <View style={{ ..._style.wh('100%'), position: 'relative' }}>
       <GalleryHeader />
@@ -131,6 +149,7 @@ var Gallery = connect(
       <DebugInfo>
         <Text>length:{dataList.length}</Text>
       </DebugInfo>
+      {RenderLoading()}
     </View>
   )
 })

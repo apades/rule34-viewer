@@ -1,5 +1,6 @@
-import { useNavigation } from '@react-navigation/native'
-import React, { useState } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { set } from 'lodash'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Appbar, IconButton } from 'react-native-paper'
 import { connect } from 'react-redux'
@@ -86,17 +87,20 @@ const GalleryHeader = connect(
   (state) => ({
     searchText: state.search.text,
     getLike: (tag) => state.likes.tags[tag],
+    likes: state.likes.tags,
   }),
   (dispatch) => ({
     likesToggle: (tag) => dispatch({ type: 'likes/tag_toggle', tag }),
   }),
 )(function (props) {
-  let { searchText, getLike, likesToggle } = props
-  let [like, setLike] = useState(getLike(searchText))
+  let { searchText, getLike, likesToggle, likes } = props
+  let [like, setLike] = useState(false)
 
+  useFocusEffect(() => {
+    setLike(getLike(searchText))
+  })
   let navigation = useNavigation()
 
-  // console.log('searchText', searchText, searchText !== 'img-likes')
   let showLikeBtn = searchText.length && searchText !== 'img-likes'
   return (
     <Appbar.Header>

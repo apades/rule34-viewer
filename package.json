@@ -1,4 +1,7 @@
 {
+  "name": "rule34-viewer",
+  "version": "1.0.0",
+  "license": "MIT",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "dev": "cross-env ENV_NAME=dev expo start",
@@ -26,6 +29,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.4.tar.gz",
+    "react-native-auto-height-image": "^3.2.3",
     "react-native-draggable": "^3.3.0",
     "react-native-gesture-handler": "~1.7.0",
     "react-native-image-zoom-viewer": "^3.0.1",

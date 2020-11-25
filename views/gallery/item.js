@@ -47,7 +47,12 @@ export const RenderGalleryItem = connect(
   function RenderImg() {
     let { setIndex } = props
     return (
-      <TouchableNativeFeedback onPress={() => setIndex(index)}>
+      <TouchableNativeFeedback
+        onPress={() => {
+          setIndex(index)
+          navigation.push('detail')
+        }}
+      >
         <View style={{ ...styles.imgContainer }}>
           <Image source={{ uri: item.preview_url }} style={styles.img}></Image>
         </View>

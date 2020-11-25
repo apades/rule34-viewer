@@ -93,3 +93,18 @@ export function throttle(fn, time) {
 export function generRandomId(id) {
   return random(0, 10000) + id
 }
+
+export function deurl(url = '') {
+  let urlArr = url.split(/\/\/?/)
+  let query = urlArr[urlArr.length - 1].split('?')[1]
+  let queryMap = {}
+  query?.split('&').forEach((q) => {
+    let [key, value] = q.split('=')
+    queryMap[key] = value
+  })
+  return {
+    protocol: urlArr[0].replace(':', ''),
+    domain: urlArr[1],
+    query: queryMap,
+  }
+}

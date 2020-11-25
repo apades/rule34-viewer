@@ -33,29 +33,33 @@ var Gallery = connect(
   console.log(`--- render ${props.searchText} gallery ---`)
   let { navigation, route, likesToggle } = props
   let [dataList, setDataList] = useState([])
-  let pid = 0
-  let [loading, setLoading] = useState(false)
+  let [pid, setPid] = useState(0)
+  // let [loading, setLoading] = useState(false)
+  let loading = false,
+    setLoading = () => {}
 
   let [firstLoad, setFirstLoad] = useState(true)
 
   let { resetImgList, pushImgList, imgLikes, searchText } = props
   useEffect(() => {
+    console.log('change')
     initState()
 
-    loadData()
+    loadData(0)
   }, [searchText])
 
   function initState() {
+    console.log('initState')
     // reset dataList 关键
     dataList.length = 0
     setDataList(dataList)
-    pid = 0
+    setPid(0)
     init = true
     resetImgList()
     setFirstLoad(true)
   }
 
-  function loadData() {
+  function loadData(pid) {
     setLoading(true)
     if (searchText === 'img-likes') {
       let dataList = Object.values(imgLikes)
@@ -92,9 +96,10 @@ var Gallery = connect(
     }
     if (isCloseToBottom(e.nativeEvent)) {
       if (!loading) {
-        console.log('scroll end')
-        pid++
-        loadData()
+        console.log('scroll end', pid)
+        // pid = pid + 1
+        loadData(pid + 1)
+        setPid(pid + 1)
       }
     }
   }
@@ -102,6 +107,22 @@ var Gallery = connect(
   function RenderViewer() {
     return <View_viewer />
   }
+  function RenderLoading() {
+    let [_loading, _setLoading] = useState(false)
+    loading = _loading
+    setLoading = _setLoading
+
+    return _loading && !firstLoad ? (
+      <View
+        style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 1000 }}
+      >
+        <ActivityIndicator animating={true} />
+      </View>
+    ) : (
+      <></>
+    )
+  }
+
   return (
     <View style={{ ..._style.wh('100%'), position: 'relative' }}>
       <GalleryHeader />
@@ -124,10 +145,11 @@ var Gallery = connect(
           <ActivityIndicator animating={true} />
         </View>
       )}
-      <RenderViewer />
+      {/* <RenderViewer /> */}
       <DebugInfo>
         <Text>length:{dataList.length}</Text>
       </DebugInfo>
+      {RenderLoading()}
     </View>
   )
 })

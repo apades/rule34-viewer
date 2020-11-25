@@ -1,10 +1,11 @@
 import {
+  Link,
   useFocusEffect,
   useIsFocused,
   useRoute,
 } from '@react-navigation/native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Image, StyleSheet, View, StatusBar } from 'react-native'
+import { Image, StyleSheet, View, StatusBar, Linking } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { Badge, Button, Chip, Divider, Text } from 'react-native-paper'
 import { connect } from 'react-redux'

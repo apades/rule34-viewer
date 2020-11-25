@@ -5,13 +5,7 @@ import { TextInput } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { _style } from '../style'
 
-export const Comp_seachInput = connect(
-  (state) => ({}),
-  (dispatch) => ({
-    search: (text) => dispatch({ type: 'search/input', text }),
-    close: () => dispatch({ type: 'search/toggle', searching: false }),
-  }),
-)(function (props) {
+export const Comp_seachInput = connect((state) => ({}))(function (props) {
   let [text, setText] = useState('')
 
   let cHeight = 40,
@@ -28,14 +22,12 @@ export const Comp_seachInput = connect(
     },
   })
 
-  let { search, close } = props
   return (
     <View style={styles.container}>
       <TextInput
         onChangeText={(t) => setText(t)}
         onSubmitEditing={() => {
           console.log('seach', text)
-          search(text)
           props.onSubmitEditing(text)
           // close()
         }}

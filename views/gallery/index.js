@@ -21,8 +21,9 @@ var Gallery = connect(
       dispatch({ type: 'likes/img_toggle', id: data.id, data }),
   }),
 )(function (props) {
-  console.log(`--- render ${props.searchText} gallery ---`)
   let { navigation, route, likesToggle } = props
+  console.log(`--- render ${route?.params?.tags ?? 'home'} gallery ---`)
+
   let [dataList, setDataList] = useState([])
   let [pid, setPid] = useState(0)
   // let [loading, setLoading] = useState(false)

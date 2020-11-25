@@ -9,16 +9,11 @@ import ChipList from '../../components/chipList'
 import { deurl } from '../../utils/utils'
 
 const Detail = connect((state) => ({
-  dataList: state.imgList.dataList,
-  count: state.imgList.count,
-  pid: state.imgList.pid,
-  index: state.imgList.index,
   getLikes: (id) => state.likes.imgs[id],
 }))(function (props) {
   let { navigation, route, dispatch } = props
 
-  let { dataList, index } = props
-  let data = dataList[index] || {}
+  let data = route.params?.data ?? {}
 
   let uri = data.file_url
   let ImageEl = _env.NSFW ? (
@@ -54,10 +49,11 @@ const Detail = connect((state) => ({
       <View>
         {ChipList({
           dataList,
-          onPress(text) {
+          onPress(tags) {
             // console.log(d)
-            dispatch({ type: 'search/input', text })
-            navigation.goBack()
+            navigation.push('gallery', {
+              tags,
+            })
           },
         })}
       </View>

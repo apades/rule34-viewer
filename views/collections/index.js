@@ -1,30 +1,10 @@
-import {
-  Link,
-  useFocusEffect,
-  useIsFocused,
-  useRoute,
-} from '@react-navigation/native'
-import React, { useCallback, useEffect, useState } from 'react'
-import { Image, StyleSheet, View, StatusBar, Linking } from 'react-native'
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
-import { Badge, Button, Chip, Divider, Text } from 'react-native-paper'
+import { useIsFocused } from '@react-navigation/native'
+import React, { useEffect, useState } from 'react'
+import { StatusBar, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
+import { Badge, Button, Chip, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
-import DebugInfo from '../../components/debugInfo'
-import search from '../../reducers/search'
 import { _style } from '../../style'
-
-import { isDev, _env } from '../../utils/env'
-
-var styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    backgroundColor: '#6cf',
-  },
-  text: {
-    // fontSize: 30,
-    textAlign: 'center',
-  },
-})
 
 export const view_collections = connect(
   (state) => ({
@@ -44,18 +24,6 @@ export const view_collections = connect(
 
   let collects = Object.keys(likes.tags)
 
-  if (isDev)
-    collects.push(
-      ...[
-        'test1',
-        'test2',
-        't3',
-        'test5',
-        'asdasdasda',
-        'bbbbbbbbbbbbbbbb',
-        'ccccc',
-      ],
-    )
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -75,7 +43,9 @@ export const view_collections = connect(
               <Chip
                 onPress={() => {
                   search(collect)
-                  navigation.jumpTo('gallery')
+                  navigation.push('gallery', {
+                    tags: collect,
+                  })
                 }}
                 style={{ ..._style.margin('5 2') }}
               >
@@ -88,15 +58,13 @@ export const view_collections = connect(
           ))}
         </View>
         <View>
-          {/* <Text>imgs</Text>
-          {Object.keys(likes.imgs).map((like) => (
-            <Text key={like}>{like}</Text>
-          ))} */}
           <Button
             mode="contained"
             onPress={() => {
               search('img-likes')
-              navigation.jumpTo('gallery')
+              navigation.push('gallery', {
+                likeList: true,
+              })
             }}
           >
             img likes

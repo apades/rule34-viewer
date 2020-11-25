@@ -20,19 +20,7 @@ import Search from './views/search'
 import Setting from './views/setting'
 
 const Stack = createStackNavigator()
-
-const MyComponent = () => (
-  <FAB icon="plus" onPress={() => alert('Pressed')} small style={s.fab} />
-)
-const s = StyleSheet.create({
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-})
-let store = createStore(reducer)
+const store = createStore(reducer)
 
 function _RenderRouter(props) {
   // init store
@@ -41,7 +29,7 @@ function _RenderRouter(props) {
     _initStore()
   }, [])
 
-  let { likes, initLikes } = props
+  let { initLikes } = props
   async function _initStore() {
     let [tags, imgs] = await Promise.all([
       AsyncStorage.getItem('tagLikes'),
@@ -49,7 +37,6 @@ function _RenderRouter(props) {
     ])
     tags = JSON.parse(tags)
     imgs = JSON.parse(imgs)
-    // console.log(tags, imgs)
     initLikes({ tags, imgs })
   }
 
@@ -68,7 +55,7 @@ function _RenderRouter(props) {
           />
           <Stack.Screen
             component={view_gallery}
-            name="gallery"
+            name="homeGallery"
             options={{
               tabBarIcon: 'view-list',
               tabBarLabel: 'gallery',
@@ -105,9 +92,13 @@ function _RenderRouter(props) {
             name="detail"
             options={{ header: () => null }}
           />
+          <Stack.Screen
+            component={view_gallery}
+            name="gallery"
+            options={{ header: () => null }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
-      {/* <MyComponent /> */}
     </View>
   )
 }

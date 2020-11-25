@@ -1,17 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { Dimensions, Image, StyleSheet, View } from 'react-native'
+import React, { useState } from 'react'
+import { Image, StyleSheet, View } from 'react-native'
 import { TouchableNativeFeedback } from 'react-native-gesture-handler'
-import { ActivityIndicator, Button, IconButton } from 'react-native-paper'
+import { IconButton } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { _style } from '../../style'
 import { _env, _screen } from '../../utils/env'
 
-export const RenderGalleryItem = connect(
-  (state) => ({}),
-  (dispatch) => ({
-    setIndex: (index) => dispatch({ type: 'imgList/setIndex', index }),
-  }),
-)(function (props) {
+export const RenderGalleryItem = connect((state) => ({}))(function (props) {
   let { item, index, isLike, likesToggle, navigation } = props
   console.log('render', index)
 
@@ -34,23 +29,21 @@ export const RenderGalleryItem = connect(
     },
     img: {
       ..._style.wh(_env.NSFW ? width / 2 : 10),
-      // ..._style.wh(width),
       resizeMode: 'contain',
     },
     imgContainer: {
       ..._style.wh(width / 2),
-      // ..._style.border(),
       ..._style.center(),
     },
   })
 
   function RenderImg() {
-    let { setIndex } = props
     return (
       <TouchableNativeFeedback
         onPress={() => {
-          setIndex(index)
-          navigation.push('detail')
+          navigation.push('detail', {
+            data: item,
+          })
         }}
       >
         <View style={{ ...styles.imgContainer }}>
@@ -61,7 +54,6 @@ export const RenderGalleryItem = connect(
   }
   function RenderLike() {
     let [like, setLike] = useState(isLike)
-    // let like = false
 
     let width = 25
     // 判断like

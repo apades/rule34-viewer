@@ -108,3 +108,20 @@ export function deurl(url = '') {
     query: queryMap,
   }
 }
+
+export function genHandlerScrollEnd(callback) {
+  return function handlerScrollEnd(e) {
+    function isCloseToBottom({
+      layoutMeasurement,
+      contentOffset,
+      contentSize,
+    }) {
+      return (
+        layoutMeasurement.height + contentOffset.y >= contentSize.height - 1
+      )
+    }
+    if (isCloseToBottom(e.nativeEvent)) {
+      callback(e)
+    }
+  }
+}

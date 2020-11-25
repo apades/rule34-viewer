@@ -15,21 +15,31 @@ export default function ChipList(props) {
         width: '100%',
       }}
     >
-      {dataList.map((data) => (
-        <View key={data} style={{ position: 'relative' }}>
-          <Chip
-            onPress={() => {
-              onPress && onPress(data)
-            }}
-            style={{
-              margin: 2,
-              ...chipStyle,
-            }}
-          >
-            <Text>{data}</Text>
-          </Chip>
-        </View>
-      ))}
+      {dataList.map((data, index) => {
+        let label
+        let ChipProps = {}
+        if (typeof data === 'string') label = data
+        else {
+          label = data.label
+          ChipProps = data.ChipProps
+        }
+        return (
+          <View key={index} style={{ position: 'relative' }}>
+            <Chip
+              onPress={() => {
+                onPress && onPress(data)
+              }}
+              style={{
+                margin: 2,
+                ...chipStyle,
+              }}
+              {...ChipProps}
+            >
+              <Text>{label}</Text>
+            </Chip>
+          </View>
+        )
+      })}
     </View>
   )
 }

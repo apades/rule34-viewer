@@ -70,7 +70,7 @@ getLike: (id) => state.likes.imgs[id],
 ## 从detail->gallery的问题
 detail的like到gallery里，like显示不正常
 
-## 功能性bug
+## ~~功能性bug~~
 由于用的search-text reducer，只能存在一个gallery页，从detail的tag到gallery无法返回到之前的detail
 
 ## `file_url`时效性

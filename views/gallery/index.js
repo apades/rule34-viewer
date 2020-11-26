@@ -26,19 +26,17 @@ var Gallery = connect(
 
   let [dataList, setDataList] = useState([])
   let [pid, setPid] = useState(0)
-  // let [loading, setLoading] = useState(false)
-  // from RenderLoading()
   let loading = false,
     setLoading = () => {}
 
   let [firstLoad, setFirstLoad] = useState(true)
 
-  let { resetImgList, pushImgList, imgLikes, searchText } = props
+  let { imgLikes } = props
   useEffect(() => {
     initState()
 
     loadData(0)
-  }, [searchText])
+  }, [])
 
   function initState() {
     console.log(`initState,${route.params?.tags ?? 'home'}`)

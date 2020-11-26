@@ -7,7 +7,7 @@
   - 需要考虑`home`怎么搞
   - [x] 需要考虑`search`怎么搞
     - 目前有一套方案，`gallery`上方为`search`，操作后该`gallery`被replace
-- `AutoHeightImage`需要有个未加载组件
+- [x] `AutoHeightImage`需要有个未加载组件
 # 功能
 
 1. tags

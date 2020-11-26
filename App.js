@@ -13,6 +13,7 @@ import { FAB } from 'react-native-paper'
 import { connect, Provider } from 'react-redux'
 import { createStore } from 'redux'
 import reducer from './reducers/index'
+import { isDev } from './utils/env'
 import { view_collections } from './views/collections'
 import Detail from './views/detail'
 import view_gallery from './views/gallery'
@@ -24,12 +25,13 @@ const store = createStore(reducer)
 
 function _RenderRouter(props) {
   // init store
+  let { dispatch } = props
   useEffect(() => {
-    console.log('init store')
+    console.log('init app')
+
+    dispatch({ type: 'setting/debugMode', value: isDev })
     _initStore()
   }, [])
-
-  let { initLikes } = props
   async function _initStore() {
     let [tags, imgs] = await Promise.all([
       AsyncStorage.getItem('tagLikes'),
@@ -37,7 +39,7 @@ function _RenderRouter(props) {
     ])
     tags = JSON.parse(tags)
     imgs = JSON.parse(imgs)
-    initLikes({ tags, imgs })
+    dispatch({ type: 'likes/init', tags, imgs })
   }
 
   function HomeComponent() {
@@ -102,18 +104,11 @@ function _RenderRouter(props) {
     </View>
   )
 }
-const RenderRouter = connect(
-  (state) => {
-    return {
-      likes: state.likes,
-    }
-  },
-  (dispatch) => {
-    return {
-      initLikes: (initData) => dispatch({ type: 'likes/init', ...initData }),
-    }
-  },
-)(_RenderRouter)
+const RenderRouter = connect((state) => {
+  return {
+    likes: state.likes,
+  }
+})(_RenderRouter)
 
 function App() {
   return (

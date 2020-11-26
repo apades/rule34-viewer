@@ -19,7 +19,7 @@ const Detail = connect((state) => ({
   let uri = data.file_url
   let match = uri.match(/.*?\/\/(.*?\.)rule34/)[1]
   uri = uri.replace(match, '')
-  let ImageEl = !_env.NSFW ? (
+  let ImageEl = _env.NSFW ? (
     imageContainer({
       source: { uri },
       width: _screen.width,

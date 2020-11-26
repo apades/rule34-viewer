@@ -7,22 +7,23 @@ import { _env, _screen } from '../../utils/env'
 import statuBarLayout from '../../layout/statuBar'
 import ChipList from '../../components/chipList'
 import { deurl } from '../../utils/utils'
+import imageContainer from '../../components/imageContainer'
 
 const Detail = connect((state) => ({
-  dataList: state.imgList.dataList,
-  count: state.imgList.count,
-  pid: state.imgList.pid,
-  index: state.imgList.index,
   getLikes: (id) => state.likes.imgs[id],
 }))(function (props) {
   let { navigation, route, dispatch } = props
 
-  let { dataList, index } = props
-  let data = dataList[index] || {}
+  let data = route.params?.data ?? {}
 
   let uri = data.file_url
+  let match = uri.match(/.*?\/\/(.*?\.)rule34/)[1]
+  uri = uri.replace(match, '')
   let ImageEl = _env.NSFW ? (
-    <AutoHeightImage source={{ uri }} width={_screen.width} />
+    imageContainer({
+      source: { uri },
+      width: _screen.width,
+    })
   ) : (
     <Text>img:{uri}</Text>
   )
@@ -54,10 +55,11 @@ const Detail = connect((state) => ({
       <View>
         {ChipList({
           dataList,
-          onPress(text) {
+          onPress(tags) {
             // console.log(d)
-            dispatch({ type: 'search/input', text })
-            navigation.goBack()
+            navigation.push('gallery', {
+              tags,
+            })
           },
         })}
       </View>

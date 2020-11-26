@@ -13,6 +13,7 @@ import { FAB } from 'react-native-paper'
 import { connect, Provider } from 'react-redux'
 import { createStore } from 'redux'
 import reducer from './reducers/index'
+import { isDev } from './utils/env'
 import { view_collections } from './views/collections'
 import Detail from './views/detail'
 import view_gallery from './views/gallery'
@@ -20,28 +21,17 @@ import Search from './views/search'
 import Setting from './views/setting'
 
 const Stack = createStackNavigator()
-
-const MyComponent = () => (
-  <FAB icon="plus" onPress={() => alert('Pressed')} small style={s.fab} />
-)
-const s = StyleSheet.create({
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-})
-let store = createStore(reducer)
+const store = createStore(reducer)
 
 function _RenderRouter(props) {
   // init store
+  let { dispatch } = props
   useEffect(() => {
-    console.log('init store')
+    console.log('init app')
+
+    dispatch({ type: 'setting/debugMode', value: isDev })
     _initStore()
   }, [])
-
-  let { likes, initLikes } = props
   async function _initStore() {
     let [tags, imgs] = await Promise.all([
       AsyncStorage.getItem('tagLikes'),
@@ -49,8 +39,7 @@ function _RenderRouter(props) {
     ])
     tags = JSON.parse(tags)
     imgs = JSON.parse(imgs)
-    // console.log(tags, imgs)
-    initLikes({ tags, imgs })
+    dispatch({ type: 'likes/init', tags, imgs })
   }
 
   function HomeComponent() {
@@ -68,7 +57,7 @@ function _RenderRouter(props) {
           />
           <Stack.Screen
             component={view_gallery}
-            name="gallery"
+            name="homeGallery"
             options={{
               tabBarIcon: 'view-list',
               tabBarLabel: 'gallery',
@@ -105,24 +94,21 @@ function _RenderRouter(props) {
             name="detail"
             options={{ header: () => null }}
           />
+          <Stack.Screen
+            component={view_gallery}
+            name="gallery"
+            options={{ header: () => null }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
-      {/* <MyComponent /> */}
     </View>
   )
 }
-const RenderRouter = connect(
-  (state) => {
-    return {
-      likes: state.likes,
-    }
-  },
-  (dispatch) => {
-    return {
-      initLikes: (initData) => dispatch({ type: 'likes/init', ...initData }),
-    }
-  },
-)(_RenderRouter)
+const RenderRouter = connect((state) => {
+  return {
+    likes: state.likes,
+  }
+})(_RenderRouter)
 
 function App() {
   return (

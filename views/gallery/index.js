@@ -1,112 +1,91 @@
-import { connect } from 'react-redux'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 import { ActivityIndicator, Text } from 'react-native-paper'
 import { FlatGrid } from 'react-native-super-grid'
+import { connect } from 'react-redux'
 import { imgList_o } from '../../api/list_o'
-import { _style } from '../../style'
-import { RenderGalleryItem } from './item'
-import { View_viewer } from '../viewer'
-import GalleryHeader from './header'
 import DebugInfo from '../../components/debugInfo'
+import { _style } from '../../style'
+import { genHandlerScrollEnd } from '../../utils/utils'
+import GalleryHeader from './header'
+import { RenderGalleryItem } from './item'
 
-let init = true
 var Gallery = connect(
   (state) => {
     return {
-      imgDataList: state.imgList.dataList,
       imgLikes: state.likes.imgs,
-      searchText: state.search.text,
     }
   },
   (dispatch) => ({
     likesToggle: (data) =>
       dispatch({ type: 'likes/img_toggle', id: data.id, data }),
-    resetImgList: () => dispatch({ type: 'imgList/reset' }),
-    pushImgList: (data) =>
-      dispatch({
-        type: 'imgList/push',
-        ...data,
-      }),
   }),
 )(function (props) {
-  console.log(`--- render ${props.searchText} gallery ---`)
   let { navigation, route, likesToggle } = props
+  console.log(`--- render ${route?.params?.tags ?? 'home'} gallery ---`)
+
   let [dataList, setDataList] = useState([])
   let [pid, setPid] = useState(0)
-  // let [loading, setLoading] = useState(false)
   let loading = false,
     setLoading = () => {}
 
   let [firstLoad, setFirstLoad] = useState(true)
 
-  let { resetImgList, pushImgList, imgLikes, searchText } = props
+  let { imgLikes } = props
   useEffect(() => {
-    console.log('change')
     initState()
 
     loadData(0)
-  }, [searchText])
+  }, [])
 
   function initState() {
-    console.log('initState')
+    console.log(`initState,${route.params?.tags ?? 'home'}`)
     // reset dataList 关键
     dataList.length = 0
     setDataList(dataList)
     setPid(0)
-    init = true
-    resetImgList()
-    setFirstLoad(true)
   }
 
   function loadData(pid) {
     setLoading(true)
-    if (searchText === 'img-likes') {
+    if (route?.params?.likeList) {
       let dataList = Object.values(imgLikes)
       setDataList(dataList)
-      init = false
       setFirstLoad(false)
-      pushImgList({ count: dataList.length, dataList, pid: 0 })
+      setLoading(false)
       return
     }
-    imgList_o({ tags: searchText, limit: 20, pid }).then((res) => {
-      let newDataList = [...dataList, ...res.dataList]
-      setDataList(newDataList)
 
-      pushImgList({ ...res, pid })
-      if (init) {
-        console.log('init')
-        init = false
-        setFirstLoad(false)
+    let tags = route?.params?.tags ?? ''
+    console.log(`load ${tags}`)
+    imgList_o({ tags, limit: 20, pid }).then((res) => {
+      function ejectData() {
+        let newDataList = [...dataList, ...res.dataList]
+        setDataList(newDataList)
+        setLoading(false)
       }
-      setLoading(false)
+
+      if (firstLoad) {
+        console.log('init')
+        setFirstLoad(() => {
+          ejectData()
+          return false
+        })
+      } else {
+        ejectData()
+      }
     })
   }
 
   // container scroll event
-  function handlerScrollEnd(e) {
-    function isCloseToBottom({
-      layoutMeasurement,
-      contentOffset,
-      contentSize,
-    }) {
-      return (
-        layoutMeasurement.height + contentOffset.y >= contentSize.height - 1
-      )
+  let handlerScrollEnd = genHandlerScrollEnd(() => {
+    if (!loading) {
+      console.log('scroll end pid:', pid)
+      loadData(pid + 1)
+      setPid(pid + 1)
     }
-    if (isCloseToBottom(e.nativeEvent)) {
-      if (!loading) {
-        console.log('scroll end', pid)
-        // pid = pid + 1
-        loadData(pid + 1)
-        setPid(pid + 1)
-      }
-    }
-  }
+  })
 
-  function RenderViewer() {
-    return <View_viewer />
-  }
   function RenderLoading() {
     let [_loading, _setLoading] = useState(false)
     loading = _loading
@@ -125,7 +104,7 @@ var Gallery = connect(
 
   return (
     <View style={{ ..._style.wh('100%'), position: 'relative' }}>
-      <GalleryHeader />
+      <GalleryHeader tags={route.params?.tags || ''} />
       {!firstLoad ? (
         <FlatGrid
           data={dataList}
@@ -145,9 +124,10 @@ var Gallery = connect(
           <ActivityIndicator animating={true} />
         </View>
       )}
-      {/* <RenderViewer /> */}
       <DebugInfo>
-        <Text>length:{dataList.length}</Text>
+        <Text>
+          l:{dataList.length} p:{pid}
+        </Text>
       </DebugInfo>
       {RenderLoading()}
     </View>

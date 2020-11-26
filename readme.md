@@ -11,3 +11,5 @@
 ## grid-view
 [gridView](https://www.npmjs.com/package/react-native-super-grid)
 
+## image-view
+[react-native-auto-height-image](https://github.com/vivaxy/react-native-auto-height-image)

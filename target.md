@@ -1,12 +1,13 @@
 # 遇到的问题
-- 觉得viewer应该改成pixiv那样的，就能比较好显示tag
-- 然后再加个view-imgDetail
+- [x] 觉得viewer应该改成pixiv那样的，就能比较好显示tag
+- [x] 然后再加个view-imgDetail
 - 功能性bug 扩展
   - `app.js`不应该为tab nav
-  - `gallery`应该是一个单独的page，从`detail`点击tag到`gallery`应该是push一个`gallery`进去的
+  - [x] `gallery`应该是一个单独的page，从`detail`点击tag到`gallery`应该是push一个`gallery`进去的
   - 需要考虑`home`怎么搞
-  - 需要考虑`search`怎么搞
+  - [x] 需要考虑`search`怎么搞
     - 目前有一套方案，`gallery`上方为`search`，操作后该`gallery`被replace
+- [x] `AutoHeightImage`需要有个未加载组件
 # 功能
 
 1. tags
@@ -70,7 +71,7 @@ getLike: (id) => state.likes.imgs[id],
 ## 从detail->gallery的问题
 detail的like到gallery里，like显示不正常
 
-## 功能性bug
+## ~~功能性bug~~
 由于用的search-text reducer，只能存在一个gallery页，从detail的tag到gallery无法返回到之前的detail
 
 ## `file_url`时效性

@@ -2,9 +2,14 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import Draggable from 'react-native-draggable'
+import { connect } from 'react-redux'
 
-export default function DebugInfo(props) {
-  return (
+const DebugInfo = connect((state) => ({
+  setting: state.setting,
+}))(function (props) {
+  let { setting } = props
+
+  return setting.debugMode ? (
     <Draggable x={0} y={85}>
       <View
         style={{
@@ -15,5 +20,9 @@ export default function DebugInfo(props) {
         {props.children}
       </View>
     </Draggable>
+  ) : (
+    <></>
   )
-}
+})
+
+export default DebugInfo

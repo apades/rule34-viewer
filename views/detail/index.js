@@ -7,6 +7,7 @@ import { _env, _screen } from '../../utils/env'
 import statuBarLayout from '../../layout/statuBar'
 import ChipList from '../../components/chipList'
 import { deurl } from '../../utils/utils'
+import imageContainer from '../../components/imageContainer'
 
 const Detail = connect((state) => ({
   getLikes: (id) => state.likes.imgs[id],
@@ -18,8 +19,11 @@ const Detail = connect((state) => ({
   let uri = data.file_url
   let match = uri.match(/.*?\/\/(.*?\.)rule34/)[1]
   uri = uri.replace(match, '')
-  let ImageEl = _env.NSFW ? (
-    <AutoHeightImage source={{ uri }} width={_screen.width} />
+  let ImageEl = !_env.NSFW ? (
+    imageContainer({
+      source: { uri },
+      width: _screen.width,
+    })
   ) : (
     <Text>img:{uri}</Text>
   )

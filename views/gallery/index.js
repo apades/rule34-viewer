@@ -125,7 +125,9 @@ var Gallery = connect(
         </View>
       )}
       <DebugInfo>
-        <Text>length:{dataList.length}</Text>
+        <Text>
+          l:{dataList.length} p:{pid}
+        </Text>
       </DebugInfo>
       {RenderLoading()}
     </View>

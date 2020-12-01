@@ -46,3 +46,17 @@ export async function imgList_o(option = {}) {
 
   return dataList
 }
+
+export async function searchCompleteList(text) {
+  let dataList = []
+  let url = `https://rule34.xxx/autocomplete.php?q=${text}`
+  try {
+    if (isDev) dataList = await request(`/proxy?url=${encodeURIComponent(url)}`)
+    else {
+      dataList = await request(url)
+    }
+  } catch (error) {
+    console.error('searchCompleteList error', error)
+  }
+  return dataList
+}

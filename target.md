@@ -31,9 +31,12 @@
 6. view-detail
    1. [x] tag-container
    2. [x] reffer-container
-   3. 高级tag功能
+   3. [x] 高级tag功能
 7. view-setting
    1. [x] 设置开启高级tag功能
+   2. [ ] log记录
+8. comp-debugInfo
+   1. [ ] 完善detail
 
 ## 1.0 基本功能
 1. [x] tag、img收藏
@@ -74,5 +77,5 @@ detail的like到gallery里，like显示不正常
 ## ~~功能性bug~~
 由于用的search-text reducer，只能存在一个gallery页，从detail的tag到gallery无法返回到之前的detail
 
-## `file_url`时效性
+## ~~`file_url`时效性~~
 从API里获取的`file_url`有时效性，可能需要去除顶级域名显示

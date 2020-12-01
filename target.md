@@ -19,7 +19,7 @@
 3. [x] 收藏本地存储化
 4. img浏览
    1. [x] 接入gallery点击
-   2. 从`/imgLisg/:tags/:page`到`/imgDetail/:tags/:id`，默认显示`:id`item，左右滑动以`:tags`dataList上下切换，回退直接到`/imgLisg/:tags/:page`，**这里滑动不记录router**，这里需要reducer记录下来`:tags`的dataList
+   2. ~~从`/imgLisg/:tags/:page`到`/imgDetail/:tags/:id`，默认显示`:id`item，左右滑动以`:tags`dataList上下切换，回退直接到`/imgLisg/:tags/:page`，**这里滑动不记录router**，这里需要reducer记录下来`:tags`的dataList~~
       - [x] 基本功能
       - 需要提前把`:tags`的dataList记录到reducer中，detail页读取到某个节点，开始请求上/下一页的`:tags`的dataList
 5. view-collections
@@ -33,13 +33,13 @@
    2. [x] reffer-container
    3. 高级tag功能
 7. view-setting
-   1. 设置开启高级tag功能
+   1. [x] 设置开启高级tag功能
 
 ## 1.0 基本功能
-1. [x]tag、img收藏
-2. [x]搜索tag
-3. 显示详情的img，以及他的附带信息
-4. [x]本地存储
+1. [x] tag、img收藏
+2. [x] 搜索tag
+3. [x] 显示详情的img，以及他的附带信息
+4. [x] 本地存储
 
 ## 1.0+ 功能
 1. 搜索历史列表

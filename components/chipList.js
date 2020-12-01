@@ -24,7 +24,7 @@ export default function ChipList(props) {
           ChipProps = data.ChipProps
         }
         return (
-          <View key={index} style={{ position: 'relative' }}>
+          <View key={`${label}-${index}`} style={{ position: 'relative' }}>
             <Chip
               onPress={() => {
                 onPress && onPress(data)

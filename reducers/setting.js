@@ -1,12 +1,15 @@
 let init = {
   debugMode: false,
+  isAdvancedTags: true,
 }
 
 const setting = (state = init, action) => {
   switch (action.type) {
     case 'setting/debugMode':
-      console.log(`set,${action.value}`)
       return { ...state, debugMode: action.value ?? !state.debugMode }
+    case 'setting/changeSetting':
+      let { key, value } = action
+      return { ...state, [key]: value }
     default:
       return state
   }

@@ -8,6 +8,7 @@ import statuBarLayout from '../../layout/statuBar'
 import ChipList from '../../components/chipList'
 import { deurl } from '../../utils/utils'
 import imageContainer from '../../components/imageContainer'
+import TagsContainer from './tagsContainer'
 
 const Detail = connect((state) => ({
   getLikes: (id) => state.likes.imgs[id],
@@ -48,23 +49,27 @@ const Detail = connect((state) => ({
     )
   }
 
-  function RenderTagsContainer() {
-    let dataList = data?.tags?.split(' ').filter((str) => str !== '')
-    // console.log(data)
-    return (
-      <View>
-        {ChipList({
-          dataList,
-          onPress(tags) {
-            // console.log(d)
-            navigation.push('gallery', {
-              tags,
-            })
-          },
-        })}
-      </View>
-    )
-  }
+  let tags = data?.tags?.split(' ').filter((str) => str !== '')
+  let tagsContainer = (
+    <TagsContainer id={data.id} navigation={navigation} tags={tags} />
+  )
+  // function RenderTagsContainer() {
+  //   let dataList = data?.tags?.split(' ').filter((str) => str !== '')
+  //   // console.log(data)
+  //   return (
+  //     <View>
+  //       {ChipList({
+  //         dataList,
+  //         onPress(tags) {
+  //           // console.log(d)
+  //           navigation.push('gallery', {
+  //             tags,
+  //           })
+  //         },
+  //       })}
+  //     </View>
+  //   )
+  // }
 
   function RenderReffer() {
     let refferMap = {
@@ -112,7 +117,8 @@ const Detail = connect((state) => ({
       <>
         <ScrollView>
           {ImageEl}
-          {RenderTagsContainer()}
+          {/* {RenderTagsContainer()} */}
+          {tagsContainer}
           <View>
             <Text>reffers</Text>
             <Divider />

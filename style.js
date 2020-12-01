@@ -1,5 +1,47 @@
 import { StyleSheet, ViewStyle } from 'react-native'
 
+function generBlockType(type) {
+  return function (str = '10') {
+    let arr = str.split(' ').map((a) => +a)
+    /** @type {ViewStyle} */
+    var rs = {}
+    switch (arr.length) {
+      case 1:
+        rs = {
+          [type]: str,
+        }
+        break
+      case 2:
+        rs = {
+          [`${type}Top`]: arr[0],
+          [`${type}Bottom`]: arr[0],
+          [`${type}Left`]: arr[1],
+          [`${type}Right`]: arr[1],
+        }
+        break
+      case 3:
+        rs = {
+          [`${type}Top`]: arr[0],
+          [`${type}Right`]: arr[1],
+          [`${type}Left`]: arr[1],
+          [`${type}Bottom`]: arr[2],
+        }
+        break
+      case 4:
+        rs = {
+          [`${type}Top`]: arr[0],
+          [`${type}Right`]: arr[1],
+          [`${type}Bottom`]: arr[2],
+          [`${type}Left`]: arr[3],
+        }
+        break
+      default:
+        break
+    }
+    return rs
+  }
+}
+
 export const _style = {
   dec(top = 0, left = top) {
     return {
@@ -37,42 +79,9 @@ export const _style = {
     return rs
   },
   margin(str = '10') {
-    let arr = str.split(' ').map((a) => +a)
-    /** @type {ViewStyle} */
-    var rs = {}
-    switch (arr.length) {
-      case 1:
-        rs = {
-          margin: str,
-        }
-        break
-      case 2:
-        rs = {
-          marginTop: arr[0],
-          marginBottom: arr[0],
-          marginLeft: arr[1],
-          marginRight: arr[1],
-        }
-        break
-      case 3:
-        rs = {
-          marginTop: arr[0],
-          marginLeft: arr[1],
-          marginRight: arr[1],
-          marginBottom: arr[2],
-        }
-        break
-      case 4:
-        rs = {
-          marginTop: arr[0],
-          marginRight: arr[1],
-          marginBottom: arr[2],
-          marginLeft: arr[3],
-        }
-        break
-      default:
-        break
-    }
-    return rs
+    return generBlockType('margin')
+  },
+  padding(str = '10') {
+    return generBlockType('padding')
   },
 }

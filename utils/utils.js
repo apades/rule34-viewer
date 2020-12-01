@@ -89,6 +89,27 @@ export function throttle(fn, time) {
   }
 }
 
+export function debounceAsync(fn, wait = 50) {
+  let lastFetchId = 0
+
+  return function (...args) {
+    const fetchId = ++lastFetchId
+
+    return fn
+      .call(this, ...args)
+      .then((...a1) => {
+        if (fetchId !== lastFetchId) {
+          return new Promise(() => {})
+        } else {
+          return Promise.resolve(...a1)
+        }
+      })
+      .catch((...a2) => {
+        return Promise.reject(...a2)
+      })
+  }
+}
+
 // expo hot reload生成list会报key问题
 export function generRandomId(id) {
   return random(0, 10000) + id

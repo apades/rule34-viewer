@@ -1,16 +1,23 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 let init = {
-  searching: false,
-  text: '',
+  histories: [],
 }
 
 const search = (state = init, action) => {
   switch (action.type) {
-    case 'search/toggle':
-      return { ...state, searching: action.searching ?? !state.searching }
-    case 'search/input':
-      return { ...state, text: action.text }
+    case 'search/addHis':
+      let histories = init.histories
+      let value = action.value
+      let hasIndex = histories.indexOf(value)
+      if (hasIndex !== -1) histories.splice(hasIndex, 1)
+      histories.push(value)
+      histories.length = 10
+      AsyncStorage.setItem('searchHistories', JSON.stringify(histories))
+
+      return { ...state, histories }
     default:
-      return state
+      return { ...state }
   }
 }
 

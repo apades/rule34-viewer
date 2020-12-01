@@ -1,5 +1,5 @@
 import koaRouter from '@koa/router'
-import { getList } from './api'
+import { getList, proxy } from './api'
 import list from './api/list'
 import detail from './api/detail'
 import { search } from 'booru'
@@ -11,6 +11,11 @@ var e2k = require('koa-connect')
 let router = new koaRouter()
 router
   .get('/', () => 'yeah')
+  .get('/proxy', async (ctx) => {
+    let { url } = ctx.query
+    let body = await proxy(decodeURIComponent(url))
+    ctx.body = body
+  })
   .get('/getList', async (ctx) => {
     let data = await getList(ctx.query)
     ctx.body = data

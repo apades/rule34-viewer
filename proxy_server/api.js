@@ -43,3 +43,7 @@ export async function getList(option = {}) {
 
   return dataList
 }
+
+export async function proxy(url, option = {}) {
+  return request(url, option)
+}

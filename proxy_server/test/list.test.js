@@ -1,6 +1,17 @@
 import { readFileSync } from 'fs'
 import { resolveData } from '../api/list'
+import { request } from '../request'
 
-let html = readFileSync(`${__dirname}\\list.html`, 'utf-8')
+async function main() {
+  let html = await request({
+    params: {
+      page: 'post',
+      s: 'list',
+      tags: 'dacad',
+    },
+  })
 
-console.log(JSON.stringify(resolveData(html)))
+  console.log(JSON.stringify(resolveData(html)))
+}
+
+main()

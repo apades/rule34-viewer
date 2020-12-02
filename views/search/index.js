@@ -7,8 +7,9 @@ import { Text } from 'react-native-paper'
 import { searchCompleteList } from '../../api/list_o'
 import { Comp_seachInput } from '../../components/searchInput'
 import { _style } from '../../style'
+import { debounceAsync } from '../../utils/utils'
 
-let fn = debounce(async (text = '', cb) => {
+let fn = debounceAsync(async (text = '') => {
   let searchArr = text.trim().split(' ')
   let searchDataList = []
   if (text.trim().length) {
@@ -16,7 +17,7 @@ let fn = debounce(async (text = '', cb) => {
     searchDataList = await searchCompleteList(nowCompelte)
   }
 
-  cb(searchDataList)
+  return searchDataList
 }, 200)
 
 export default function Search(props) {
@@ -38,7 +39,12 @@ export default function Search(props) {
     let [dataList, setDataList] = useState([])
 
     useEffect(() => {
-      fn(text, (rs) => setDataList(rs))
+      try {
+        fn(text).then(
+          (rs) => setDataList(rs),
+          () => ({}),
+        )
+      } catch (error) {}
     }, [text])
 
     return (

@@ -2,7 +2,7 @@
 - [x] 觉得viewer应该改成pixiv那样的，就能比较好显示tag
 - [x] 然后再加个view-imgDetail
 - 功能性bug 扩展
-  - `app.js`不应该为tab nav
+  - [x] `app.js`不应该为tab nav
   - [x] `gallery`应该是一个单独的page，从`detail`点击tag到`gallery`应该是push一个`gallery`进去的
   - 需要考虑`home`怎么搞
   - [x] 需要考虑`search`怎么搞
@@ -79,3 +79,9 @@ detail的like到gallery里，like显示不正常
 
 ## ~~`file_url`时效性~~
 从API里获取的`file_url`有时效性，可能需要去除顶级域名显示
+
+## `img-likes`顺序问题
+添加的img显示并**不是顺序的**，可能需要修改reducer的likes
+
+------
+object的number key会自动排序，而Map不会

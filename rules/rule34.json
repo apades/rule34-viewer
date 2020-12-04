@@ -1,0 +1,17 @@
+{
+    "name":"rule34",
+    "host":"https://rule34.xx",
+    "discover":{
+        "url":"https://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&tags=@{searchString}&limit=@{pageLimit}&pid=@{pageNum}",
+        "list":"$",
+        "tags":"@js:($)=>$.tags.split(' ')",
+        "name":"",
+        "cover":"@js:($)=>`https://rule34.xxx/${$.directory}/${$.image}`"
+    },
+    "content":{
+        "url":"https://rule34.xxx/index.php",
+        "inherit":"discover",
+        "image":"@js:($)=>`https://rule34.xxx/${@{$.directory}@}/${@{$.image}@}`",
+        "tags":"@map{copyright::@qpath:$$(.tag-type-copyright a).text||character::@qpath:$$(.tag-type-copyright a).text||artists::@qpath:$$(.tag-type-artist a).text||general::@qpath:$$(.tag-type-general a).text||metadata::@qpath:$$(.tag-type-metadata a).text}@"
+    }
+}

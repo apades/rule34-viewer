@@ -14,10 +14,16 @@ const likes = (state = init, action) => {
       for (let i in action.tags) {
         state.tags[i] = action.tags[i]
       }
+      if (action.initStore) {
+        console.log('init')
+        AsyncStorage.setItem('imgLikes', JSON.stringify(state.imgs))
+        AsyncStorage.setItem('tagLikes', JSON.stringify(state.tags))
+      }
       return { ...state }
     case 'likes/img_toggle':
-      if (state.imgs[action.id]) delete state.imgs[action.id]
-      else state.imgs[action.id] = action.data
+      let id = `rule34_${action.id}`
+      if (state.imgs[id]) delete state.imgs[id]
+      else state.imgs[id] = action.data
       // 这样不让他更新全部
       AsyncStorage.setItem('imgLikes', JSON.stringify(state.imgs))
       return state
@@ -27,7 +33,8 @@ const likes = (state = init, action) => {
       AsyncStorage.setItem('tagLikes', JSON.stringify(state.tags))
       return state
     case 'likes/clear':
-      state[action.key] = {}
+      state[`${action.key}s`] = {}
+      AsyncStorage.setItem(`${action.key}Likes`, '{}')
       return { ...state }
     default:
       return state

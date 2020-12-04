@@ -11,7 +11,7 @@ import imageContainer from '../../components/imageContainer'
 import TagsContainer from './tagsContainer'
 
 const Detail = connect((state) => ({
-  getLikes: (id) => state.likes.imgs[id],
+  getLikes: (id) => state.likes.imgs[`rule34_${id}`],
 }))(function (props) {
   let { navigation, route, dispatch } = props
 

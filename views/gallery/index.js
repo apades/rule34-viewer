@@ -112,7 +112,7 @@ var Gallery = connect(
           renderItem={({ item, index }) => (
             <RenderGalleryItem
               index={index}
-              isLike={!!imgLikes[item.id]}
+              isLike={!!imgLikes[`rule34_${item.id}`]}
               item={item}
               likesToggle={likesToggle}
               navigation={navigation}

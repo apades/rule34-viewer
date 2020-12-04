@@ -114,7 +114,9 @@ export const View_viewer = connect((state) => ({
   let { imgLikes } = props
   function RenderFooter() {
     let data = dataList[_index]
-    let [like, setLike] = useState(imgLikes[data?.id])
+    let id = `rules34_${data?.id}`
+
+    let [like, setLike] = useState(imgLikes[id])
     return (
       <View
         style={{

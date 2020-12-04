@@ -43,6 +43,7 @@ export const RenderGalleryItem = connect((state) => ({}))(function (props) {
         onPress={() => {
           navigation.push('detail', {
             data: item,
+            nowTag: props.nowTag,
           })
         }}
       >

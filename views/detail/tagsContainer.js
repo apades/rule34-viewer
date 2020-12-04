@@ -21,13 +21,20 @@ let TagsContainer = connect((state) => ({
     detailTags(id).then((res) => setAtags(res))
   }
 
-  let el
   function onPress(tag = '') {
     let tags = tag.replace(/\s/g, '_')
     return navigation.push('gallery', {
       tags,
     })
   }
+  function onLongPress(tag = '') {
+    let value = tag.replace(/\s/g, '_')
+    return navigation.push('search', {
+      value: `${props.nowTag} ${value}`,
+    })
+  }
+
+  let el
   if (Object.keys(atags).length)
     el = (
       <View>
@@ -43,6 +50,7 @@ let TagsContainer = connect((state) => ({
                     {ChipList({
                       dataList,
                       onPress,
+                      onLongPress,
                     })}
                   </>
                 ) : (
@@ -61,6 +69,7 @@ let TagsContainer = connect((state) => ({
         {ChipList({
           dataList: tags,
           onPress,
+          onLongPress,
         })}
       </View>
     )

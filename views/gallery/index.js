@@ -116,6 +116,7 @@ var Gallery = connect(
               item={item}
               likesToggle={likesToggle}
               navigation={navigation}
+              nowTag={route.params?.tags}
             />
           )}
         />

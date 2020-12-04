@@ -38,7 +38,7 @@ const GalleryHeader = connect(
       <Appbar.Action
         icon="magnify"
         onPress={() => {
-          navigation.push('search')
+          navigation.push('search', { value: tags })
         }}
       />
     </Appbar.Header>

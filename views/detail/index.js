@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Image,
   Linking,
@@ -14,12 +14,64 @@ import imageContainer from '../../components/imageContainer'
 import statuBarLayout from '../../layout/statuBar'
 import { _style } from '../../style'
 import { _env, _screen } from '../../utils/env'
+import request from '../../utils/request'
 import { deurl } from '../../utils/utils'
 import TagsContainer from './tagsContainer'
+
+function RenderImageEl(uri, data) {
+  console.log('render img')
+  // let _isVideo = data.tags.indexOf('webm') === -1
+  let [isVideo, setIsVideo] = useState(false)
+  let [firstLoad, setFirstLoad] = useState(false)
+
+  let ImageEl
+
+  useEffect(() => {
+    if (!isVideo) {
+      request.head(uri).then((res) => {
+        setFirstLoad(false)
+        if (res.headers['content-type'].indexOf('video') !== -1)
+          setIsVideo(true)
+      })
+    }
+  }, [])
+
+  if (_env.NSFW) {
+    ImageEl = <Text>img:{uri}</Text>
+  } else {
+    ImageEl =
+      !firstLoad && !isVideo
+        ? imageContainer({
+            source: { uri },
+          })
+        : imageContainer({
+            source: { uri: data.preview_url },
+            child: () =>
+              isVideo ? (
+                <View
+                  style={{
+                    ..._style.wh('100%'),
+                    ..._style.center(),
+                    position: 'absolute',
+                    backgroundColor: '#fff8',
+                  }}
+                >
+                  <Text style={{ fontSize: 20, color: Colors.blue400 }}>
+                    click reffers-&gt;web to play webm
+                  </Text>
+                </View>
+              ) : (
+                <></>
+              ),
+          })
+  }
+  return ImageEl
+}
 
 const Detail = connect((state) => ({
   getLikes: (id) => state.likes.imgs[`rule34_${id}`],
 }))(function (props) {
+  console.log('render contain')
   let { navigation, route, dispatch } = props
 
   let data = route.params?.data ?? {}
@@ -27,33 +79,6 @@ const Detail = connect((state) => ({
   let uri = data.file_url
   let match = uri.match(/.*?\/\/(.*?\.)rule34/)[1]
   uri = uri.replace(match, '')
-  let ImageEl
-  if (!_env.NSFW) {
-    ImageEl = <Text>img:{uri}</Text>
-  } else {
-    ImageEl =
-      data.tags.indexOf('webm') === -1
-        ? imageContainer({
-            source: { uri },
-          })
-        : imageContainer({
-            source: { uri: data.preview_url },
-            child: () => (
-              <View
-                style={{
-                  ..._style.wh('100%'),
-                  ..._style.center(),
-                  position: 'absolute',
-                  backgroundColor: '#fff8',
-                }}
-              >
-                <Text style={{ fontSize: 20, color: Colors.blue400 }}>
-                  click reffers-&gt;web to play webm
-                </Text>
-              </View>
-            ),
-          })
-  }
 
   function RenderLike() {
     let { getLikes } = props
@@ -145,7 +170,7 @@ const Detail = connect((state) => ({
     children: () => (
       <>
         <ScrollView>
-          {ImageEl}
+          {RenderImageEl(uri, data)}
           {tagsContainer}
           <View>
             <Text>reffers</Text>

@@ -14,7 +14,9 @@ let request = axios.create({
 
 request.interceptors.response.use(
   (res) => {
-    return res.data
+    return ['get', 'post', 'delete'].includes(res.config.method)
+      ? res.data
+      : res
   },
   (err) => {
     console.error('axios error'.red)

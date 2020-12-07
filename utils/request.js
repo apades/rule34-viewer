@@ -1,5 +1,4 @@
 import Axios from 'axios'
-import emojiRegex from 'emoji-regex/text'
 import { _env, ip } from './env'
 
 let request = Axios.create({
@@ -10,7 +9,9 @@ let request = Axios.create({
 
 request.interceptors.response.use(
   (res) => {
-    return res.data
+    return ['get', 'post', 'delete'].includes(res.config.method)
+      ? res.data
+      : res
   },
   (err) => {
     console.error('axios error', err)

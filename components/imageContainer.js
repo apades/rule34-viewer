@@ -14,15 +14,15 @@ export default function imageContainer(props) {
     let el = (
       <AutoHeightImage
         onError={() => {
-          console.log('load err')
+          // console.log('load err')
           setError(true)
         }}
         onLoadEnd={() => {
-          console.log('load end')
+          // console.log('load end')
           setLoading(false)
         }}
         onLoadStart={() => {
-          console.log('load start')
+          // console.log('load start')
           setLoading(true)
         }}
         source={source}

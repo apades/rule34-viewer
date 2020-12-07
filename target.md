@@ -85,3 +85,6 @@ detail的like到gallery里，like显示不正常
 
 ------
 object的number key会自动排序，而Map不会
+
+## page_detial渲染次数问题
+渲染次数有4次，route返回后出现了2次渲染

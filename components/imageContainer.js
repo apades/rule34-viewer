@@ -3,17 +3,14 @@ import { View } from 'react-native'
 import AutoHeightImage from 'react-native-auto-height-image'
 import { ActivityIndicator, Text } from 'react-native-paper'
 import { _style } from '../style'
+import { _screen } from '../utils/env'
 
 export default function imageContainer(props) {
-  // let [loading, setLoading] = useState(false)
-  let loading = false,
-    setLoading = () => {}
-
   function RenderLoading() {
     let [loading, setLoading] = useState(false)
     let [error, setError] = useState(false)
 
-    let { source, width } = props
+    let { source, width = _screen.width } = props
     let el = (
       <AutoHeightImage
         onError={() => {
@@ -64,6 +61,7 @@ export default function imageContainer(props) {
       <View style={cStyle}>
         {el}
         {addEl}
+        {props.child && props.child()}
       </View>
     )
   }

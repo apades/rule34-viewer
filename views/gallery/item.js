@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 import { TouchableNativeFeedback } from 'react-native-gesture-handler'
-import { IconButton } from 'react-native-paper'
+import { Colors, IconButton, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { _style } from '../../style'
 import { _env, _screen } from '../../utils/env'
@@ -34,8 +34,21 @@ export const RenderGalleryItem = connect((state) => ({}))(function (props) {
     imgContainer: {
       ..._style.wh(width / 2),
       ..._style.center(),
+      position: 'relative',
     },
   })
+
+  function RenderItemType() {
+    return (
+      <View style={{ position: 'absolute', left: 0, top: 0 }}>
+        {item.tags.indexOf('webm') !== -1 ? (
+          <Text style={{ color: Colors.blue300 }}>Webm</Text>
+        ) : (
+          <></>
+        )}
+      </View>
+    )
+  }
 
   function RenderImg() {
     return (
@@ -48,6 +61,7 @@ export const RenderGalleryItem = connect((state) => ({}))(function (props) {
         }}
       >
         <View style={{ ...styles.imgContainer }}>
+          {RenderItemType()}
           <Image source={{ uri: item.preview_url }} style={styles.img}></Image>
         </View>
       </TouchableNativeFeedback>

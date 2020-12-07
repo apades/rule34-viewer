@@ -1,13 +1,20 @@
 import React, { useState } from 'react'
-import AutoHeightImage from 'react-native-auto-height-image'
-import { Image, Linking, ScrollView, View } from 'react-native'
-import { Divider, FAB, Text } from 'react-native-paper'
+import {
+  Image,
+  Linking,
+  ScrollView,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native'
+import { Colors, Divider, FAB, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
-import { _env, _screen } from '../../utils/env'
-import statuBarLayout from '../../layout/statuBar'
 import ChipList from '../../components/chipList'
-import { deurl } from '../../utils/utils'
+import DebugInfo from '../../components/debugInfo'
 import imageContainer from '../../components/imageContainer'
+import statuBarLayout from '../../layout/statuBar'
+import { _style } from '../../style'
+import { _env, _screen } from '../../utils/env'
+import { deurl } from '../../utils/utils'
 import TagsContainer from './tagsContainer'
 
 const Detail = connect((state) => ({
@@ -20,14 +27,33 @@ const Detail = connect((state) => ({
   let uri = data.file_url
   let match = uri.match(/.*?\/\/(.*?\.)rule34/)[1]
   uri = uri.replace(match, '')
-  let ImageEl = _env.NSFW ? (
-    imageContainer({
-      source: { uri },
-      width: _screen.width,
-    })
-  ) : (
-    <Text>img:{uri}</Text>
-  )
+  let ImageEl
+  if (!_env.NSFW) {
+    ImageEl = <Text>img:{uri}</Text>
+  } else {
+    ImageEl =
+      data.tags.indexOf('webm') === -1
+        ? imageContainer({
+            source: { uri },
+          })
+        : imageContainer({
+            source: { uri: data.preview_url },
+            child: () => (
+              <View
+                style={{
+                  ..._style.wh('100%'),
+                  ..._style.center(),
+                  position: 'absolute',
+                  backgroundColor: '#fff8',
+                }}
+              >
+                <Text style={{ fontSize: 20, color: Colors.blue400 }}>
+                  click reffers-&gt;web to play webm
+                </Text>
+              </View>
+            ),
+          })
+  }
 
   function RenderLike() {
     let { getLikes } = props
@@ -71,15 +97,20 @@ const Detail = connect((state) => ({
       ),
     }
 
-    let reffers = data?.source?.split(' ')
-    let dataList =
-      reffers?.map((reffer) => {
-        let durl = deurl(reffer)
-        return {
-          label: durl.domain,
-          url: reffer,
-        }
-      }) || []
+    let reffers = (data?.source && data.source.split(' ')) || []
+    let dataList = reffers.map((reffer) => {
+      let durl = deurl(reffer)
+      return {
+        label: durl.domain,
+        url: reffer,
+      }
+    })
+
+    dataList.unshift({
+      label: 'web',
+      url: `https://rule34.xxx/index.php?page=post&s=view&id=${data.id}`,
+    })
+
     function handleOpenUrl(url) {
       return Linking.canOpenURL(url).then((can) => {
         if (can) Linking.openURL(url)
@@ -87,7 +118,7 @@ const Detail = connect((state) => ({
       })
     }
     return (
-      <View>
+      <View style={{ marginBottom: 20 }}>
         {ChipList({
           dataList,
           onPress(data) {
@@ -95,6 +126,17 @@ const Detail = connect((state) => ({
           },
         })}
       </View>
+    )
+  }
+
+  function RenderDebugInfo() {
+    let [detail, setDetail] = useState(false)
+    return (
+      <DebugInfo y={_screen.height - 50}>
+        <TouchableWithoutFeedback onPress={() => setDetail((d) => !d)}>
+          <Text>{detail ? JSON.stringify(data) : 'show detail'}</Text>
+        </TouchableWithoutFeedback>
+      </DebugInfo>
     )
   }
 
@@ -111,6 +153,7 @@ const Detail = connect((state) => ({
           </View>
           {RenderReffer()}
         </ScrollView>
+        {RenderDebugInfo()}
         {RenderLike()}
       </>
     ),

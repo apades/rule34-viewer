@@ -3,8 +3,12 @@ import { View } from 'react-native'
 import { Text, Chip } from 'react-native-paper'
 import { _style } from '../style'
 
-export default function ChipList(props) {
-  let { dataList = [], onPress, chipStyle } = props
+export default function ChipList({
+  dataList = [],
+  onPress = () => {},
+  chipStyle,
+  onLongPress = () => {},
+}) {
   return (
     <View
       style={{
@@ -27,13 +31,14 @@ export default function ChipList(props) {
           <View key={`${label}-${index}`} style={{ position: 'relative' }}>
             <Chip
               onPress={() => {
-                onPress && onPress(data)
+                onPress(data)
               }}
               style={{
                 margin: 2,
                 ...chipStyle,
               }}
               {...ChipProps}
+              onLongPress={() => [onLongPress(data)]}
             >
               <Text>{label}</Text>
             </Chip>

@@ -11,7 +11,7 @@
     "content":{
         "url":"https://rule34.xxx/index.php",
         "inherit":"discover",
-        "image":"@js:($)=>`https://rule34.xxx/${@{$.directory}@}/${@{$.image}@}`",
+        "image":"@js:($,{$i})=>`https://rule34.xxx/${$i.directory}/${$i.image}`",
         "tags":"@map{copyright::@css:.tag-type-copyright a@text||character::@css:.tag-type-copyright a@text||artist::@css:.tag-type-artist a@text||general::@css:.tag-type-general a@text||metadata::@css:.tag-type-metadata a@text}@"
     }
 }

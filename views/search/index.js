@@ -18,9 +18,9 @@ let fn = debounceAsync(async (text = '') => {
 }, 500)
 
 export default function Search(props) {
-  let { navigation } = props
+  let { navigation, route } = props
 
-  let [text, setText] = useState(props.value || '')
+  let [text, setText] = useState(route?.params?.value ?? '')
 
   return (
     <View style={{ flex: 1, ..._style.center() }}>

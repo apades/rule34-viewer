@@ -51,25 +51,13 @@ const Detail = connect((state) => ({
 
   let tags = data?.tags?.split(' ').filter((str) => str !== '')
   let tagsContainer = (
-    <TagsContainer id={data.id} navigation={navigation} tags={tags} />
+    <TagsContainer
+      id={data.id}
+      navigation={navigation}
+      nowTag={route.params?.nowTag}
+      tags={tags}
+    />
   )
-  // function RenderTagsContainer() {
-  //   let dataList = data?.tags?.split(' ').filter((str) => str !== '')
-  //   // console.log(data)
-  //   return (
-  //     <View>
-  //       {ChipList({
-  //         dataList,
-  //         onPress(tags) {
-  //           // console.log(d)
-  //           navigation.push('gallery', {
-  //             tags,
-  //           })
-  //         },
-  //       })}
-  //     </View>
-  //   )
-  // }
 
   function RenderReffer() {
     let refferMap = {
@@ -104,7 +92,6 @@ const Detail = connect((state) => ({
           dataList,
           onPress(data) {
             handleOpenUrl(data.url)
-            // console.log(data)
           },
         })}
       </View>
@@ -117,7 +104,6 @@ const Detail = connect((state) => ({
       <>
         <ScrollView>
           {ImageEl}
-          {/* {RenderTagsContainer()} */}
           {tagsContainer}
           <View>
             <Text>reffers</Text>

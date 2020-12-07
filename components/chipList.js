@@ -8,6 +8,8 @@ export default function ChipList({
   onPress = () => {},
   chipStyle,
   onLongPress = () => {},
+  renderItem,
+  renderChild,
 }) {
   return (
     <View
@@ -29,19 +31,24 @@ export default function ChipList({
         }
         return (
           <View key={`${label}-${index}`} style={{ position: 'relative' }}>
-            <Chip
-              onPress={() => {
-                onPress(data)
-              }}
-              style={{
-                margin: 2,
-                ...chipStyle,
-              }}
-              {...ChipProps}
-              onLongPress={() => [onLongPress(data)]}
-            >
-              <Text>{label}</Text>
-            </Chip>
+            {renderItem ? (
+              renderItem(data, index)
+            ) : (
+              <Chip
+                onPress={() => {
+                  onPress(data)
+                }}
+                style={{
+                  margin: 2,
+                  ...chipStyle,
+                }}
+                {...ChipProps}
+                onLongPress={() => [onLongPress(data)]}
+              >
+                <Text>{label}</Text>
+              </Chip>
+            )}
+            {renderChild ? renderChild(data, index) : <></>}
           </View>
         )
       })}

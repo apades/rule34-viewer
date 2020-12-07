@@ -28,6 +28,7 @@ export const Comp_seachInput = connect((state) => ({}))(function (props) {
   return (
     <View style={styles.container}>
       <TextInput
+        autoFocus={props.autoFocus}
         onChangeText={(text) => {
           setText(text)
           props.onChangeText(text)

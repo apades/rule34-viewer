@@ -30,7 +30,7 @@ let TagsContainer = connect((state) => ({
   function onLongPress(tag = '') {
     let value = tag.replace(/\s/g, '_')
     return navigation.push('search', {
-      value: `${props.nowTag} ${value}`,
+      value: `${props.nowTag || ''} ${value}`,
     })
   }
 

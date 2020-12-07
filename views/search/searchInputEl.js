@@ -6,6 +6,7 @@ let SearchInputEl = connect((state) => ({}))(
   ({ navigation, setText, text, dispatch }) => {
     return (
       <Comp_seachInput
+        autoFocus={true}
         onChangeText={(text) => {
           setText(text)
         }}

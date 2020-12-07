@@ -45,11 +45,11 @@ let Setting = connect((state) => ({
             <Text>length:{Object.keys(likes.imgs).length}</Text>
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Button mode="contained" onPress={() => changeLikes()}>
               fixLikes
             </Button>
-          </View>
+          </View> */}
 
           <View>
             <Text>debug mode</Text>

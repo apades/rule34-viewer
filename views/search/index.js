@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { View } from 'react-native'
 import { searchCompleteList } from '../../api/list_o'
+import statuBarLayout from '../../layout/statuBar'
 import { _style } from '../../style'
 import { debounceAsync } from '../../utils/utils'
 import SearchHistoryContainer from './historyContainer'
@@ -22,15 +23,17 @@ export default function Search(props) {
 
   let [text, setText] = useState(route?.params?.value ?? '')
 
-  return (
-    <View style={{ flex: 1, ..._style.center() }}>
-      <View style={{ width: '80%' }}>
-        {/* {searchInputEl} */}
+  return statuBarLayout({
+    children: () => (
+      <View style={{ width: '80%', marginTop: 10 }}>
         <SearchInputEl navigation={navigation} setText={setText} text={text} />
         <View style={{ marginTop: 10 }}>
           <SearchHistoryContainer setText={setText} text={text} />
         </View>
       </View>
-    </View>
-  )
+    ),
+    style: {
+      alignItems: 'center',
+    },
+  })
 }

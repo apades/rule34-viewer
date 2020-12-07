@@ -4,6 +4,7 @@ import { StatusBar, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Badge, Button, Chip, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
+import ChipList from '../../components/chipList'
 import { _style } from '../../style'
 
 export const view_collections = connect(
@@ -35,27 +36,22 @@ export const view_collections = connect(
             alignItems: 'baseline',
             flexDirection: 'row',
             flexWrap: 'wrap',
-            marginTop: 10,
           }}
         >
-          {collects.map((collect) => (
-            <View key={collect} style={{ position: 'relative' }}>
-              <Chip
-                onPress={() => {
-                  search(collect)
-                  navigation.push('gallery', {
-                    tags: collect,
-                  })
-                }}
-                style={{ ..._style.margin('5 2') }}
-              >
-                <Text>{collect}</Text>
-              </Chip>
-              <View style={{ position: 'absolute', right: 0, top: -1 }}>
-                <Badge size={15}>1</Badge>
-              </View>
-            </View>
-          ))}
+          {ChipList({
+            dataList: collects,
+            onPress: (collect) => {
+              search(collect)
+              navigation.push('gallery', {
+                tags: collect,
+              })
+            },
+            // renderChild: () => (
+            //   <View style={{ position: 'absolute', right: 0, top: -1 }}>
+            //     <Badge size={15}>1</Badge>
+            //   </View>
+            // ),
+          })}
         </View>
         <View>
           <Button

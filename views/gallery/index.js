@@ -49,7 +49,7 @@ var Gallery = connect(
   function loadData(pid) {
     setLoading(true)
     if (route?.params?.likeList) {
-      let dataList = Object.values(imgLikes)
+      let dataList = Object.values(imgLikes).reverse()
       setDataList(dataList)
       setFirstLoad(false)
       setLoading(false)

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <auth>
+        <name>apad</name>
+        <mail>apad2@qq.com</mail>
+    </auth>
+    <meta>
+        <name>rule34</name>
+        <host>https://rule34.xx</host>
+        <version>1.0</version>
+    </meta>
+    <main>
+        <home>
+            <url>https://rule34.xxx/index.php?page=dapi&amp;s=post&amp;q=indexjson=1&amp;tags=@{searchString}&amp;limit=@{pageLimit}&amp;pid=@{pageNum}</url>
+            <list code="json">$</list>
+            <tags code="js">
+                ($)=>$.tags.split(' ')
+            </tags>
+            <cover code="js">
+                ($)=>`https://rule34.xxx/${$.directory}/${$.image}`
+            </cover>
+        </home>
+        <content>
+            <url>https://rule34.xxx/index.php</url>
+            <content code="js" type="image">
+                ($,{$i})=>`https://rule34.xxx/${$i.directory}}/${$i.image}`
+            </content>
+            <tags code="js" q="true">
+                ($,{q})=>({
+                    copyright:q('.tag-type-copyright a').text(),
+                    character:q('.tag-type-character a').text(),
+                    artist:q('.tag-type-artist a').text(),
+                    general:q('.tag-type-general a').text(),
+                    metadata:q('.tag-type-metadata a').text()
+                }）
+            </tags>
+        </content>
+    </main>
+</config>

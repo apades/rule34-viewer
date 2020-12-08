@@ -5,7 +5,10 @@ import { FlatGrid } from 'react-native-super-grid'
 import { connect } from 'react-redux'
 import { imgList_o } from '../../api/list_o'
 import DebugInfo from '../../components/debugInfo'
+import _config from '../../config/base.config'
 import { _style } from '../../style'
+import request from '../../utils/request'
+import { parserStringValue } from '../../utils/ruleParser'
 import { genHandlerScrollEnd } from '../../utils/utils'
 import GalleryHeader from './header'
 import { RenderGalleryItem } from './item'
@@ -58,13 +61,19 @@ var Gallery = connect(
 
     let tags = route?.params?.tags ?? ''
     console.log(`load ${tags}`)
-    imgList_o({ tags, limit: 20, pid }).then((res) => {
+
+    let requestUrl = parserStringValue(_config.rule.discover.url, {
+      searchString: tags,
+      pageLimit: 20,
+      pageNum: pid,
+    })
+    // console.log(requestUrl)
+    request(requestUrl).then((res) => {
       function ejectData() {
-        let newDataList = [...dataList, ...res.dataList]
+        let newDataList = [...dataList, ...res]
         setDataList(newDataList)
         setLoading(false)
       }
-
       if (firstLoad) {
         console.log('init')
         setFirstLoad(() => {
@@ -75,6 +84,24 @@ var Gallery = connect(
         ejectData()
       }
     })
+
+    // imgList_o({ tags, limit: 20, pid }).then((res) => {
+    //   function ejectData() {
+    //     let newDataList = [...dataList, ...res.dataList]
+    //     setDataList(newDataList)
+    //     setLoading(false)
+    //   }
+
+    //   if (firstLoad) {
+    //     console.log('init')
+    //     setFirstLoad(() => {
+    //       ejectData()
+    //       return false
+    //     })
+    //   } else {
+    //     ejectData()
+    //   }
+    // })
   }
 
   // container scroll event

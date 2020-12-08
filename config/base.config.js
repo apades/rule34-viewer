@@ -1,5 +1,6 @@
+import rule_rule34 from '../rules/rule34.json'
 // config
-const config = {
+const _config = {
   gallery: {
     rowNum: 2,
     pageNum: 20,
@@ -22,5 +23,6 @@ const config = {
     },
   },
   showDebugComponent: false,
+  rule: rule_rule34,
 }
-export default config
+export default _config

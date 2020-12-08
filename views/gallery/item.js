@@ -3,8 +3,14 @@ import { Image, StyleSheet, View } from 'react-native'
 import { TouchableNativeFeedback } from 'react-native-gesture-handler'
 import { Colors, IconButton, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
+import _config from '../../config/base.config'
 import { _style } from '../../style'
 import { _env, _screen } from '../../utils/env'
+import {
+  evalScript,
+  executePaser,
+  parserItemValue,
+} from '../../utils/ruleParser'
 
 export const RenderGalleryItem = connect((state) => ({}))(function (props) {
   let { item, index, isLike, likesToggle, navigation } = props
@@ -51,18 +57,19 @@ export const RenderGalleryItem = connect((state) => ({}))(function (props) {
   }
 
   function RenderImg() {
+    let uri = executePaser(_config.rule.discover.cover, item)
     return (
       <TouchableNativeFeedback
         onPress={() => {
           navigation.push('detail', {
-            data: item,
+            data: { ...item, cover: uri },
             nowTag: props.nowTag,
           })
         }}
       >
         <View style={{ ...styles.imgContainer }}>
           {RenderItemType()}
-          <Image source={{ uri: item.preview_url }} style={styles.img}></Image>
+          <Image source={{ uri }} style={styles.img}></Image>
         </View>
       </TouchableNativeFeedback>
     )

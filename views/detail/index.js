@@ -11,10 +11,12 @@ import { connect } from 'react-redux'
 import ChipList from '../../components/chipList'
 import DebugInfo from '../../components/debugInfo'
 import imageContainer from '../../components/imageContainer'
+import _config from '../../config/base.config'
 import statuBarLayout from '../../layout/statuBar'
 import { _style } from '../../style'
 import { _env, _screen } from '../../utils/env'
 import request from '../../utils/request'
+import { executePaser } from '../../utils/ruleParser'
 import { deurl } from '../../utils/utils'
 import TagsContainer from './tagsContainer'
 
@@ -36,7 +38,7 @@ function RenderImageEl(uri, data) {
     }
   }, [])
 
-  if (_env.NSFW) {
+  if (!_env.NSFW) {
     ImageEl = <Text>img:{uri}</Text>
   } else {
     ImageEl =
@@ -45,7 +47,7 @@ function RenderImageEl(uri, data) {
             source: { uri },
           })
         : imageContainer({
-            source: { uri: data.preview_url },
+            source: { uri: data.cover },
             child: () =>
               isVideo ? (
                 <View
@@ -76,9 +78,7 @@ const Detail = connect((state) => ({
 
   let data = route.params?.data ?? {}
 
-  let uri = data.file_url
-  let match = uri.match(/.*?\/\/(.*?\.)rule34/)[1]
-  uri = uri.replace(match, '')
+  let uri = executePaser(_config.rule.content.image, { $i: data })
 
   function RenderLike() {
     let { getLikes } = props

@@ -45,7 +45,9 @@ export function executePaser(content = '', option, rs = '') {
     return evalScript(content.replace('@js:', ''), option)
   // $.key1.key2 -> value
   else if (content.indexOf('$') === 0) {
-    return parserItemValue(content, option)
+    if (Object.keys(option).includes('$i')) {
+      return parserItemValue(content, option.$i)
+    } else return parserItemValue(content, option)
   }
 
   return rs

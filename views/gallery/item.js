@@ -45,6 +45,7 @@ export const RenderGalleryItem = connect((state) => ({}))(function (props) {
   // console.log('render', index)
 
   function RenderItemType() {
+    // let type = executePaser(_config.rule.)
     return (
       <View style={{ position: 'absolute', left: 0, top: 0 }}>
         {item.tags.indexOf('webm') !== -1 ? (

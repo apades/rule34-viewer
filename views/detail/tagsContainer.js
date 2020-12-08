@@ -11,7 +11,7 @@ import { executePaser } from '../../utils/ruleParser'
 let TagsContainer = connect((state) => ({
   isAdvancedTags: state.setting.isAdvancedTags,
 }))(function (props) {
-  let { tags, id, isAdvancedTags, navigation } = props
+  let { tags, id, isAdvancedTags, navigation, data } = props
 
   let [atags, setAtags] = useState({
     // copyrights: [],
@@ -22,13 +22,18 @@ let TagsContainer = connect((state) => ({
   })
 
   useEffect(() => {
-    let requestUrl = executePaser(_config.rule.content.url, {
-      id,
-    })
-    request(requestUrl).then((res) => {
-      let _tags = executePaser(_config.rule.content.tags, res)
+    if (_config.rule.content.url) {
+      let requestUrl = executePaser(_config.rule.content.url, {
+        id,
+      })
+      request(requestUrl).then((res) => {
+        let _tags = executePaser(_config.rule.content.tags, res)
+        setAtags(_tags)
+      })
+    } else {
+      let _tags = executePaser(_config.rule.content.tags, data)
       setAtags(_tags)
-    })
+    }
   }, [])
 
   function onPress(tag = '') {
@@ -48,28 +53,26 @@ let TagsContainer = connect((state) => ({
   if (Object.keys(atags).length)
     el = (
       <View>
-        {['character', 'artist', 'general', 'copyright', 'metadata'].map(
-          (type) => {
-            let dataList = atags[`${type}`]
-            return (
-              <View key={type}>
-                {dataList.length ? (
-                  <>
-                    <Text>{type}</Text>
-                    <Divider />
-                    {ChipList({
-                      dataList,
-                      onPress,
-                      onLongPress,
-                    })}
-                  </>
-                ) : (
-                  <></>
-                )}
-              </View>
-            )
-          },
-        )}
+        {Object.keys(atags).map((type) => {
+          let dataList = atags[`${type}`]
+          return (
+            <View key={type}>
+              {dataList.length ? (
+                <>
+                  <Text>{type}</Text>
+                  <Divider />
+                  {ChipList({
+                    dataList,
+                    onPress,
+                    onLongPress,
+                  })}
+                </>
+              ) : (
+                <></>
+              )}
+            </View>
+          )
+        })}
       </View>
     )
 

@@ -94,13 +94,14 @@ const Detail = connect((state) => ({
     )
   }
 
-  let tags = data?.tags?.split(' ').filter((str) => str !== '')
+  // let tags = data?.tags?.split(' ').filter((str) => str !== '')
   let tagsContainer = (
     <TagsContainer
+      data={data}
       id={data.id}
       navigation={navigation}
       nowTag={route.params?.nowTag}
-      tags={tags}
+      // tags={tags}
     />
   )
 

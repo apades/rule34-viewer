@@ -2,6 +2,7 @@ import lodash, { get } from 'lodash'
 import parse from 'node-html-parser'
 
 export function parserStringValue(string = '', obj = {}) {
+  // console.log('parserStringValue', string, Object.keys(obj))
   let keyArr = string.match(/@\{.*?\}/g)
   keyArr.forEach(
     (key) =>
@@ -10,7 +11,7 @@ export function parserStringValue(string = '', obj = {}) {
   return string
 }
 
-export function parserItemValue(data, path = '') {
+export function parserItemValue(path = '', data = {}) {
   let v = { $: data }
   return get(v, path)
 }
@@ -43,7 +44,9 @@ export function executePaser(content = '', option, rs = '') {
   else if (content.indexOf('@js:') !== -1)
     return evalScript(content.replace('@js:', ''), option)
   // $.key1.key2 -> value
-  else if (content.indexOf('$') === 0) return parserStringValue(option, content)
+  else if (content.indexOf('$') === 0) {
+    return parserItemValue(content, option)
+  }
 
   return rs
 }

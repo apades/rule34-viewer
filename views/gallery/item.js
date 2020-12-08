@@ -12,37 +12,37 @@ import {
   parserItemValue,
 } from '../../utils/ruleParser'
 
+// 获取屏幕宽度
+let width = _screen.width
+const styles = StyleSheet.create({
+  itemContainer: {
+    position: 'relative',
+  },
+  tooltipContainer: {
+    position: 'absolute',
+    bottom: 15,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    ..._style.wh('100%', 15),
+  },
+  btn_like: {
+    ..._style.wh(10),
+    tintColor: '#6cf',
+  },
+  img: {
+    ..._style.wh(_env.NSFW ? width / 2 : 10),
+    resizeMode: 'contain',
+  },
+  imgContainer: {
+    ..._style.wh(width / 2),
+    ..._style.center(),
+    position: 'relative',
+  },
+})
+
 export const RenderGalleryItem = connect((state) => ({}))(function (props) {
   let { item, index, isLike, likesToggle, navigation } = props
   // console.log('render', index)
-
-  // 获取屏幕宽度
-  let width = _screen.width
-  const styles = StyleSheet.create({
-    itemContainer: {
-      position: 'relative',
-    },
-    tooltipContainer: {
-      position: 'absolute',
-      bottom: 15,
-      alignItems: 'flex-end',
-      justifyContent: 'flex-end',
-      ..._style.wh('100%', 15),
-    },
-    btn_like: {
-      ..._style.wh(10),
-      tintColor: '#6cf',
-    },
-    img: {
-      ..._style.wh(_env.NSFW ? width / 2 : 10),
-      resizeMode: 'contain',
-    },
-    imgContainer: {
-      ..._style.wh(width / 2),
-      ..._style.center(),
-      position: 'relative',
-    },
-  })
 
   function RenderItemType() {
     return (
@@ -58,6 +58,7 @@ export const RenderGalleryItem = connect((state) => ({}))(function (props) {
 
   function RenderImg() {
     let uri = executePaser(_config.rule.discover.cover, item)
+
     return (
       <TouchableNativeFeedback
         onPress={() => {
@@ -68,7 +69,7 @@ export const RenderGalleryItem = connect((state) => ({}))(function (props) {
         }}
       >
         <View style={{ ...styles.imgContainer }}>
-          {RenderItemType()}
+          {/* {RenderItemType()} */}
           <Image source={{ uri }} style={styles.img}></Image>
         </View>
       </TouchableNativeFeedback>

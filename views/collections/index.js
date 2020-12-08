@@ -6,6 +6,7 @@ import { Badge, Button, Chip, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
 import ChipList from '../../components/chipList'
 import { _style } from '../../style'
+import request from '../../utils/request'
 
 export const view_collections = connect(
   (state) => ({

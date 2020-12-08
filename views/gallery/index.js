@@ -8,7 +8,7 @@ import DebugInfo from '../../components/debugInfo'
 import _config from '../../config/base.config'
 import { _style } from '../../style'
 import request from '../../utils/request'
-import { parserStringValue } from '../../utils/ruleParser'
+import { parserItemValue, parserStringValue } from '../../utils/ruleParser'
 import { genHandlerScrollEnd } from '../../utils/utils'
 import GalleryHeader from './header'
 import { RenderGalleryItem } from './item'
@@ -27,18 +27,23 @@ var Gallery = connect(
   let { navigation, route, likesToggle } = props
   console.log(`--- render ${route?.params?.tags ?? 'home'} gallery ---`)
 
+  // dataList
   let [dataList, setDataList] = useState([])
-  let [pid, setPid] = useState(0)
+
+  // pid
+  let pidInit = _config.rule?.config?.pageNumStart ?? 0
+  let [pid, setPid] = useState(pidInit)
+
+  // loading
   let loading = false,
     setLoading = () => {}
-
   let [firstLoad, setFirstLoad] = useState(true)
 
   let { imgLikes } = props
   useEffect(() => {
     initState()
 
-    loadData(0)
+    loadData(pidInit)
   }, [])
 
   function initState() {
@@ -46,11 +51,12 @@ var Gallery = connect(
     // reset dataList 关键
     dataList.length = 0
     setDataList(dataList)
-    setPid(0)
+    setPid(pidInit)
   }
 
   function loadData(pid) {
     setLoading(true)
+    // imgLikes-mode
     if (route?.params?.likeList) {
       let dataList = Object.values(imgLikes).reverse()
       setDataList(dataList)
@@ -62,14 +68,17 @@ var Gallery = connect(
     let tags = route?.params?.tags ?? ''
     console.log(`load ${tags}`)
 
+    // **script-load request**
     let requestUrl = parserStringValue(_config.rule.discover.url, {
       searchString: tags,
       pageLimit: 20,
       pageNum: pid,
     })
+    // console.log(requestUrl)
     request(requestUrl).then((res) => {
+      let resDataList = parserItemValue(_config.rule.discover?.list ?? '$', res)
       function ejectData() {
-        let newDataList = [...dataList, ...res]
+        let newDataList = [...dataList, ...resDataList]
         setDataList(newDataList)
         setLoading(false)
       }
@@ -82,6 +91,7 @@ var Gallery = connect(
       } else {
         ejectData()
       }
+      setPid(pid)
     })
   }
 
@@ -90,7 +100,6 @@ var Gallery = connect(
     if (!loading) {
       console.log('scroll end pid:', pid)
       loadData(pid + 1)
-      setPid(pid + 1)
     }
   })
 

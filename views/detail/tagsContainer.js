@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Divider, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
 import { detailTags } from '../../api/detail_reptiles'
 import ChipList from '../../components/chipList'
+import _config from '../../config/base.config'
+import request from '../../utils/request'
+import { executePaser } from '../../utils/ruleParser'
 
 let TagsContainer = connect((state) => ({
   isAdvancedTags: state.setting.isAdvancedTags,
@@ -17,9 +20,16 @@ let TagsContainer = connect((state) => ({
     // generals: [],
     // metadatas: [],
   })
-  if (isAdvancedTags) {
-    detailTags(id).then((res) => setAtags(res))
-  }
+
+  useEffect(() => {
+    let requestUrl = executePaser(_config.rule.content.url, {
+      id,
+    })
+    request(requestUrl).then((res) => {
+      let _tags = executePaser(_config.rule.content.tags, res)
+      setAtags(_tags)
+    })
+  }, [])
 
   function onPress(tag = '') {
     let tags = tag.replace(/\s/g, '_')
@@ -34,13 +44,13 @@ let TagsContainer = connect((state) => ({
     })
   }
 
-  let el
+  let el = <></>
   if (Object.keys(atags).length)
     el = (
       <View>
         {['character', 'artist', 'general', 'copyright', 'metadata'].map(
           (type) => {
-            let dataList = atags[`${type}s`]
+            let dataList = atags[`${type}`]
             return (
               <View key={type}>
                 {dataList.length ? (
@@ -62,18 +72,6 @@ let TagsContainer = connect((state) => ({
         )}
       </View>
     )
-  else {
-    // 简单tags模式
-    el = (
-      <View>
-        {ChipList({
-          dataList: tags,
-          onPress,
-          onLongPress,
-        })}
-      </View>
-    )
-  }
 
   return el
 })

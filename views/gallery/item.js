@@ -14,7 +14,7 @@ import {
 
 export const RenderGalleryItem = connect((state) => ({}))(function (props) {
   let { item, index, isLike, likesToggle, navigation } = props
-  console.log('render', index)
+  // console.log('render', index)
 
   // 获取屏幕宽度
   let width = _screen.width

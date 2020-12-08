@@ -32,7 +32,7 @@
                     artist:q('.tag-type-artist a').text(),
                     general:q('.tag-type-general a').text(),
                     metadata:q('.tag-type-metadata a').text()
-                }）
+                })
             </tags>
         </content>
     </main>

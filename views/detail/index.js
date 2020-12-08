@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Image,
-  Linking,
-  ScrollView,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native'
-import { Colors, Divider, FAB, Text } from 'react-native-paper'
+import { Image, ScrollView, TouchableWithoutFeedback, View } from 'react-native'
+import { Button, Colors, Divider, FAB, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
 import ChipList from '../../components/chipList'
 import DebugInfo from '../../components/debugInfo'
@@ -17,7 +11,7 @@ import { _style } from '../../style'
 import { _env, _screen } from '../../utils/env'
 import request from '../../utils/request'
 import { executePaser } from '../../utils/ruleParser'
-import { deurl } from '../../utils/utils'
+import { deurl, handleOpenUrl } from '../../utils/utils'
 import TagsContainer from './tagsContainer'
 
 function RenderImageEl(uri, data) {
@@ -131,19 +125,12 @@ const Detail = connect((state) => ({
       }
     })
 
-    dataList.unshift({
-      label: 'web',
-      url: `https://rule34.xxx/index.php?page=post&s=view&id=${data.id}`,
-    })
-
-    function handleOpenUrl(url) {
-      return Linking.canOpenURL(url).then((can) => {
-        if (can) Linking.openURL(url)
-        else console.error(`can\'t open ${url}`)
-      })
-    }
-    return (
-      <View style={{ marginBottom: 20 }}>
+    return dataList.length ? (
+      <View>
+        <View>
+          <Text>reffers</Text>
+          <Divider />
+        </View>
         {ChipList({
           dataList,
           onPress(data) {
@@ -151,6 +138,8 @@ const Detail = connect((state) => ({
           },
         })}
       </View>
+    ) : (
+      <></>
     )
   }
 
@@ -172,11 +161,20 @@ const Detail = connect((state) => ({
         <ScrollView>
           {RenderImageEl(uri, data)}
           {tagsContainer}
-          <View>
-            <Text>reffers</Text>
-            <Divider />
-          </View>
           {RenderReffer()}
+          <View>
+            <Button
+              mode="contained"
+              onPress={() =>
+                handleOpenUrl(
+                  `https://rule34.xxx/index.php?page=post&s=view&id=${data.id}`,
+                )
+              }
+            >
+              origin
+            </Button>
+          </View>
+          <View style={{ marginTop: 20 }}></View>
         </ScrollView>
         {RenderDebugInfo()}
         {RenderLike()}

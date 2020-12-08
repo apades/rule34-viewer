@@ -67,7 +67,6 @@ var Gallery = connect(
       pageLimit: 20,
       pageNum: pid,
     })
-    // console.log(requestUrl)
     request(requestUrl).then((res) => {
       function ejectData() {
         let newDataList = [...dataList, ...res]
@@ -84,24 +83,6 @@ var Gallery = connect(
         ejectData()
       }
     })
-
-    // imgList_o({ tags, limit: 20, pid }).then((res) => {
-    //   function ejectData() {
-    //     let newDataList = [...dataList, ...res.dataList]
-    //     setDataList(newDataList)
-    //     setLoading(false)
-    //   }
-
-    //   if (firstLoad) {
-    //     console.log('init')
-    //     setFirstLoad(() => {
-    //       ejectData()
-    //       return false
-    //     })
-    //   } else {
-    //     ejectData()
-    //   }
-    // })
   }
 
   // container scroll event

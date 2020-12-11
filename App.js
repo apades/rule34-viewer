@@ -8,7 +8,7 @@ import {
 import { createStackNavigator } from '@react-navigation/stack'
 import * as React from 'react'
 import { useEffect } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { LogBox, StyleSheet, View } from 'react-native'
 import { FAB } from 'react-native-paper'
 import { connect, Provider } from 'react-redux'
 import { createStore } from 'redux'
@@ -19,6 +19,8 @@ import Detail from './views/detail'
 import view_gallery from './views/gallery'
 import Search from './views/search'
 import Setting from './views/setting'
+
+LogBox.ignoreLogs(['Remote debugger'])
 
 const Stack = createStackNavigator()
 const store = createStore(reducer)

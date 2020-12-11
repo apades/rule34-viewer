@@ -1,11 +1,6 @@
 import koaRouter from '@koa/router'
-import { getList, proxy } from './api'
-import list from './api/list'
-import detail from './api/detail'
 import { search } from 'booru'
-import { createProxyMiddleware } from 'http-proxy-middleware'
-import Axios from 'axios'
-import { request_o } from './request'
+import { request } from './request'
 var e2k = require('koa-connect')
 
 let router = new koaRouter()
@@ -13,35 +8,23 @@ router
   .get('/', () => 'yeah')
   .get('/proxy', async (ctx) => {
     let { url } = ctx.query
-    let body = await proxy(decodeURIComponent(url))
+    url = decodeURIComponent(url)
+    console.log(`proxy: ${url}`)
+    let body = await request(url)
     ctx.body = body
   })
-  .get('/getList', async (ctx) => {
-    let data = await getList(ctx.query)
-    ctx.body = data
-  })
-  .get('/list/:tags', async (ctx) => {
-    let data = await list(ctx)
-    ctx.body = data
-  })
-  .get('/detail/:id', async (ctx) => {
-    let data = await detail(ctx)
-    ctx.body = data
-  })
-  .get('/rule34/:tags', async ({ params, query }) => {
+  .get('/booru/:site/:tags', async ({ params, query }) => {
     let tags = [...params.tags.split(',')]
 
-    let data = await search('rule34', tags, query)
+    let data = await search(params.site, tags, query)
     return data
   })
-  .get('/img/:url', async ({ params }) => {})
-
-router.get('/proxy-img', async (ctx) => {
-  let url = decodeURIComponent(ctx.query.url)
-  console.log(url)
-  let res = await request_o(url, { responseType: 'arraybuffer' })
-  ctx.set('content-type', 'image/png')
-  ctx.body = res
-})
+  .get('/proxy-img', async (ctx) => {
+    let url = decodeURIComponent(ctx.query.url)
+    console.log(url)
+    let res = await request(url, { responseType: 'arraybuffer' })
+    ctx.set('content-type', 'image/png')
+    ctx.body = res
+  })
 
 export default router

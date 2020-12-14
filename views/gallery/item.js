@@ -40,12 +40,14 @@ const styles = StyleSheet.create({
   },
 })
 
-export const RenderGalleryItem = connect((state) => ({}))(function (props) {
+export const RenderGalleryItem = connect((state) => ({
+  rule: state.setting.rule,
+}))(function (props) {
   let { item, index, isLike, likesToggle, navigation } = props
   // console.log('render', index)
 
   function RenderItemType() {
-    // let type = executePaser(_config.rule.)
+    // let type = executePaser(props.rule.)
     return (
       <View style={{ position: 'absolute', left: 0, top: 0 }}>
         {item.tags.indexOf('webm') !== -1 ? (
@@ -58,7 +60,7 @@ export const RenderGalleryItem = connect((state) => ({}))(function (props) {
   }
 
   function RenderImg() {
-    let uri = executePaser(_config.rule.discover.cover, item)
+    let uri = executePaser(props.rule.discover.cover, item)
 
     return (
       <TouchableNativeFeedback

@@ -66,13 +66,14 @@ function RenderImageEl(uri, data) {
 
 const Detail = connect((state) => ({
   getLikes: (id) => state.likes.imgs[`rule34_${id}`],
+  rule: state.setting.rule,
 }))(function (props) {
   console.log('render contain')
   let { navigation, route, dispatch } = props
 
   let data = route.params?.data ?? {}
 
-  let uri = executePaser(_config.rule.content.image, { $i: data })
+  let uri = executePaser(props.rule.content.image, { $i: data })
 
   function RenderLike() {
     let { getLikes } = props

@@ -9,6 +9,7 @@ import { executePaser } from '../../utils/ruleParser'
 
 let TagsContainer = connect((state) => ({
   isAdvancedTags: state.setting.isAdvancedTags,
+  rule: state.setting.rule,
 }))(function (props) {
   let { tags, id, isAdvancedTags, navigation, data } = props
 
@@ -21,16 +22,16 @@ let TagsContainer = connect((state) => ({
   })
 
   useEffect(() => {
-    if (_config.rule.content.url) {
-      let requestUrl = executePaser(_config.rule.content.url, {
+    if (props.rule.content.url) {
+      let requestUrl = executePaser(props.rule.content.url, {
         id,
       })
       request(requestUrl).then((res) => {
-        let _tags = executePaser(_config.rule.content.tags, res)
+        let _tags = executePaser(props.rule.content.tags, res)
         setAtags(_tags)
       })
     } else {
-      let _tags = executePaser(_config.rule.content.tags, data)
+      let _tags = executePaser(props.rule.content.tags, data)
       setAtags(_tags)
     }
   }, [])

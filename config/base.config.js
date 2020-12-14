@@ -9,11 +9,11 @@ const _config = {
     pageLimit: 20,
   },
   showDebugComponent: false,
-  rule: rule_rule34,
+  // rule: rule_rule34,
 }
-AsyncStorage.getItem('config_rule').then((res) => {
-  console.log('get', res)
-  if (res) _config.rule = res === 'rule_rule34' ? rule_rule34 : rule_e621
-})
+// AsyncStorage.getItem('config_rule').then((res) => {
+//   console.log('get', res)
+//   if (res) _config.rule = res === 'rule_rule34' ? rule_rule34 : rule_e621
+// })
 
 export default _config

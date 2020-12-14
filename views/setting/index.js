@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 let Setting = connect((state) => ({
   likes: state.likes,
   setting: state.setting,
+  rule: state.setting.rule,
 }))(function (props) {
   let { navigation, route } = props
 
@@ -24,7 +25,7 @@ let Setting = connect((state) => ({
     dispatch({ type: 'likes/init', imgs: newImgs, initStore: true })
   }
 
-  console.log(setting)
+  // console.log(setting)
   return statuBarLayout({
     children() {
       return (
@@ -52,13 +53,13 @@ let Setting = connect((state) => ({
             </Button>
           </View> */}
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text>{props.rule.name}</Text>
             <Button
               mode="contained"
               onPress={() => {
-                AsyncStorage.getItem('config_rule').then((res) => {
-                  let rs = res === 'rule_rule34' ? 'rule_e621' : 'rule_rule34'
-                  console.log('set', rs)
-                  AsyncStorage.setItem('config_rule', rs)
+                dispatch({
+                  type: 'setting/setRule',
+                  ruleName: props.rule.name === 'rule34' ? 'e621' : 'rule34',
                 })
               }}
             >

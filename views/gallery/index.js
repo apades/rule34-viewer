@@ -16,6 +16,7 @@ var Gallery = connect(
   (state) => {
     return {
       imgLikes: state.likes.imgs,
+      rule: state.setting.rule,
     }
   },
   (dispatch) => ({
@@ -30,7 +31,7 @@ var Gallery = connect(
   let [dataList, setDataList] = useState([])
 
   // pid
-  let pidInit = _config.rule?.config?.pageNumStart ?? 0
+  let pidInit = props.rule?.config?.pageNumStart ?? 0
   let [pid, setPid] = useState(pidInit)
 
   // loading
@@ -68,14 +69,14 @@ var Gallery = connect(
     console.log(`load ${tags}`)
 
     // **script-load request**
-    let requestUrl = parserStringValue(_config.rule.discover.url, {
+    let requestUrl = parserStringValue(props.rule.discover.url, {
       searchString: tags,
       pageLimit: 20,
       pageNum: pid,
     })
-    // console.log(requestUrl)
+    console.log(requestUrl)
     request(requestUrl).then((res) => {
-      let resDataList = parserItemValue(_config.rule.discover?.list ?? '$', res)
+      let resDataList = parserItemValue(props.rule.discover?.list ?? '$', res)
       function ejectData() {
         let newDataList = [...dataList, ...resDataList]
         setDataList(newDataList)

@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import statuBarLayout from '../../layout/statuBar'
 import { _style } from '../../style'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as fs from 'expo-file-system'
 
 let Setting = connect((state) => ({
   likes: state.likes,
@@ -14,7 +15,11 @@ let Setting = connect((state) => ({
   let { navigation, route } = props
 
   let { dispatch, likes, setting } = props
-  console.log(Object.keys(likes.imgs))
+  // console.log(Object.keys(likes.imgs))
+  // let [dir,setDir] = useState('')
+  let dir = fs.documentDirectory
+  // console.log(fs.documentDirectory)
+
   let clear = (key) => dispatch({ type: 'likes/clear', key })
   let changeLikes = () => {
     let imgs = { ...likes.imgs }
@@ -30,6 +35,9 @@ let Setting = connect((state) => ({
     children() {
       return (
         <>
+          <View>
+            <Text>{dir}</Text>
+          </View>
           <View>
             <Text>clear</Text>
             <Divider />

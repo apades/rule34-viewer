@@ -15,8 +15,9 @@ let Setting = connect((state) => ({
   let { navigation, route } = props
 
   let { dispatch, likes, setting } = props
-  let dir = fs.documentDirectory
-  function writeFile(filename, content) {
+  // let dir = fs.documentDirectory
+  let dir = 'file:///storage/emulated/0/'
+  async function writeFile(filename, content) {
     let uri = `${dir}${filename}.txt`
     return fs
       .writeAsStringAsync(uri, content, {
@@ -26,28 +27,30 @@ let Setting = connect((state) => ({
         () =>
           ToastAndroid.showWithGravity(
             `导出成功 ${dir}`,
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
           ),
         (rej) =>
           ToastAndroid.showWithGravity(
             `导出失败 ${rej}`,
             ToastAndroid.LONG,
-            ToastAndroid.CENTER,
+            ToastAndroid.BOTTOM,
           ),
       )
       .catch((err) =>
         ToastAndroid.showWithGravity(
           `发生错误 ${err}`,
           ToastAndroid.LONG,
-          ToastAndroid.CENTER,
+          ToastAndroid.BOTTOM,
         ),
       )
   }
   // fs.readAsStringAsync(dir + 'tags.txt', {
   //   encoding: fs.EncodingType.UTF8,
   // }).then((res) => console.log(res))
-  // fs.readDirectoryAsync(dir).then((res) => console.log(res))
+  // fs.readDirectoryAsync('file:///storage/emulated/0').then((res) =>
+  //   console.log(res),
+  // )
 
   let clear = (key) => dispatch({ type: 'likes/clear', key })
   let changeLikes = () => {

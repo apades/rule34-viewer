@@ -1,6 +1,6 @@
 import React from 'react'
-import { StatusBar, Text, View } from 'react-native'
-import { Button, Divider, Switch } from 'react-native-paper'
+import { StatusBar, Text, ToastAndroid, View } from 'react-native'
+import { Button, Colors, Divider, Switch } from 'react-native-paper'
 import { connect } from 'react-redux'
 import statuBarLayout from '../../layout/statuBar'
 import { _style } from '../../style'
@@ -15,10 +15,39 @@ let Setting = connect((state) => ({
   let { navigation, route } = props
 
   let { dispatch, likes, setting } = props
-  // console.log(Object.keys(likes.imgs))
-  // let [dir,setDir] = useState('')
   let dir = fs.documentDirectory
-  // console.log(fs.documentDirectory)
+  function writeFile(filename, content) {
+    let uri = `${dir}${filename}.txt`
+    return fs
+      .writeAsStringAsync(uri, content, {
+        encoding: fs.EncodingType.UTF8,
+      })
+      .then(
+        () =>
+          ToastAndroid.showWithGravity(
+            `导出成功 ${dir}`,
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+          ),
+        (rej) =>
+          ToastAndroid.showWithGravity(
+            `导出失败 ${rej}`,
+            ToastAndroid.LONG,
+            ToastAndroid.CENTER,
+          ),
+      )
+      .catch((err) =>
+        ToastAndroid.showWithGravity(
+          `发生错误 ${err}`,
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
+        ),
+      )
+  }
+  // fs.readAsStringAsync(dir + 'tags.txt', {
+  //   encoding: fs.EncodingType.UTF8,
+  // }).then((res) => console.log(res))
+  // fs.readDirectoryAsync(dir).then((res) => console.log(res))
 
   let clear = (key) => dispatch({ type: 'likes/clear', key })
   let changeLikes = () => {
@@ -36,21 +65,39 @@ let Setting = connect((state) => ({
       return (
         <>
           <View>
-            <Text>{dir}</Text>
-          </View>
-          <View>
-            <Text>clear</Text>
-            <Divider />
+            <Text>dir:{dir}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Button mode="contained" onPress={() => clear('tag')}>
-              tags
+            <Text>tags</Text>
+            <Button
+              mode="contained"
+              onPress={() => writeFile('tags', JSON.stringify(likes.tags))}
+            >
+              export
+            </Button>
+            <Button
+              color={Colors.red600}
+              mode="contained"
+              onPress={() => clear('tag')}
+            >
+              clear
             </Button>
             <Text>length:{Object.keys(likes.tags).length}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Button mode="contained" onPress={() => clear('img')}>
-              imgs
+            <Text>imgs</Text>
+            <Button
+              mode="contained"
+              onPress={() => writeFile('imgs', JSON.stringify(likes.imgs))}
+            >
+              export
+            </Button>
+            <Button
+              color={Colors.red600}
+              mode="contained"
+              onPress={() => clear('img')}
+            >
+              clear
             </Button>
             <Text>length:{Object.keys(likes.imgs).length}</Text>
           </View>

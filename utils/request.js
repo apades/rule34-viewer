@@ -9,7 +9,7 @@ let request = Axios.create({
 
 request.interceptors.response.use(
   (res) => {
-    return ['get', 'post', 'delete'].includes(res.config.method)
+    return ['get', 'post', 'delete', 'put'].includes(res.config.method)
       ? res.data
       : res
   },
@@ -20,6 +20,9 @@ request.interceptors.response.use(
 
 request.interceptors.request.use(
   (req) => {
+    if (_env.proxy_server) req.url = `/proxy?url=${encodeURIComponent(req.url)}`
+    req.headers['user-agent'] =
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36'
     return req
   },
   (err) => {

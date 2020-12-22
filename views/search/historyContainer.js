@@ -3,8 +3,8 @@ import { ScrollView, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { Text } from 'react-native-paper'
 import { connect } from 'react-redux'
-import { searchCompleteList } from '../../api/list_o'
 import { _style } from '../../style'
+import request from '../../utils/request'
 import { debounceAsync } from '../../utils/utils'
 
 let fn = debounceAsync(async (text = '') => {
@@ -12,7 +12,9 @@ let fn = debounceAsync(async (text = '') => {
   let searchDataList = []
   if (text.trim().length) {
     let nowCompelte = searchArr[searchArr.length - 1]
-    searchDataList = await searchCompleteList(nowCompelte)
+    searchDataList = await request(
+      `https://rule34.xxx/autocomplete.php?q=${nowCompelte}`,
+    )
   }
 
   return searchDataList

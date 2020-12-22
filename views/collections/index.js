@@ -2,10 +2,9 @@ import { useIsFocused } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import { StatusBar, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import { Badge, Button, Chip, Text } from 'react-native-paper'
+import { Button } from 'react-native-paper'
 import { connect } from 'react-redux'
 import ChipList from '../../components/chipList'
-import { _style } from '../../style'
 
 export const view_collections = connect(
   (state) => ({

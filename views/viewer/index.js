@@ -1,27 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import {
-  Dimensions,
-  Image,
-  Modal,
-  StyleSheet,
-  TouchableHighlight,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import {
-  ActivityIndicator,
-  Button,
-  Text,
-  Colors,
-  IconButton,
-} from 'react-native-paper'
-import { imgList_o } from '../../api/list_o'
-import { _style } from '../../style'
-import { _env, _screen } from '../../utils/env'
-import testDataList from '../../test/list'
+import React, { useState } from 'react'
+import { Modal, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import ImageViewer from 'react-native-image-zoom-viewer'
+import { ActivityIndicator, IconButton, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
+import { _style } from '../../style'
+import { _screen } from '../../utils/env'
 
 let dataType = {
   height: '566',

@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Image,
-  Linking,
-  ScrollView,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native'
-import { Colors, Divider, FAB, Text } from 'react-native-paper'
+import { Image, ScrollView, TouchableWithoutFeedback, View } from 'react-native'
+import { Button, Colors, Divider, FAB, Text } from 'react-native-paper'
 import { connect } from 'react-redux'
 import ChipList from '../../components/chipList'
 import DebugInfo from '../../components/debugInfo'
 import imageContainer from '../../components/imageContainer'
+import _config from '../../config/base.config'
 import statuBarLayout from '../../layout/statuBar'
 import { _style } from '../../style'
 import { _env, _screen } from '../../utils/env'
 import request from '../../utils/request'
-import { deurl } from '../../utils/utils'
+import { executePaser } from '../../utils/ruleParser'
+import { deurl, handleOpenUrl } from '../../utils/utils'
 import TagsContainer from './tagsContainer'
 
 function RenderImageEl(uri, data) {
@@ -36,7 +32,7 @@ function RenderImageEl(uri, data) {
     }
   }, [])
 
-  if (_env.NSFW) {
+  if (!_env.NSFW) {
     ImageEl = <Text>img:{uri}</Text>
   } else {
     ImageEl =
@@ -45,7 +41,7 @@ function RenderImageEl(uri, data) {
             source: { uri },
           })
         : imageContainer({
-            source: { uri: data.preview_url },
+            source: { uri: data.cover },
             child: () =>
               isVideo ? (
                 <View
@@ -70,15 +66,14 @@ function RenderImageEl(uri, data) {
 
 const Detail = connect((state) => ({
   getLikes: (id) => state.likes.imgs[`rule34_${id}`],
+  rule: state.setting.rule,
 }))(function (props) {
   console.log('render contain')
   let { navigation, route, dispatch } = props
 
   let data = route.params?.data ?? {}
 
-  let uri = data.file_url
-  let match = uri.match(/.*?\/\/(.*?\.)rule34/)[1]
-  uri = uri.replace(match, '')
+  let uri = executePaser(props.rule.content.image, { $i: data })
 
   function RenderLike() {
     let { getLikes } = props
@@ -100,13 +95,14 @@ const Detail = connect((state) => ({
     )
   }
 
-  let tags = data?.tags?.split(' ').filter((str) => str !== '')
+  // let tags = data?.tags?.split(' ').filter((str) => str !== '')
   let tagsContainer = (
     <TagsContainer
+      data={data}
       id={data.id}
       navigation={navigation}
       nowTag={route.params?.nowTag}
-      tags={tags}
+      // tags={tags}
     />
   )
 
@@ -131,19 +127,12 @@ const Detail = connect((state) => ({
       }
     })
 
-    dataList.unshift({
-      label: 'web',
-      url: `https://rule34.xxx/index.php?page=post&s=view&id=${data.id}`,
-    })
-
-    function handleOpenUrl(url) {
-      return Linking.canOpenURL(url).then((can) => {
-        if (can) Linking.openURL(url)
-        else console.error(`can\'t open ${url}`)
-      })
-    }
-    return (
-      <View style={{ marginBottom: 20 }}>
+    return dataList.length ? (
+      <View>
+        <View>
+          <Text>reffers</Text>
+          <Divider />
+        </View>
         {ChipList({
           dataList,
           onPress(data) {
@@ -151,6 +140,8 @@ const Detail = connect((state) => ({
           },
         })}
       </View>
+    ) : (
+      <></>
     )
   }
 
@@ -172,11 +163,20 @@ const Detail = connect((state) => ({
         <ScrollView>
           {RenderImageEl(uri, data)}
           {tagsContainer}
-          <View>
-            <Text>reffers</Text>
-            <Divider />
-          </View>
           {RenderReffer()}
+          <View>
+            <Button
+              mode="contained"
+              onPress={() =>
+                handleOpenUrl(
+                  `https://rule34.xxx/index.php?page=post&s=view&id=${data.id}`,
+                )
+              }
+            >
+              origin
+            </Button>
+          </View>
+          <View style={{ marginTop: 20 }}></View>
         </ScrollView>
         {RenderDebugInfo()}
         {RenderLike()}

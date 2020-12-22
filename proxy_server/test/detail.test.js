@@ -1,5 +1,3 @@
-import { readFileSync } from 'fs'
-import { resolveData } from '../api/detail'
 import { parse } from 'node-html-parser'
 import { request } from '../request'
 

@@ -1,7 +1,6 @@
 import fs from 'fs'
-import { get } from 'lodash'
+import lodash, { get } from 'lodash'
 import path from 'path'
-// import lodash from 'lodash'
 
 let data = {
   directory: '3741',
@@ -35,9 +34,21 @@ function parserStringValue(string = '', obj = {}) {
   return string
 }
 
-function parserItemValue(path = '') {
+function parserItemValue(data, path = '') {
   let v = { $: data }
   return get(v, path)
+}
+
+function evalScript(script, ...value) {
+  let _rs
+  let scriptStr = `_rs=(${script})(${value
+    .map((v) => {
+      if (lodash.isObject(v)) return JSON.stringify(v)
+      return v
+    })
+    .join(',')})`
+  eval(scriptStr)
+  return _rs
 }
 
 // console.log(
@@ -48,4 +59,8 @@ function parserItemValue(path = '') {
 //   }),
 // )
 
-console.log(parserItemValue('$.id'))
+// console.log(parserItemValue(data,'$.id'))
+
+// console.log(
+//   evalScript('($)=>`https://rule34.xxx/${$.directory}/${$.image}`', data),
+// )

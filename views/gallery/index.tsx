@@ -10,9 +10,11 @@ import request from '../../utils/request'
 import { parserItemValue, parserStringValue } from '../../utils/ruleParser'
 import { genHandlerScrollEnd } from '../../utils/utils'
 import GalleryHeader from './header'
-import { RenderGalleryItem } from './item'
+import RenderGalleryItem from './item'
 
-type rProps = ConnectedProps<typeof connector> & any
+type rProps = ConnectedProps<typeof connector> & {
+  [k: string]: any
+}
 
 const Gallery: FC<rProps> = function (props) {
   let { navigation, route, likesToggle } = props
@@ -93,46 +95,49 @@ const Gallery: FC<rProps> = function (props) {
     }
   })
 
-  return  <View style={{ ..._style.wh('100%'), position: 'relative' }}>
-   <GalleryHeader tags={route.params?.tags || ''} />
-  <FlatGrid
-    data={dataList}
-    onScroll={handlerScrollEnd}
-    renderItem={({ item, index }) => (
-      <RenderGalleryItem
-        index={index}
-        isLike={!!imgLikes[`rule34_${item.id}`]}
-        item={item}
-        likesToggle={likesToggle}
-        navigation={navigation}
-        nowTag={route.params?.tags}
+  return (
+    <View style={{ ..._style.wh('100%'), position: 'relative' }}>
+      <GalleryHeader tags={route.params?.tags || ''} />
+      <FlatGrid
+        data={dataList}
+        onScroll={handlerScrollEnd}
+        renderItem={({ item, index }) => (
+          <RenderGalleryItem
+            index={index}
+            isLike={!!imgLikes[`rule34_${item.id}`]}
+            item={item}
+            likesToggle={likesToggle}
+            navigation={navigation}
+            nowTag={route.params?.tags}
+          />
+        )}
       />
-    )}
-  />
-  {firstLoad && (
-    <View
-      style={{
-        ..._style.wh('100%'),
-        ..._style.center(),
-        position: 'absolute',
-        top: 0,
-      }}
-    >
-      <ActivityIndicator animating={true} />
+      {firstLoad && (
+        <View
+          style={{
+            ..._style.wh('100%'),
+            ..._style.center(),
+            position: 'absolute',
+            top: 0,
+          }}
+        >
+          <ActivityIndicator animating={true} />
+        </View>
+      )}
+      <DebugInfo>
+        <Text>
+          l:{dataList.length} p:{pid}
+        </Text>
+      </DebugInfo>
+      {loading && !firstLoad && (
+        <View
+          style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 1000 }}
+        >
+          <ActivityIndicator animating={true} />
+        </View>
+      )}
     </View>
-  )}
-  <DebugInfo>
-    <Text>
-      l:{dataList.length} p:{pid}
-    </Text>
-  </DebugInfo>
-  {loading &&
-    !firstLoad && <View
-    style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 1000 }}
-  >
-    <ActivityIndicator animating={true} />
-  </View>}
-</View>
+  )
 }
 
 const mapStateToProps = (state: StateBase) => {
@@ -141,7 +146,6 @@ const mapStateToProps = (state: StateBase) => {
     rule: state.setting.rule,
   }
 }
-
 const mapDispatchToProps = {
   likesToggle: (data: any) => (dispatch: Dispatch<RootActions>) =>
     dispatch({ type: 'likes/img_toggle', id: data.id, data }),

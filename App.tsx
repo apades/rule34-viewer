@@ -7,7 +7,7 @@ import { LogBox, View } from 'react-native'
 import { connect, Provider } from 'react-redux'
 import store, { StateBase } from './reducers/index'
 import { isDev } from './utils/env'
-import { view_collections } from './views/collections'
+import view_collections from './views/collections'
 import Detail from './views/detail'
 import view_gallery from './views/gallery'
 import Search from './views/search'
@@ -15,7 +15,18 @@ import Setting from './views/setting'
 
 LogBox.ignoreLogs(['Remote debugger'])
 
-const Stack = createStackNavigator()
+export type RootStackParamList = {
+  home: undefined
+  search: undefined
+  detail: undefined
+  gallery: { tags: string } | { likeList: true } | undefined
+}
+export type TabStackParamList = {
+  collections: undefined
+  homeGallery: undefined
+  Setting: undefined
+}
+const RootStack = createStackNavigator<RootStackParamList>()
 
 function _RenderRouter(props: any) {
   // init store
@@ -42,63 +53,62 @@ function _RenderRouter(props: any) {
   }
 
   function HomeComponent() {
-    let tab = createMaterialBottomTabNavigator()
+    let tab = createMaterialBottomTabNavigator<TabStackParamList>()
     return (
-      <NavigationContainer independent={true}>
-        <tab.Navigator initialRouteName="collections">
-          <tab.Screen
-            component={view_collections}
-            name="collections"
-            options={{
-              tabBarIcon: 'heart',
-              tabBarLabel: 'collects',
-            }}
-          />
-          <tab.Screen
-            component={view_gallery}
-            name="homeGallery"
-            options={{
-              tabBarIcon: 'view-list',
-              tabBarLabel: 'gallery',
-            }}
-          />
-          <tab.Screen
-            component={Setting}
-            name="Setting"
-            options={{
-              tabBarIcon: 'settings',
-              tabBarLabel: 'setting',
-            }}
-          />
-        </tab.Navigator>
-      </NavigationContainer>
+      <tab.Navigator initialRouteName="collections">
+        <tab.Screen
+          component={view_collections}
+          name="collections"
+          options={{
+            tabBarIcon: 'heart',
+            tabBarLabel: 'collects',
+          }}
+        />
+        <tab.Screen
+          component={view_gallery}
+          name="homeGallery"
+          options={{
+            tabBarIcon: 'view-list',
+            tabBarLabel: 'gallery',
+          }}
+        />
+        <tab.Screen
+          component={Setting}
+          name="Setting"
+          options={{
+            tabBarIcon: 'settings',
+            tabBarLabel: 'setting',
+          }}
+        />
+      </tab.Navigator>
     )
   }
+
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="home">
-          <Stack.Screen
+        <RootStack.Navigator initialRouteName="home">
+          <RootStack.Screen
             component={HomeComponent}
             name="home"
             options={{ header: () => null }}
           />
-          <Stack.Screen
+          <RootStack.Screen
             component={Search}
             name="search"
             options={{ header: () => null }}
           />
-          <Stack.Screen
+          <RootStack.Screen
             component={Detail}
             name="detail"
             options={{ header: () => null }}
           />
-          <Stack.Screen
+          <RootStack.Screen
             component={view_gallery}
             name="gallery"
             options={{ header: () => null }}
           />
-        </Stack.Navigator>
+        </RootStack.Navigator>
       </NavigationContainer>
     </View>
   )

@@ -1,10 +1,24 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-let init = {
-  histories: ['dacad', 'km-15'],
+export type SearchDstate = {
+  histories: string[]
+}
+let init: SearchDstate = {
+  histories: [],
 }
 
-const search = (state = init, action) => {
+export type SearchAction = SearchInit | SearchAdd
+
+type SearchInit = {
+  type: 'search/initHis'
+  histories: string[]
+}
+type SearchAdd = {
+  type: 'search/addHis'
+  value: string
+}
+
+const search = (state = init, action: SearchAction): SearchDstate => {
   switch (action.type) {
     case 'search/addHis':
       console.log(`add ${action.value}`)

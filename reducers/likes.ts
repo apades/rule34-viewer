@@ -1,11 +1,55 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-let init = {
+type LikeData = {
+  id: number
+  [k: string]: any
+}
+
+export type LikesDstate = {
+  imgs: {
+    [k: string]: LikeData
+  }
+  tags: {
+    [k: string]: boolean
+  }
+}
+
+let init: LikesDstate = {
   imgs: {},
   tags: {},
 }
 
-const likes = (state = init, action) => {
+export type LikesAction =
+  | LikesInit
+  | LikesImgToggle
+  | LikesTagToggle
+  | LikesClear
+
+type LikesInit = {
+  type: 'likes/init'
+  imgs: {
+    [k: string]: LikeData
+  }
+  tags: {
+    [k: string]: boolean
+  }
+  initStore?: true
+}
+type LikesImgToggle = {
+  type: 'likes/img_toggle'
+  id: number
+  data: LikeData
+}
+type LikesTagToggle = {
+  type: 'likes/tag_toggle'
+  tag: string
+}
+type LikesClear = {
+  type: 'likes/clear'
+  key: 'tag' | 'img'
+}
+
+const likes = (state = init, action: LikesAction): LikesDstate => {
   switch (action.type) {
     case 'likes/init':
       for (let i in action.imgs) {
@@ -15,7 +59,7 @@ const likes = (state = init, action) => {
         state.tags[i] = action.tags[i]
       }
       if (action.initStore) {
-        console.log('init')
+        console.log('initStore')
         AsyncStorage.setItem('imgLikes', JSON.stringify(state.imgs))
         AsyncStorage.setItem('tagLikes', JSON.stringify(state.tags))
       }
@@ -33,7 +77,9 @@ const likes = (state = init, action) => {
       AsyncStorage.setItem('tagLikes', JSON.stringify(state.tags))
       return state
     case 'likes/clear':
-      state[`${action.key}s`] = {}
+      if (action.key === 'img') state.imgs = {}
+      else if (action.key === 'tag') state.tags = {}
+
       AsyncStorage.setItem(`${action.key}Likes`, '{}')
       return { ...state }
     default:

@@ -1,18 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
-import {
-  NavigationContainer,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native'
+import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import * as React from 'react'
-import { useEffect } from 'react'
-import { LogBox, StyleSheet, View } from 'react-native'
-import { FAB } from 'react-native-paper'
+import React, { useEffect } from 'react'
+import { LogBox, View } from 'react-native'
 import { connect, Provider } from 'react-redux'
-import { createStore } from 'redux'
-import reducer from './reducers/index'
+import store, { StateBase } from './reducers/index'
 import { isDev } from './utils/env'
 import { view_collections } from './views/collections'
 import Detail from './views/detail'
@@ -23,9 +16,8 @@ import Setting from './views/setting'
 LogBox.ignoreLogs(['Remote debugger'])
 
 const Stack = createStackNavigator()
-const store = createStore(reducer)
 
-function _RenderRouter(props) {
+function _RenderRouter(props: any) {
   // init store
   let { dispatch } = props
   useEffect(() => {
@@ -62,7 +54,7 @@ function _RenderRouter(props) {
               tabBarLabel: 'collects',
             }}
           />
-          <Stack.Screen
+          <tab.Screen
             component={view_gallery}
             name="homeGallery"
             options={{
@@ -70,7 +62,7 @@ function _RenderRouter(props) {
               tabBarLabel: 'gallery',
             }}
           />
-          <Stack.Screen
+          <tab.Screen
             component={Setting}
             name="Setting"
             options={{
@@ -111,13 +103,13 @@ function _RenderRouter(props) {
     </View>
   )
 }
-const RenderRouter = connect((state) => {
+const RenderRouter = connect((state: StateBase) => {
   return {
     likes: state.likes,
   }
 })(_RenderRouter)
 
-function App() {
+function App(): JSX.Element {
   return (
     <Provider store={store}>
       <RenderRouter />

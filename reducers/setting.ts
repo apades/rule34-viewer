@@ -1,14 +1,36 @@
-import rule_rule34 from '../rules/rule34.json'
-import rule_e621 from '../rules/e621.json'
+import rule_rule34 from '../rules/rule34'
+import rule_e621 from '../rules/e621'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-let init = {
+export type SettingDstate = {
+  debugMode: boolean
+  isAdvancedTags: boolean
+  rule: any
+}
+
+let init: SettingDstate = {
   debugMode: false,
   isAdvancedTags: true,
   rule: rule_rule34,
 }
 
-const setting = (state = init, action) => {
+export type SettingAction = SettingDebug | SettingChange | SettingSetRule
+
+type SettingDebug = {
+  type: 'setting/debugMode'
+  value?: boolean
+}
+type SettingChange = {
+  type: 'setting/changeSetting'
+  key: keyof SettingDstate
+  value: any
+}
+type SettingSetRule = {
+  type: 'setting/setRule'
+  ruleName: 'rule34' | 'e621'
+}
+
+const setting = (state = init, action: SettingAction): SettingDstate => {
   switch (action.type) {
     case 'setting/debugMode':
       return { ...state, debugMode: action.value ?? !state.debugMode }

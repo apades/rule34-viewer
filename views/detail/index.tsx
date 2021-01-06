@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Image, ScrollView, TouchableWithoutFeedback, View } from 'react-native'
 import { Button, Colors, Divider, FAB, Text } from 'react-native-paper'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
+import { StateBase } from 'reducers'
 import ChipList from '../../components/chipList'
 import DebugInfo from '../../components/debugInfo'
 import imageContainer from '../../components/imageContainer'
@@ -14,7 +15,7 @@ import { executePaser } from '../../utils/ruleParser'
 import { deurl, handleOpenUrl } from '../../utils/utils'
 import TagsContainer from './tagsContainer'
 
-function RenderImageEl(uri, data) {
+function RenderImageEl(uri: string, data: any) {
   console.log('render img')
   // let _isVideo = data.tags.indexOf('webm') === -1
   let [isVideo, setIsVideo] = useState(false)
@@ -64,10 +65,11 @@ function RenderImageEl(uri, data) {
   return ImageEl
 }
 
-const Detail = connect((state) => ({
-  getLikes: (id) => state.likes.imgs[`rule34_${id}`],
-  rule: state.setting.rule,
-}))(function (props) {
+type rProps = ConnectedProps<typeof connector> & {
+  [k: string]: any
+}
+
+const Detail: FC<rProps> = (props) => {
   console.log('render contain')
   let { navigation, route, dispatch } = props
 
@@ -118,7 +120,7 @@ const Detail = connect((state) => ({
       ),
     }
 
-    let reffers = (data?.source && data.source.split(' ')) || []
+    let reffers: string[] = (data?.source && data.source.split(' ')) || []
     let dataList = reffers.map((reffer) => {
       let durl = deurl(reffer)
       return {
@@ -134,9 +136,9 @@ const Detail = connect((state) => ({
           <Divider />
         </View>
         {ChipList({
-          dataList,
-          onPress(data) {
-            handleOpenUrl(data.url)
+          dataList: dataList.map((d) => d.label),
+          onPress(data, index) {
+            handleOpenUrl(dataList[index])
           },
         })}
       </View>
@@ -183,5 +185,16 @@ const Detail = connect((state) => ({
       </>
     ),
   })
-})
-export default Detail
+}
+
+const mapStateToProps = (state: StateBase) => {
+  return {
+    getLikes: (id: number) => !!state.likes.imgs[`rule34_${id}`],
+    rule: state.setting.rule,
+  }
+}
+const mapDispatchToProps = {}
+
+let connector = connect(mapStateToProps, mapDispatchToProps)
+
+export default connector(Detail)

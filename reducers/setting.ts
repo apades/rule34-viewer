@@ -2,19 +2,21 @@ import rule_rule34 from '../rules/rule34'
 import rule_e621 from '../rules/e621'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export type SettingDstate = {
-  debugMode: boolean
-  isAdvancedTags: boolean
-  rule: any
-}
+export type SettingDstate = typeof init
 
-let init: SettingDstate = {
+let init = {
   debugMode: false,
   isAdvancedTags: true,
-  rule: rule_rule34,
+  rule: rule_rule34 as any,
+  rules: [rule_rule34, rule_e621] as any[],
+  loaded: false,
 }
 
-export type SettingAction = SettingDebug | SettingChange | SettingSetRule
+export type SettingAction =
+  | SettingDebug
+  | SettingChange
+  | SettingSetRule
+  | SettingLoadRules
 
 type SettingDebug = {
   type: 'setting/debugMode'
@@ -27,7 +29,11 @@ type SettingChange = {
 }
 type SettingSetRule = {
   type: 'setting/setRule'
-  ruleName: 'rule34' | 'e621'
+  rule: any
+}
+type SettingLoadRules = {
+  type: 'setting/loadRules'
+  rules: any[]
 }
 
 const setting = (state = init, action: SettingAction): SettingDstate => {
@@ -38,9 +44,10 @@ const setting = (state = init, action: SettingAction): SettingDstate => {
       let { key, value } = action
       return { ...state, [key]: value }
     case 'setting/setRule':
-      let ruleName = action.ruleName
-      AsyncStorage.setItem('setting/rule', ruleName)
-      return { ...state, rule: ruleName === 'rule34' ? rule_rule34 : rule_e621 }
+      return { ...state, rule: action.rule }
+    case 'setting/loadRules': {
+      return { ...state, rules: action.rules, loaded: true }
+    }
     default:
       return state
   }

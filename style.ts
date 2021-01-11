@@ -1,10 +1,10 @@
 import { StyleSheet, ViewStyle } from 'react-native'
 
-function generBlockType(type) {
-  return function (str = '10') {
+function generBlockType(type: 'margin' | 'padding') {
+  return function (str = '10'): ViewStyle {
     let arr = str.split(' ').map((a) => +a)
     /** @type {ViewStyle} */
-    var rs = {}
+    let rs = {}
     switch (arr.length) {
       case 1:
         rs = {
@@ -43,45 +43,33 @@ function generBlockType(type) {
 }
 
 export const _style = {
-  dec(top = 0, left = top) {
+  wh(width: number | string, height = width): ViewStyle {
     return {
-      position: 'absolute',
-      top,
-      left,
-      backgroundColor: '#666',
-      color: 'red',
-      zIndex: 100000000,
-    }
-  },
-  wh(width, height = width) {
-    /** @type {ViewStyle} */
-    var rs = {
       width,
       height,
     }
-    return rs
   },
-  border(borderWidth = 1, borderColor = '#000', borderStyle = 'solid') {
-    /** @type {ViewStyle} */
-    var rs = {
+  border(
+    borderWidth = 1,
+    borderColor = '#000',
+    borderStyle: 'solid' | 'dotted' | 'dashed' = 'solid',
+  ): ViewStyle {
+    return {
       borderWidth,
       borderColor,
       borderStyle,
     }
-    return rs
   },
-  center() {
-    /** @type {ViewStyle} */
-    var rs = {
+  center(): ViewStyle {
+    return {
       justifyContent: 'center',
       alignItems: 'center',
     }
-    return rs
   },
-  margin(str = '10') {
-    return generBlockType('margin')
+  margin(str = '10'): ViewStyle {
+    return generBlockType('margin')(str)
   },
-  padding(str = '10') {
-    return generBlockType('padding')
+  padding(str = '10'): ViewStyle {
+    return generBlockType('padding')(str)
   },
 }

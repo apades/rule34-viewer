@@ -2,10 +2,16 @@ import React, { FC, ReactElement } from 'react'
 import { View, ViewStyle } from 'react-native'
 import { Chip, Text } from 'react-native-paper'
 
-type DataType = string | { label: string; ChipProps: typeof Chip }
+type DataType =
+  | string
+  | {
+      label: string
+      ChipProps?: typeof Chip
+      [k: string]: any
+    }
 type Props = {
   dataList: DataType[]
-  onPress?: (data: DataType) => void
+  onPress?: (data: DataType, index: number) => void
   chipStyle?: ViewStyle
   onLongPress?: (data: DataType) => void
   renderItem?: (data: DataType, index: number) => ReactElement
@@ -46,7 +52,7 @@ const ChipList: FC<Props> = (props) => {
             ) : (
               <Chip
                 onPress={() => {
-                  onPress(data)
+                  onPress(data, index)
                 }}
                 style={{
                   margin: 2,

@@ -1,42 +1,34 @@
-import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
-import { ActivityIndicator, Text } from 'react-native-paper'
+import React, { Dispatch, FC, memo, useEffect, useState } from 'react'
+import { Text, View } from 'react-native'
+import { ActivityIndicator } from 'react-native-paper'
 import { FlatGrid } from 'react-native-super-grid'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
+import { RootActions, StateBase } from 'reducers'
 import DebugInfo from '../../components/debugInfo'
-import _config from '../../config/base.config'
 import { _style } from '../../style'
 import request from '../../utils/request'
 import { parserItemValue, parserStringValue } from '../../utils/ruleParser'
 import { genHandlerScrollEnd } from '../../utils/utils'
 import GalleryHeader from './header'
-import { RenderGalleryItem } from './item'
+import RenderGalleryItem from './item'
 
-var Gallery = connect(
-  (state) => {
-    return {
-      imgLikes: state.likes.imgs,
-      rule: state.setting.rule,
-    }
-  },
-  (dispatch) => ({
-    likesToggle: (data) =>
-      dispatch({ type: 'likes/img_toggle', id: data.id, data }),
-  }),
-)(function (props) {
+type rProps = ConnectedProps<typeof connector> & {
+  [k: string]: any
+}
+
+const Gallery: FC<rProps> = function (props) {
   let { navigation, route, likesToggle } = props
   console.log(`--- render ${route?.params?.tags ?? 'home'} gallery ---`)
 
   // dataList
-  let [dataList, setDataList] = useState([])
+  let [dataList, setDataList] = useState<any>([])
 
   // pid
   let pidInit = props.rule?.config?.pageNumStart ?? 0
   let [pid, setPid] = useState(pidInit)
 
   // loading
-  let loading = false,
-    setLoading = () => {}
+  let [loading, setLoading] = useState(false)
   let [firstLoad, setFirstLoad] = useState(true)
 
   let { imgLikes } = props
@@ -54,7 +46,7 @@ var Gallery = connect(
     setPid(pidInit)
   }
 
-  function loadData(pid) {
+  function loadData(pid: number) {
     setLoading(true)
     // imgLikes-mode
     if (route?.params?.likeList) {
@@ -83,7 +75,7 @@ var Gallery = connect(
         setLoading(false)
       }
       if (firstLoad) {
-        console.log('init')
+        console.log('init Gallery')
         setFirstLoad(() => {
           ejectData()
           return false
@@ -103,42 +95,32 @@ var Gallery = connect(
     }
   })
 
-  function RenderLoading() {
-    let [_loading, _setLoading] = useState(false)
-    loading = _loading
-    setLoading = _setLoading
-
-    return _loading && !firstLoad ? (
-      <View
-        style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 1000 }}
-      >
-        <ActivityIndicator animating={true} />
-      </View>
-    ) : (
-      <></>
-    )
-  }
-
   return (
     <View style={{ ..._style.wh('100%'), position: 'relative' }}>
       <GalleryHeader tags={route.params?.tags || ''} />
-      {!firstLoad ? (
-        <FlatGrid
-          data={dataList}
-          onScroll={handlerScrollEnd}
-          renderItem={({ item, index }) => (
-            <RenderGalleryItem
-              index={index}
-              isLike={!!imgLikes[`rule34_${item.id}`]}
-              item={item}
-              likesToggle={likesToggle}
-              navigation={navigation}
-              nowTag={route.params?.tags}
-            />
-          )}
-        />
-      ) : (
-        <View style={{ ..._style.wh('100%'), ..._style.center() }}>
+      <FlatGrid
+        data={dataList}
+        onScroll={handlerScrollEnd}
+        renderItem={({ item, index }) => (
+          <RenderGalleryItem
+            index={index}
+            isLike={!!imgLikes[`rule34_${item.id}`]}
+            item={item}
+            likesToggle={likesToggle}
+            navigation={navigation}
+            nowTag={route.params?.tags}
+          />
+        )}
+      />
+      {firstLoad && (
+        <View
+          style={{
+            ..._style.wh('100%'),
+            ..._style.center(),
+            position: 'absolute',
+            top: 0,
+          }}
+        >
           <ActivityIndicator animating={true} />
         </View>
       )}
@@ -147,9 +129,28 @@ var Gallery = connect(
           l:{dataList.length} p:{pid}
         </Text>
       </DebugInfo>
-      {RenderLoading()}
+      {loading && !firstLoad && (
+        <View
+          style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 1000 }}
+        >
+          <ActivityIndicator animating={true} />
+        </View>
+      )}
     </View>
   )
-})
+}
 
-export default Gallery
+const mapStateToProps = (state: StateBase) => {
+  return {
+    imgLikes: state.likes.imgs,
+    rule: state.setting.rule,
+  }
+}
+const mapDispatchToProps = {
+  likesToggle: (data: any) => (dispatch: Dispatch<RootActions>) =>
+    dispatch({ type: 'likes/img_toggle', id: data.id, data }),
+}
+
+let connector = connect(mapStateToProps, mapDispatchToProps)
+
+export default connector(memo(Gallery))

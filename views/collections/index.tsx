@@ -1,19 +1,25 @@
-import { useIsFocused } from '@react-navigation/native'
-import React, { useEffect, useState } from 'react'
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
+import { CompositeNavigationProp, useIsFocused } from '@react-navigation/native'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { RootStackParamList, TabStackParamList } from 'App'
+import React, { FC, useEffect, useState } from 'react'
 import { StatusBar, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Button } from 'react-native-paper'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
+import { StateBase } from 'reducers'
 import ChipList from '../../components/chipList'
 
-export const view_collections = connect(
-  (state) => ({
-    getLikes: () => state.likes,
-  }),
-  (dispatch) => ({
-    search: (text) => dispatch({ type: 'search/input', text }),
-  }),
-)(function ({ navigation, getLikes, search }) {
+type rProps = ConnectedProps<typeof connector> & {
+  navigation: CompositeNavigationProp<
+    BottomTabNavigationProp<TabStackParamList, 'collections'>,
+    StackNavigationProp<RootStackParamList>
+  >
+  [k: string]: any
+}
+
+const view_collections: FC<rProps> = (props) => {
+  let { navigation, getLikes } = props
   let focus = useIsFocused()
   let [likes, setLikes] = useState(getLikes())
 
@@ -39,8 +45,7 @@ export const view_collections = connect(
         >
           {ChipList({
             dataList: collects,
-            onPress: (collect) => {
-              search(collect)
+            onPress: (collect: string) => {
               navigation.push('gallery', {
                 tags: collect,
               })
@@ -56,7 +61,6 @@ export const view_collections = connect(
           <Button
             mode="contained"
             onPress={() => {
-              search('img-likes')
               navigation.push('gallery', {
                 likeList: true,
               })
@@ -71,4 +75,15 @@ export const view_collections = connect(
       </DebugInfo> */}
     </View>
   )
-})
+}
+
+const mapStateToProps = (state: StateBase) => {
+  return {
+    getLikes: () => state.likes,
+  }
+}
+const mapDispatchToProps = {}
+
+let connector = connect(mapStateToProps, mapDispatchToProps)
+
+export default connector(view_collections)

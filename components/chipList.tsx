@@ -1,16 +1,32 @@
-import React from 'react'
-import { View } from 'react-native'
-import { Text, Chip } from 'react-native-paper'
-import { _style } from '../style'
+import React, { FC, ReactElement } from 'react'
+import { View, ViewStyle } from 'react-native'
+import { Chip, Text } from 'react-native-paper'
 
-export default function ChipList({
-  dataList = [],
-  onPress = () => {},
-  chipStyle,
-  onLongPress = () => {},
-  renderItem,
-  renderChild,
-}) {
+type DataType =
+  | string
+  | {
+      label: string
+      ChipProps?: typeof Chip
+      [k: string]: any
+    }
+type Props = {
+  dataList: DataType[]
+  onPress?: (data: DataType, index: number) => void
+  chipStyle?: ViewStyle
+  onLongPress?: (data: DataType) => void
+  renderItem?: (data: DataType, index: number) => ReactElement
+  renderChild?: (data: DataType, index: number) => ReactElement
+}
+
+const ChipList: FC<Props> = (props) => {
+  let {
+    dataList = [],
+    onPress = () => 1,
+    chipStyle = {},
+    onLongPress = () => 1,
+    renderItem,
+    renderChild,
+  } = props
   return (
     <View
       style={{
@@ -36,7 +52,7 @@ export default function ChipList({
             ) : (
               <Chip
                 onPress={() => {
-                  onPress(data)
+                  onPress(data, index)
                 }}
                 style={{
                   margin: 2,
@@ -55,3 +71,4 @@ export default function ChipList({
     </View>
   )
 }
+export default ChipList

@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Divider, Text } from 'react-native-paper'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
+import { StateBase } from 'reducers'
 import ChipList from '../../components/chipList'
 import _config from '../../config/base.config'
 import request from '../../utils/request'
 import { executePaser } from '../../utils/ruleParser'
 
-let TagsContainer = connect((state) => ({
-  isAdvancedTags: state.setting.isAdvancedTags,
-  rule: state.setting.rule,
-}))(function (props) {
+type rProps = ConnectedProps<typeof connector> & {
+  data: any
+  id: number
+  navigation: any
+  nowTag: string
+  [k: string]: any
+}
+
+let TagsContainer: FC<rProps> = (props) => {
   let { tags, id, isAdvancedTags, navigation, data } = props
 
-  let [atags, setAtags] = useState({
+  let [atags, setAtags] = useState<{ [k: string]: any }>({
     // copyrights: [],
     // characters: [],
     // artists: [],
@@ -77,6 +83,16 @@ let TagsContainer = connect((state) => ({
     )
 
   return el
-})
+}
 
-export default TagsContainer
+const mapStateToProps = (state: StateBase) => {
+  return {
+    isAdvancedTags: state.setting.isAdvancedTags,
+    rule: state.setting.rule,
+  }
+}
+const mapDispatchToProps = {}
+
+let connector = connect(mapStateToProps, mapDispatchToProps)
+
+export default connector(TagsContainer)

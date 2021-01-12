@@ -1,5 +1,5 @@
-import rule_rule34 from '../rules/rule34.json'
-import rule_e621 from '../rules/e621.json'
+import rule_rule34 from '../rules/rule34.ts'
+import rule_e621 from '../rules/e621.ts'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // config

@@ -1,20 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
-import {
-  NavigationContainer,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native'
+import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import * as React from 'react'
-import { useEffect } from 'react'
-import { LogBox, StyleSheet, View } from 'react-native'
-import { FAB } from 'react-native-paper'
+import React, { useEffect } from 'react'
+import { LogBox, View } from 'react-native'
 import { connect, Provider } from 'react-redux'
-import { createStore } from 'redux'
-import reducer from './reducers/index'
+import store, { StateBase } from './reducers/index'
 import { isDev } from './utils/env'
-import { view_collections } from './views/collections'
+import view_collections from './views/collections'
 import Detail from './views/detail'
 import view_gallery from './views/gallery'
 import Search from './views/search'
@@ -22,10 +15,20 @@ import Setting from './views/setting'
 
 LogBox.ignoreLogs(['Remote debugger'])
 
-const Stack = createStackNavigator()
-const store = createStore(reducer)
+export type RootStackParamList = {
+  home: undefined
+  search: undefined
+  detail: undefined
+  gallery: { tags: string } | { likeList: true } | undefined
+}
+export type TabStackParamList = {
+  collections: undefined
+  homeGallery: undefined
+  Setting: undefined
+}
+const RootStack = createStackNavigator<RootStackParamList>()
 
-function _RenderRouter(props) {
+function _RenderRouter(props: any) {
   // init store
   let { dispatch } = props
   useEffect(() => {
@@ -50,74 +53,73 @@ function _RenderRouter(props) {
   }
 
   function HomeComponent() {
-    let tab = createMaterialBottomTabNavigator()
+    let tab = createMaterialBottomTabNavigator<TabStackParamList>()
     return (
-      <NavigationContainer independent={true}>
-        <tab.Navigator initialRouteName="collections">
-          <tab.Screen
-            component={view_collections}
-            name="collections"
-            options={{
-              tabBarIcon: 'heart',
-              tabBarLabel: 'collects',
-            }}
-          />
-          <Stack.Screen
-            component={view_gallery}
-            name="homeGallery"
-            options={{
-              tabBarIcon: 'view-list',
-              tabBarLabel: 'gallery',
-            }}
-          />
-          <Stack.Screen
-            component={Setting}
-            name="Setting"
-            options={{
-              tabBarIcon: 'settings',
-              tabBarLabel: 'setting',
-            }}
-          />
-        </tab.Navigator>
-      </NavigationContainer>
+      <tab.Navigator initialRouteName="collections">
+        <tab.Screen
+          component={view_collections}
+          name="collections"
+          options={{
+            tabBarIcon: 'heart',
+            tabBarLabel: 'collects',
+          }}
+        />
+        <tab.Screen
+          component={view_gallery}
+          name="homeGallery"
+          options={{
+            tabBarIcon: 'view-list',
+            tabBarLabel: 'gallery',
+          }}
+        />
+        <tab.Screen
+          component={Setting}
+          name="Setting"
+          options={{
+            tabBarIcon: 'settings',
+            tabBarLabel: 'setting',
+          }}
+        />
+      </tab.Navigator>
     )
   }
+
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="home">
-          <Stack.Screen
+        <RootStack.Navigator initialRouteName="home">
+          <RootStack.Screen
             component={HomeComponent}
             name="home"
             options={{ header: () => null }}
           />
-          <Stack.Screen
+          <RootStack.Screen
             component={Search}
             name="search"
             options={{ header: () => null }}
           />
-          <Stack.Screen
+          <RootStack.Screen
             component={Detail}
             name="detail"
             options={{ header: () => null }}
           />
-          <Stack.Screen
+          <RootStack.Screen
             component={view_gallery}
             name="gallery"
             options={{ header: () => null }}
           />
-        </Stack.Navigator>
+        </RootStack.Navigator>
       </NavigationContainer>
     </View>
   )
 }
-const RenderRouter = connect((state) => {
+const RenderRouter = connect((state: StateBase) => {
   return {
     likes: state.likes,
   }
 })(_RenderRouter)
 
-function App() {
+function App(): JSX.Element {
   return (
     <Provider store={store}>
       <RenderRouter />

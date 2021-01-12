@@ -1,16 +1,12 @@
-import React, { useState } from 'react'
-import { Image, StyleSheet, View } from 'react-native'
+import React, { FC, memo, useState } from 'react'
+import { Image, ImageStyle, StyleSheet, View } from 'react-native'
 import { TouchableNativeFeedback } from 'react-native-gesture-handler'
 import { Colors, IconButton, Text } from 'react-native-paper'
-import { connect } from 'react-redux'
-import _config from '../../config/base.config'
+import { connect, ConnectedProps } from 'react-redux'
+import { StateBase } from 'reducers'
 import { _style } from '../../style'
 import { _env, _screen } from '../../utils/env'
-import {
-  evalScript,
-  executePaser,
-  parserItemValue,
-} from '../../utils/ruleParser'
+import { executePaser } from '../../utils/ruleParser'
 
 // 获取屏幕宽度
 let width = _screen.width
@@ -40,9 +36,11 @@ const styles = StyleSheet.create({
   },
 })
 
-export const RenderGalleryItem = connect((state) => ({
-  rule: state.setting.rule,
-}))(function (props) {
+type rProps = ConnectedProps<typeof connector> & {
+  [k: string]: any
+}
+
+const RenderGalleryItem: FC<rProps> = function (props) {
   let { item, index, isLike, likesToggle, navigation } = props
   // console.log('render', index)
 
@@ -73,7 +71,7 @@ export const RenderGalleryItem = connect((state) => ({
       >
         <View style={{ ...styles.imgContainer }}>
           {/* {RenderItemType()} */}
-          <Image source={{ uri }} style={styles.img}></Image>
+          <Image source={{ uri }} style={styles.img as ImageStyle}></Image>
         </View>
       </TouchableNativeFeedback>
     )
@@ -107,4 +105,15 @@ export const RenderGalleryItem = connect((state) => ({
       </View>
     </View>
   )
-})
+}
+
+const mapStateToProps = (state: StateBase) => {
+  return {
+    rule: state.setting.rule,
+  }
+}
+const mapDispatchToProps = {}
+
+let connector = connect(mapStateToProps, mapDispatchToProps)
+
+export default connector(memo(RenderGalleryItem))

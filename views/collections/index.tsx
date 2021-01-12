@@ -78,6 +78,7 @@ const view_collections: FC<rProps> = (props) => {
 }
 
 const mapStateToProps = (state: StateBase) => {
+  console.log(state.setting)
   return {
     getLikes: () => state.likes,
   }

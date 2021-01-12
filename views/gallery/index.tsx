@@ -16,12 +16,17 @@ type rProps = ConnectedProps<typeof connector> & {
   [k: string]: any
 }
 
+export type rData<T = any> = {
+  isLike: boolean
+  data: T
+}
+
 const Gallery: FC<rProps> = function (props) {
   let { navigation, route, likesToggle } = props
   console.log(`--- render ${route?.params?.tags ?? 'home'} gallery ---`)
 
   // dataList
-  let [dataList, setDataList] = useState<any>([])
+  let [dataList, setDataList] = useState<rData[]>([])
 
   // pid
   let pidInit = props.rule?.config?.pageNumStart ?? 0
@@ -50,7 +55,12 @@ const Gallery: FC<rProps> = function (props) {
     setLoading(true)
     // imgLikes-mode
     if (route?.params?.likeList) {
-      let dataList = Object.values(imgLikes).reverse()
+      let dataList: rData[] = Object.values(imgLikes)
+        .reverse()
+        .map((d) => ({
+          isLike: true,
+          data: d,
+        }))
       setDataList(dataList)
       setFirstLoad(false)
       setLoading(false)
@@ -68,7 +78,13 @@ const Gallery: FC<rProps> = function (props) {
     })
     console.log(requestUrl)
     request(requestUrl).then((res) => {
-      let resDataList = parserItemValue(props.rule.discover?.list ?? '$', res)
+      let resDataList = parserItemValue(
+        props.rule.discover?.list ?? '$',
+        res,
+      ).map((d: any) => ({
+        isLike: !!imgLikes[d.id],
+        data: d,
+      }))
       function ejectData() {
         let newDataList = [...dataList, ...resDataList]
         setDataList(newDataList)
@@ -101,17 +117,21 @@ const Gallery: FC<rProps> = function (props) {
       <FlatGrid
         data={dataList}
         onScroll={handlerScrollEnd}
-        renderItem={({ item, index }) => (
-          <RenderGalleryItem
-            index={index}
-            isLike={!!imgLikes[`rule34_${item.id}`]}
-            item={item}
-            likesToggle={likesToggle}
-            navigation={navigation}
-            nowTag={route.params?.tags}
-          />
-        )}
+        renderItem={({ item, index }) => {
+          return (
+            <RenderGalleryItem
+              key={index}
+              index={index}
+              isLike={item.isLike}
+              data={item.data}
+              likesToggle={likesToggle}
+              navigation={navigation}
+              nowTag={route.params?.tags}
+            />
+          )
+        }}
       />
+
       {firstLoad && (
         <View
           style={{

@@ -38,18 +38,18 @@ function _RenderRouter(props: any) {
     _initStore()
   }, [])
   async function _initStore() {
-    let [tags, imgs, histories, ruleName] = await Promise.all([
+    let [tags, imgs, histories] = await Promise.all([
       AsyncStorage.getItem('tagLikes'),
       AsyncStorage.getItem('imgLikes'),
       AsyncStorage.getItem('searchHistories'),
-      AsyncStorage.getItem('setting/rule'),
+      // AsyncStorage.getItem('setting/rule'),
     ])
     tags = JSON.parse(tags)
     imgs = JSON.parse(imgs)
     histories = JSON.parse(histories)
     dispatch({ type: 'likes/init', tags, imgs })
     dispatch({ type: 'search/initHis', histories })
-    dispatch({ type: 'setting/setRule', ruleName })
+    // dispatch({ type: 'setting/setRule', ruleName })
   }
 
   function HomeComponent() {

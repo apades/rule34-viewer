@@ -4,7 +4,7 @@ import { _env, ip } from './env'
 let request = Axios.create({
   // baseURL: _env.baseURL,
   baseURL: (_env.proxy_server && `http://${ip}:3001`) || '',
-  // timeout: 5000,
+  timeout: 5000,
 })
 
 request.interceptors.response.use(
@@ -15,6 +15,7 @@ request.interceptors.response.use(
   },
   (err) => {
     console.error('axios error', err)
+    throw err
   },
 )
 
@@ -27,6 +28,7 @@ request.interceptors.request.use(
   },
   (err) => {
     console.error('axios请求错误', err)
+    throw err
   },
 )
 

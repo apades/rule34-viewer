@@ -37,18 +37,21 @@ const styles = StyleSheet.create({
 })
 
 type rProps = ConnectedProps<typeof connector> & {
+  data: any
+  index: number
+  isLike: boolean
+  likesToggle: (data: any) => void
   [k: string]: any
 }
 
 const RenderGalleryItem: FC<rProps> = function (props) {
-  let { item, index, isLike, likesToggle, navigation } = props
-  // console.log('render', index)
+  let { data, index, isLike, likesToggle, navigation } = props
 
   function RenderItemType() {
     // let type = executePaser(props.rule.)
     return (
       <View style={{ position: 'absolute', left: 0, top: 0 }}>
-        {item.tags.indexOf('webm') !== -1 ? (
+        {data.tags.indexOf('webm') !== -1 ? (
           <Text style={{ color: Colors.blue300 }}>Webm</Text>
         ) : (
           <></>
@@ -58,13 +61,13 @@ const RenderGalleryItem: FC<rProps> = function (props) {
   }
 
   function RenderImg() {
-    let uri = executePaser(props.rule.discover.cover, item)
+    let uri = executePaser(props.rule.discover.cover, data)
 
     return (
       <TouchableNativeFeedback
         onPress={() => {
           navigation.push('detail', {
-            data: { ...item, cover: uri },
+            data: { ...data, cover: uri },
             nowTag: props.nowTag,
           })
         }}
@@ -87,7 +90,7 @@ const RenderGalleryItem: FC<rProps> = function (props) {
           color="#6cf"
           icon={like ? 'heart' : 'heart-outline'}
           onPress={() => {
-            likesToggle(item)
+            likesToggle(data)
             setLike(!like)
           }}
           size={width}
@@ -96,7 +99,7 @@ const RenderGalleryItem: FC<rProps> = function (props) {
     )
   }
   return (
-    <View key={item.id} style={styles.itemContainer}>
+    <View style={styles.itemContainer}>
       {/* 图片可触摸区 */}
       <RenderImg />
       {/* 工具区 */}

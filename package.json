@@ -25,7 +25,7 @@
     "expo-file-system": "~9.2.0",
     "expo-status-bar": "~1.0.2",
     "lodash": "^4.17.20",
-    "node-html-parser": "^2.0.0",
+    "node-html-parser": "^2.0.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.4.tar.gz",
@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
+    "@types/lodash": "^4.14.167",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-native": "0.63.40",

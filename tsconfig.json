@@ -15,9 +15,13 @@
     "jsx": "react",
     "allowJs": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "watch": true
   },
   "include": [
     "./**/*"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

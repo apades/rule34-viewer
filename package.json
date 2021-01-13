@@ -10,7 +10,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "build": "node ./script/build && expo build:android -t apk",
+    "build": "node ./script/build && node ./script/addTag && expo build:android -t apk",
     "server": "cd proxy_server && yarn dev"
   },
   "dependencies": {

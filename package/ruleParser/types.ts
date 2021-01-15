@@ -2,7 +2,6 @@ export type dykey = {
   [k: string]: any
 }
 
-export type RuleTemplate = 'list'
 export type RuleGetType = 'xml' | 'json'
 export type RuleContentType = 'image' | 'manga' | 'text'
 export type RuleListPros = {
@@ -29,23 +28,27 @@ export type RuleListPros = {
   cover?: string
 }
 export type RuleDetailProps = {
-  url?: string
   gtype?: RuleGetType
   ctype: RuleContentType
-  tags?: string
 } & {
   ctype: 'image' | 'manga'
-  image: string
-}
+} & ({
+  gtype?: 'json'
+  url?: string | ((props: RuleItemValues & RuleItemInListValues) => string)
+  image: string | ((props: RuleJsonIndieItemValues) => string)
+  tags?: string | ((props: RuleJsonIndieItemValues) => dykey)
+} | {
+  gtype?: 'xml'
+  url?: string | ((props: RuleItemValues & RuleItemInListValues) => string)
+  image: string | ((props: RuleXmlIndieItemValues) => string)
+  tags?: string | ((props: RuleXmlIndieItemValues) => dykey)
+})
 
 // TODO rule规则定义问题
 // 如果像现在这种rule全是string，开发插件会很难用，并没有语法提示
 // 后续应该 rule:RuleProps -> _rule:RuleParserProps -> parser(_rule)
 export type RuleProps = {
   name: string
-  home?: {
-    template?: RuleTemplate
-  }
   /** 列表页面 */
   list: RuleListPros
   /** @js新增变量$i：为list中当前的数据，$list为list的数据 */
@@ -78,16 +81,15 @@ export type HtmlTypeProps = { $q: $q }
 export type _RuleProps = {
   name: string
   home?: {
-    template?: RuleTemplate
   }
   list: {
-    url: string
+    url: string | ((props: RuleListValues) => string)
   } & (
     | {
       gtype?: 'json'
-      list?: string | ((props: ListProps) => dykey[])
+      list?: string | ((props: RuleJsonListValues) => dykey[])
 
-      cover?: string | ((props: ListProps & ItemProps) => dykey[])
+      cover?: string | ((props: RuleJsonListValues & RuleItemInListValues) => string)
     }
     | {
       gtype?: 'xml'
@@ -111,29 +113,22 @@ export type _RuleProps = {
   }
 }
 
-// let a: _RuleProps = {
-//   detail: {},
-//   list: {
-//     url: 'asda',
-//   },
-// }
-
 // TODO 定义新rule ts解析版本的Props
 // tempString感觉应该去掉，毕竟都可以用function提示
 type RuleUrlType = {
   data: string
-  type: 'js' | 'json' | 'tempString'
+  type: 'js' | 'json'
 }
 type RuleDataType = {
   data: string
 } & (
     | {
       gtype: 'xml'
-      type: 'js' | 'tempString'
+      type: 'js'
     }
     | {
       gtype: 'json'
-      type: 'js' | 'json' | 'tempString'
+      type: 'js' | 'json'
     }
   )
 export type RuleParserProps = {
@@ -181,25 +176,27 @@ type RuleXmlIndieItemValues<T = dykey> = RuleItemValues & RuleItemInListValues<T
 }
 // ---#js props---
 
-export let testrule34: RuleProps = {
+let r34new: _RuleProps = {
   name: 'rule34',
   list: {
-    url:
-      'https://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&tags=@{listName}&limit=20&pid=@{pid}',
+    url: ({ pid, listName }) => `https://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&tags=${listName}&limit=20&pid=${pid}`,
     gtype: 'json',
     list: '$',
-    cover:
-      "@js:({$i})=>`https://rule34.xxx/thumbnails/${$i.directory}/thumbnail_${$i.image.replace(/^(.*)\\..*?$/,'$1.jpg')}`"
+    cover: ({ $i }) => `https://rule34.xxx/thumbnails/${$i.directory}/thumbnail_${$i.image.replace(/^(.*)\\..*?$/, '$1.jpg')}`
   },
   detail: {
-    url: 'https://rule34.xxx/index.php?page=post&s=view&id=@{id}',
+    url: ({ $i }) => `https://rule34.xxx/index.php?page=post&s=view&id=${$i.id}`,
     gtype: 'xml',
     ctype: 'image',
-    image:
-      '@js:({$i})=>`https://rule34.xxx/images/${$i.directory}/${$i.image}`',
-    tags:
-      "@js:({$q})=>({ copyright:$q('.tag-type-copyright a').text(),character:$q('.tag-type-character a').text(),artist:$q('.tag-type-artist a').text(),general:$q('.tag-type-general a').text(),metadata:$q('.tag-type-metadata a').text()})",
-  },
+    image: ({ $i }) => `https://rule34.xxx/images/${$i.directory}/${$i.image}`,
+    tags: ({ $q }) => ({
+      copyright: $q('.tag-type-copyright a').text(),
+      character: $q('.tag-type-character a').text(),
+      artist: $q('.tag-type-artist a').text(),
+      general: $q('.tag-type-general a').text(),
+      metadata: $q('.tag-type-metadata a').text()
+    })
+  }
 }
 
 let data = {

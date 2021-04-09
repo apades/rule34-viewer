@@ -1,18 +1,19 @@
+import ChipList from '@r/components/chipList'
+import DebugInfo from '@r/components/debugInfo'
+import ImageContainer from '@r/components/imageContainer'
+import { useDp } from '@r/hooks'
+import StatuBarLayout from '@r/layout/statuBar'
+import { StateBase } from '@r/reducers'
+import { _style } from '@r/style'
+import { RootPageProps } from '@r/types/route'
+import { _env, _screen } from '@r/utils/env'
+import request from '@r/utils/request'
+import { executePaser } from '@r/utils/ruleParser'
+import { deurl, handleOpenUrl } from '@r/utils/utils'
 import React, { FC, useEffect, useState } from 'react'
 import { Image, ScrollView, TouchableWithoutFeedback, View } from 'react-native'
 import { Button, Colors, Divider, FAB, Text } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
-import { StateBase } from 'reducers'
-import ChipList from '../../components/chipList'
-import DebugInfo from '../../components/debugInfo'
-import imageContainer from '../../components/imageContainer'
-import _config from '../../config/base.config'
-import statuBarLayout from '../../layout/statuBar'
-import { _style } from '../../style'
-import { _env, _screen } from '../../utils/env'
-import request from '../../utils/request'
-import { executePaser } from '../../utils/ruleParser'
-import { deurl, handleOpenUrl } from '../../utils/utils'
 import TagsContainer from './tagsContainer'
 
 function RenderImageEl(uri: string, data: any) {
@@ -20,8 +21,6 @@ function RenderImageEl(uri: string, data: any) {
   // let _isVideo = data.tags.indexOf('webm') === -1
   let [isVideo, setIsVideo] = useState(false)
   let [firstLoad, setFirstLoad] = useState(false)
-
-  let ImageEl
 
   useEffect(() => {
     if (!isVideo) {
@@ -33,53 +32,45 @@ function RenderImageEl(uri: string, data: any) {
     }
   }, [])
 
-  if (!_env.NSFW) {
-    ImageEl = <Text>img:{uri}</Text>
-  } else {
-    ImageEl =
-      !firstLoad && !isVideo
-        ? imageContainer({
-            source: { uri },
-          })
-        : imageContainer({
-            source: { uri: data.cover },
-            child: () =>
-              isVideo ? (
-                <View
-                  style={{
-                    ..._style.wh('100%'),
-                    ..._style.center(),
-                    position: 'absolute',
-                    backgroundColor: '#fff8',
-                  }}
-                >
-                  <Text style={{ fontSize: 20, color: Colors.blue400 }}>
-                    click reffers-&gt;web to play webm
-                  </Text>
-                </View>
-              ) : (
-                <></>
-              ),
-          })
-  }
-  return ImageEl
+  if (!_env.NSFW) return <Text>img:{uri}</Text>
+  if (!firstLoad && !isVideo) return <ImageContainer source={{ uri }} />
+  return (
+    <ImageContainer source={{ uri: data.cover }}>
+      {isVideo && (
+        <View
+          style={{
+            ..._style.wh('100%'),
+            ..._style.center(),
+            position: 'absolute',
+            backgroundColor: '#fff8',
+          }}
+        >
+          <Text style={{ fontSize: 20, color: Colors.blue400 }}>
+            click reffers-&gt;web to play webm
+          </Text>
+        </View>
+      )}
+    </ImageContainer>
+  )
 }
 
-type rProps = ConnectedProps<typeof connector> & {
-  [k: string]: any
-}
+type Props = RootPageProps<'detail'>
+type rProps = ConnectedProps<typeof connector> &
+  Props & {
+    [k: string]: any
+  }
 
 const Detail: FC<rProps> = (props) => {
   console.log('render contain')
-  let { navigation, route, dispatch } = props
+  let { navigation, route } = props
+  let dispatch = useDp()
 
-  let data = route.params?.data ?? {}
+  let data = route.params?.data
 
   let uri = executePaser(props.rule.content.image, { $i: data })
 
   function RenderLike() {
-    let { getLikes } = props
-    let [like, setLike] = useState(getLikes(data.id))
+    let [like, setLike] = useState(props.getLikes(data.id))
     return (
       <FAB
         icon={like ? 'heart' : 'heart-outline'}
@@ -97,17 +88,6 @@ const Detail: FC<rProps> = (props) => {
     )
   }
 
-  // let tags = data?.tags?.split(' ').filter((str) => str !== '')
-  let tagsContainer = (
-    <TagsContainer
-      data={data}
-      id={data.id}
-      navigation={navigation}
-      nowTag={route.params?.nowTag}
-      // tags={tags}
-    />
-  )
-
   function RenderReffer() {
     let refferMap = {
       'e621.net': (
@@ -123,27 +103,28 @@ const Detail: FC<rProps> = (props) => {
     let reffers: string[] = (data?.source && data.source.split(' ')) || []
     let dataList = reffers.map((reffer) => {
       let durl = deurl(reffer)
+      console.log('durl', durl)
       return {
         label: durl.domain,
         url: reffer,
       }
     })
 
-    return dataList.length ? (
-      <View>
+    return (
+      !!dataList.length && (
         <View>
-          <Text>reffers</Text>
-          <Divider />
+          <View>
+            <Text>reffers</Text>
+            <Divider />
+          </View>
+          <ChipList
+            dataList={dataList}
+            onPress={(data, index) => {
+              handleOpenUrl(dataList[index].url)
+            }}
+          />
         </View>
-        {ChipList({
-          dataList: dataList.map((d) => d.label),
-          onPress(data, index) {
-            handleOpenUrl(dataList[index])
-          },
-        })}
-      </View>
-    ) : (
-      <></>
+      )
     )
   }
 
@@ -158,14 +139,19 @@ const Detail: FC<rProps> = (props) => {
     )
   }
 
-  return statuBarLayout({
-    style: { position: 'relative' },
-    children: () => (
+  return (
+    <StatuBarLayout style={{ position: 'relative' }}>
       <>
         <ScrollView>
           {RenderImageEl(uri, data)}
-          {tagsContainer}
-          {RenderReffer()}
+          <TagsContainer
+            data={data}
+            id={data.id}
+            navigation={navigation}
+            nowTag={route.params?.nowTag}
+            // tags={tags}
+          />
+          <RenderReffer />
           <View>
             <Button
               mode="contained"
@@ -180,15 +166,17 @@ const Detail: FC<rProps> = (props) => {
           </View>
           <View style={{ marginTop: 20 }}></View>
         </ScrollView>
-        {RenderDebugInfo()}
-        {RenderLike()}
+        <RenderDebugInfo />
+        <RenderLike />
       </>
-    ),
-  })
+    </StatuBarLayout>
+  )
 }
 
-const mapStateToProps = (state: StateBase) => {
+const mapStateToProps = (state: StateBase, props: Props) => {
+  let pageData = props.route.params.data
   return {
+    isLike: !!state.likes.imgs[`rule34_${pageData.id}`],
     getLikes: (id: number) => !!state.likes.imgs[`rule34_${id}`],
     rule: state.setting.rule,
   }

@@ -1,5 +1,5 @@
-import { GalleryItem } from 'types/itemType'
-import { Dp, GetState } from 'types/redux'
+import { GalleryItem } from '@r/types/itemType'
+import { Dp, GetState } from '@r/types/redux'
 
 export const likeToggle = (data: GalleryItem) => async (
   dispatch: Dp,

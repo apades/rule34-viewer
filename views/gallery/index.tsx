@@ -1,20 +1,19 @@
+import DebugInfo from '@r/components/debugInfo'
+import { StateBase } from '@r/reducers'
+import { _style } from '@r/style'
+import { GalleryItem } from '@r/types/itemType'
+import { RootPageProps } from '@r/types/route'
+import request from '@r/utils/request'
+import { parserItemValue, parserStringValue } from '@r/utils/ruleParser'
+import { genHandlerScrollEnd } from '@r/utils/utils'
 import { throttle } from 'lodash'
-import React from 'react'
-import { Dispatch, FC, memo, useEffect, useState } from 'react'
+import React, { FC, memo, useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import { FlatGrid } from 'react-native-super-grid'
 import { connect, ConnectedProps } from 'react-redux'
-import { _env } from '@r/utils/env'
 import GalleryHeader from './header'
 import RenderGalleryItem from './item'
-import { _style } from '@r/style'
-import { RootPageProps } from '@r/types/route'
-import request from '@r/utils/request'
-import { StateBase, RootActions } from '@r/reducers'
-import { parserStringValue, parserItemValue } from '@r/utils/ruleParser'
-import { genHandlerScrollEnd } from '@r/utils/utils'
-import DebugInfo from '@r/components/debugInfo'
 
 type Props = RootPageProps<'gallery'>
 type rProps = ConnectedProps<typeof connector> & Props
@@ -25,9 +24,7 @@ export type rData<T = any> = {
 }
 
 const Gallery: FC<rProps> = function (props) {
-  let { navigation, route, likesToggle } = props
-  console.log(`--- render ${route?.params?.tags ?? 'home'} gallery ---`)
-
+  let { navigation, route, imgLikes } = props
   // dataList
   let [dataList, setDataList] = useState<rData[]>([])
 
@@ -39,7 +36,6 @@ const Gallery: FC<rProps> = function (props) {
   let [loading, setLoading] = useState(false)
   let [firstLoad, setFirstLoad] = useState(true)
 
-  let { imgLikes } = props
   useEffect(() => {
     initState()
 
@@ -47,7 +43,7 @@ const Gallery: FC<rProps> = function (props) {
   }, [])
 
   function initState() {
-    console.log(`initState,${route.params?.tags ?? 'home'}`)
+    console.log(`--- render ${route?.params?.tags ?? 'home'} gallery ---`)
     setDataList([])
     setPid(pidInit)
   }
@@ -83,7 +79,7 @@ const Gallery: FC<rProps> = function (props) {
       let resDataList = parserItemValue(
         props.rule.discover?.list ?? '$',
         res,
-      ).map((d: any) => {
+      ).map((d: GalleryItem) => {
         let id = `rule34_${d.id}`
         return {
           isLike: !!imgLikes[id],
@@ -93,8 +89,7 @@ const Gallery: FC<rProps> = function (props) {
       console.log('imgLikes', imgLikes, resDataList)
 
       function ejectData() {
-        let newDataList = [...dataList, ...resDataList]
-        setDataList(newDataList)
+        setDataList([...dataList, ...resDataList])
         setLoading(false)
       }
 
@@ -173,10 +168,7 @@ const mapStateToProps = (state: StateBase) => {
     rule: state.setting.rule,
   }
 }
-const mapDispatchToProps = {
-  likesToggle: (data: any) => (dispatch: Dispatch<RootActions>) =>
-    dispatch({ type: 'likes/img_toggle', id: data.id, data }),
-}
+const mapDispatchToProps = {}
 
 let connector = connect(mapStateToProps, mapDispatchToProps)
 

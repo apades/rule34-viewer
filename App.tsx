@@ -6,6 +6,7 @@ import React, { useEffect } from 'react'
 import { LogBox, View } from 'react-native'
 import { connect, Provider } from 'react-redux'
 import store, { StateBase } from './reducers/index'
+import { GalleryItem } from './types/itemType'
 import { isDev } from './utils/env'
 import view_collections from './views/collections'
 import Detail from './views/detail'
@@ -18,7 +19,7 @@ LogBox.ignoreLogs(['Remote debugger'])
 export type RootStackParamList = {
   home: undefined
   search: undefined
-  detail: undefined
+  detail: { data: GalleryItem; nowTag: string }
   gallery: Partial<{ tags: string; likeList: boolean }>
 }
 export type TabStackParamList = {

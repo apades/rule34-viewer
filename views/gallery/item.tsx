@@ -1,13 +1,15 @@
-import { likeToggle } from '../../actions/likeAction'
-import React, { Dispatch, FC, memo, useState } from 'react'
+import { likeToggle } from '@r/actions/likeAction'
+import { StateBase } from '@r/reducers'
+import { _style } from '@r/style'
+import { GalleryItem } from '@r/types/itemType'
+import { RootPageProps } from '@r/types/route'
+import { _screen, _env, isDev, ip } from '@r/utils/env'
+import { executePaser } from '@r/utils/ruleParser'
+import React, { FC, memo, useState } from 'react'
 import { Image, ImageStyle, StyleSheet, View } from 'react-native'
 import { TouchableNativeFeedback } from 'react-native-gesture-handler'
 import { Colors, IconButton, Text } from 'react-native-paper'
 import { connect, ConnectedProps, shallowEqual } from 'react-redux'
-import { RootActions, StateBase } from 'reducers'
-import { _style } from '../../style'
-import { ip, isDev, _env, _screen } from '../../utils/env'
-import { executePaser } from '../../utils/ruleParser'
 
 // 获取屏幕宽度
 let width = _screen.width
@@ -38,9 +40,10 @@ const styles = StyleSheet.create({
 })
 
 type rProps = ConnectedProps<typeof connector> & {
-  data: any
+  data: GalleryItem
   index: number
   isLike: boolean
+  navigation: RootPageProps<'gallery'>['navigation']
   [k: string]: any
 }
 

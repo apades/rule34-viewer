@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
-import { View } from 'react-native'
+import React, { FC, useState } from 'react'
+import { StyleProp, View, ViewStyle } from 'react-native'
 import AutoHeightImage from 'react-native-auto-height-image'
 import { ActivityIndicator, Text } from 'react-native-paper'
 import { _style } from '../style'
 import { _screen } from '../utils/env'
 
-export default function imageContainer(props) {
+type Props = {
+  width?: number
+  source: number | { uri: string }
+}
+let ImageContainer: FC<Props> = (props) => {
   function RenderLoading() {
     let [loading, setLoading] = useState(false)
     let [error, setError] = useState(false)
@@ -31,7 +35,7 @@ export default function imageContainer(props) {
     )
 
     let addHeight = 100
-    let addElStyle = {
+    let addElStyle: StyleProp<ViewStyle> = {
       width: '100%',
       height: addHeight,
       ..._style.center(),
@@ -54,17 +58,19 @@ export default function imageContainer(props) {
       )
     }
 
-    let cStyle = { position: 'relative' }
+    let cStyle: StyleProp<ViewStyle> = { position: 'relative' }
     if (loading) cStyle.height = addHeight
     else delete cStyle.height
     return (
       <View style={cStyle}>
         {el}
         {addEl}
-        {props.child && props.child()}
+        {props.children}
       </View>
     )
   }
 
   return <View>{RenderLoading()}</View>
 }
+
+export default ImageContainer

@@ -1,9 +1,11 @@
+import { throttle } from 'lodash'
 import React, { Dispatch, FC, memo, useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import { FlatGrid } from 'react-native-super-grid'
 import { connect, ConnectedProps } from 'react-redux'
 import { RootActions, StateBase } from 'reducers'
+import { RootPageProps } from 'types/route'
 import DebugInfo from '../../components/debugInfo'
 import { _style } from '../../style'
 import request from '../../utils/request'
@@ -12,9 +14,8 @@ import { genHandlerScrollEnd } from '../../utils/utils'
 import GalleryHeader from './header'
 import RenderGalleryItem from './item'
 
-type rProps = ConnectedProps<typeof connector> & {
-  [k: string]: any
-}
+type Props = RootPageProps<'gallery'>
+type rProps = ConnectedProps<typeof connector> & Props
 
 export type rData<T = any> = {
   isLike: boolean
@@ -45,9 +46,7 @@ const Gallery: FC<rProps> = function (props) {
 
   function initState() {
     console.log(`initState,${route.params?.tags ?? 'home'}`)
-    // reset dataList 关键
-    dataList.length = 0
-    setDataList(dataList)
+    setDataList([])
     setPid(pidInit)
   }
 
@@ -85,11 +84,13 @@ const Gallery: FC<rProps> = function (props) {
         isLike: !!imgLikes[d.id],
         data: d,
       }))
+
       function ejectData() {
         let newDataList = [...dataList, ...resDataList]
         setDataList(newDataList)
         setLoading(false)
       }
+
       if (firstLoad) {
         console.log('init Gallery')
         setFirstLoad(() => {
@@ -116,15 +117,14 @@ const Gallery: FC<rProps> = function (props) {
       <GalleryHeader tags={route.params?.tags || ''} />
       <FlatGrid
         data={dataList}
-        onScroll={handlerScrollEnd}
+        onScroll={throttle(handlerScrollEnd)}
         renderItem={({ item, index }) => {
           return (
             <RenderGalleryItem
-              key={index}
+              key={item.data.id}
               index={index}
               isLike={item.isLike}
               data={item.data}
-              likesToggle={likesToggle}
               navigation={navigation}
               nowTag={route.params?.tags}
             />

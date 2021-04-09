@@ -72,10 +72,11 @@ const likes = (state = init, action: LikesAction): LikesDstate => {
       AsyncStorage.setItem('imgLikes', JSON.stringify(state.imgs))
       return state
     case 'likes/tag_toggle':
-      if (state.tags[action.tag]) delete state.tags[action.tag]
-      else state.tags[action.tag] = true
-      AsyncStorage.setItem('tagLikes', JSON.stringify(state.tags))
-      return state
+      console.log('action', action)
+      // if (state.tags[action.tag]) delete state.tags[action.tag]
+      // else state.tags[action.tag] = true
+      // AsyncStorage.setItem('tagLikes', JSON.stringify(state.tags))
+      return { ...state }
     case 'likes/clear':
       if (action.key === 'img') state.imgs = {}
       else if (action.key === 'tag') state.tags = {}

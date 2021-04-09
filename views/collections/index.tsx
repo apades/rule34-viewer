@@ -43,19 +43,15 @@ const view_collections: FC<rProps> = (props) => {
             flexWrap: 'wrap',
           }}
         >
-          {ChipList({
-            dataList: collects,
-            onPress: (collect: string) => {
+          <ChipList
+            dataList={collects}
+            onPress={(collect: string) => {
+              console.log('navigation', navigation)
               navigation.push('gallery', {
                 tags: collect,
               })
-            },
-            // renderChild: () => (
-            //   <View style={{ position: 'absolute', right: 0, top: -1 }}>
-            //     <Badge size={15}>1</Badge>
-            //   </View>
-            // ),
-          })}
+            }}
+          />
         </View>
         <View>
           <Button
@@ -78,7 +74,6 @@ const view_collections: FC<rProps> = (props) => {
 }
 
 const mapStateToProps = (state: StateBase) => {
-  console.log(state.setting)
   return {
     getLikes: () => state.likes,
   }

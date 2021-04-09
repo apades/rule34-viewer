@@ -46,20 +46,20 @@ const ChipList: FC<Props> = (props) => {
           ChipProps = data.ChipProps
         }
         return (
-          <View key={`${label}-${index}`} style={{ position: 'relative' }}>
+          <View key={`${label}`} style={{ position: 'relative' }}>
             {renderItem ? (
               renderItem(data, index)
             ) : (
               <Chip
-                onPress={() => {
-                  onPress(data, index)
-                }}
                 style={{
                   margin: 2,
                   ...chipStyle,
                 }}
                 {...ChipProps}
-                onLongPress={() => [onLongPress(data)]}
+                onPress={() => {
+                  console.log('press', data, index)
+                  onPress(data, index)
+                }}
               >
                 <Text>{label}</Text>
               </Chip>

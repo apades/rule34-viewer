@@ -19,7 +19,7 @@ export type RootStackParamList = {
   home: undefined
   search: undefined
   detail: undefined
-  gallery: { tags: string } | { likeList: true } | undefined
+  gallery: Partial<{ tags: string; likeList: boolean }>
 }
 export type TabStackParamList = {
   collections: undefined

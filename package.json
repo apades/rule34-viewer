@@ -6,14 +6,16 @@
   "scripts": {
     "dev": "concurrently \"yarn dev_s\" \"yarn dev_server\" ",
     "dev_server": "cd proxy_server && yarn dev",
-    "dev_s":"cross-env ENV_NAME=dev expo start",
+    "dev_s": "cross-env ENV_NAME=dev expo start",
     "dev_a": "cross-env ENV_NAME=dev_a expo start",
     "and": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
     "build": "node ./script/build && node ./script/addTag && expo build:android -t apk",
-    "server": "cd proxy_server && yarn dev"
+    "server": "cd proxy_server && yarn dev",
+    "postinstall": "rndebugger-open --expo",
+    "redux":"set REACT_DEBUGGER=\"unset ELECTRON_RUN_AS_NODE && open -g 'rndebugger://set-debugger-loc?host=localhost&port=19001'\" && yarn dev"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.1",
@@ -44,7 +46,9 @@
     "react-native-webview": "^11.0.2",
     "react-redux": "^7.2.2",
     "react-xml-parser": "^1.1.8",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",

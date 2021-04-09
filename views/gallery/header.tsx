@@ -2,7 +2,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import React, { Dispatch, FC, memo, useState } from 'react'
 import { Appbar } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
-import { StateBase, RootActions } from 'reducers'
+import { RootActions, StateBase } from 'reducers'
 
 type rProps = ConnectedProps<typeof connector> & {
   tags: string

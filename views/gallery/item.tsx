@@ -1,11 +1,12 @@
-import React, { FC, memo, useState } from 'react'
+import { likeToggle } from '../../actions/likeAction'
+import React, { Dispatch, FC, memo, useState } from 'react'
 import { Image, ImageStyle, StyleSheet, View } from 'react-native'
 import { TouchableNativeFeedback } from 'react-native-gesture-handler'
 import { Colors, IconButton, Text } from 'react-native-paper'
-import { connect, ConnectedProps } from 'react-redux'
-import { StateBase } from 'reducers'
+import { connect, ConnectedProps, shallowEqual } from 'react-redux'
+import { RootActions, StateBase } from 'reducers'
 import { _style } from '../../style'
-import { _env, _screen } from '../../utils/env'
+import { ip, isDev, _env, _screen } from '../../utils/env'
 import { executePaser } from '../../utils/ruleParser'
 
 // 获取屏幕宽度
@@ -40,12 +41,12 @@ type rProps = ConnectedProps<typeof connector> & {
   data: any
   index: number
   isLike: boolean
-  likesToggle: (data: any) => void
   [k: string]: any
 }
 
 const RenderGalleryItem: FC<rProps> = function (props) {
-  let { data, index, isLike, likesToggle, navigation } = props
+  console.log(`render ${props.index}`)
+  let { data, index, isLike, navigation } = props
 
   function RenderItemType() {
     // let type = executePaser(props.rule.)
@@ -62,6 +63,9 @@ const RenderGalleryItem: FC<rProps> = function (props) {
 
   function RenderImg() {
     let uri = executePaser(props.rule.discover.cover, data)
+    uri = isDev
+      ? `http://${ip}:3001/proxy-img?url=${encodeURIComponent(uri)}`
+      : uri
 
     return (
       <TouchableNativeFeedback
@@ -90,7 +94,7 @@ const RenderGalleryItem: FC<rProps> = function (props) {
           color="#6cf"
           icon={like ? 'heart' : 'heart-outline'}
           onPress={() => {
-            likesToggle(data)
+            props.likeToggle(data)
             setLike(!like)
           }}
           size={width}
@@ -115,8 +119,15 @@ const mapStateToProps = (state: StateBase) => {
     rule: state.setting.rule,
   }
 }
-const mapDispatchToProps = {}
+
+const mapDispatchToProps = {
+  likeToggle,
+}
 
 let connector = connect(mapStateToProps, mapDispatchToProps)
 
-export default connector(memo(RenderGalleryItem))
+export default connector(
+  memo(RenderGalleryItem, (pre, next) => {
+    return shallowEqual(pre.data, next.data)
+  }),
+)

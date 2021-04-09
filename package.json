@@ -15,7 +15,7 @@
     "build": "node ./script/build && node ./script/addTag && expo build:android -t apk",
     "server": "cd proxy_server && yarn dev",
     "postinstall": "rndebugger-open --expo",
-    "redux":"set REACT_DEBUGGER=\"unset ELECTRON_RUN_AS_NODE && open -g 'rndebugger://set-debugger-loc?host=localhost&port=19001'\" && yarn dev"
+    "redux": "set REACT_DEBUGGER=\"unset ELECTRON_RUN_AS_NODE && open -g 'rndebugger://set-debugger-loc?host=localhost&port=19001'\" && yarn dev"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.1",
@@ -60,6 +60,7 @@
     "@typescript-eslint/eslint-plugin": "^4.12.0",
     "@typescript-eslint/parser": "^4.12.0",
     "babel-eslint": "^10.1.0",
+    "babel-plugin-module-resolver": "^4.1.0",
     "concurrently": "^5.3.0",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",

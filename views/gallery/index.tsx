@@ -1,18 +1,20 @@
 import { throttle } from 'lodash'
-import React, { Dispatch, FC, memo, useEffect, useState } from 'react'
+import React from 'react'
+import { Dispatch, FC, memo, useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import { FlatGrid } from 'react-native-super-grid'
 import { connect, ConnectedProps } from 'react-redux'
-import { RootActions, StateBase } from 'reducers'
-import { RootPageProps } from 'types/route'
-import DebugInfo from '../../components/debugInfo'
-import { _style } from '../../style'
-import request from '../../utils/request'
-import { parserItemValue, parserStringValue } from '../../utils/ruleParser'
-import { genHandlerScrollEnd } from '../../utils/utils'
+import { _env } from '@r/utils/env'
 import GalleryHeader from './header'
 import RenderGalleryItem from './item'
+import { _style } from '@r/style'
+import { RootPageProps } from '@r/types/route'
+import request from '@r/utils/request'
+import { StateBase, RootActions } from '@r/reducers'
+import { parserStringValue, parserItemValue } from '@r/utils/ruleParser'
+import { genHandlerScrollEnd } from '@r/utils/utils'
+import DebugInfo from '@r/components/debugInfo'
 
 type Props = RootPageProps<'gallery'>
 type rProps = ConnectedProps<typeof connector> & Props
@@ -75,15 +77,20 @@ const Gallery: FC<rProps> = function (props) {
       pageLimit: 20,
       pageNum: pid,
     })
-    console.log(requestUrl)
+    console.log('requestUrl', requestUrl)
+
     request(requestUrl).then((res) => {
       let resDataList = parserItemValue(
         props.rule.discover?.list ?? '$',
         res,
-      ).map((d: any) => ({
-        isLike: !!imgLikes[d.id],
-        data: d,
-      }))
+      ).map((d: any) => {
+        let id = `rule34_${d.id}`
+        return {
+          isLike: !!imgLikes[id],
+          data: d,
+        }
+      })
+      console.log('imgLikes', imgLikes, resDataList)
 
       function ejectData() {
         let newDataList = [...dataList, ...resDataList]

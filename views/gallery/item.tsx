@@ -45,7 +45,7 @@ type rProps = ConnectedProps<typeof connector> & {
 }
 
 const RenderGalleryItem: FC<rProps> = function (props) {
-  console.log(`render ${props.index}`)
+  // console.log(`render ${props.index}`)
   let { data, index, isLike, navigation } = props
 
   function RenderItemType() {
@@ -85,7 +85,6 @@ const RenderGalleryItem: FC<rProps> = function (props) {
   }
   function RenderLike() {
     let [like, setLike] = useState(isLike)
-
     let width = 25
     // 判断like
     return (
@@ -105,11 +104,9 @@ const RenderGalleryItem: FC<rProps> = function (props) {
   return (
     <View style={styles.itemContainer}>
       {/* 图片可触摸区 */}
-      <RenderImg />
+      {RenderImg()}
       {/* 工具区 */}
-      <View style={styles.tooltipContainer}>
-        <RenderLike />
-      </View>
+      <View style={styles.tooltipContainer}>{RenderLike()}</View>
     </View>
   )
 }

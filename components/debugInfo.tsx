@@ -1,8 +1,8 @@
+import { StateBase } from '@r/reducers'
 import React, { FC, memo } from 'react'
 import { View } from 'react-native'
 import Draggable from 'react-native-draggable'
 import { connect, ConnectedProps } from 'react-redux'
-import { StateBase } from 'reducers'
 
 type rProps = ConnectedProps<typeof connector> & {
   [k: string]: any

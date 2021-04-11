@@ -86,7 +86,6 @@ const Gallery: FC<rProps> = function (props) {
           data: d,
         }
       })
-      console.log('imgLikes', imgLikes, resDataList)
 
       function ejectData() {
         setDataList([...dataList, ...resDataList])

@@ -15,18 +15,11 @@ type rProps = ConnectedProps<typeof connector> & {
     BottomTabNavigationProp<TabStackParamList, 'collections'>,
     StackNavigationProp<RootStackParamList>
   >
-  [k: string]: any
 }
 
 const view_collections: FC<rProps> = (props) => {
-  let { navigation, getLikes } = props
+  let { navigation, likes } = props
   let focus = useIsFocused()
-  let [likes, setLikes] = useState(getLikes())
-
-  useEffect(() => {
-    let likes = getLikes()
-    setLikes(likes)
-  }, [focus])
 
   let collects = Object.keys(likes.tags)
 
@@ -75,7 +68,7 @@ const view_collections: FC<rProps> = (props) => {
 
 const mapStateToProps = (state: StateBase) => {
   return {
-    getLikes: () => state.likes,
+    likes: state.likes,
   }
 }
 const mapDispatchToProps = {}

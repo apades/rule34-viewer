@@ -4,17 +4,15 @@
   "license": "MIT",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "dev": "concurrently \"yarn dev_s\" \"yarn dev_server\" ",
+    "dev": "concurrently \"cross-env ENV_NAME=dev expo start\" \"yarn dev_server\" ",
+    "dev_a": "concurrently \"cross-env ENV_NAME=dev_a expo start\" \"yarn dev_server\" ",
     "dev_server": "cd proxy_server && yarn dev",
-    "dev_s": "cross-env ENV_NAME=dev expo start",
-    "dev_a": "cross-env ENV_NAME=dev_a expo start",
     "and": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
     "build": "node ./script/build && node ./script/addTag && expo build:android -t apk",
     "server": "cd proxy_server && yarn dev",
-    "postinstall": "rndebugger-open --expo",
     "redux": "set REACT_DEBUGGER=\"unset ELECTRON_RUN_AS_NODE && open -g 'rndebugger://set-debugger-loc?host=localhost&port=19001'\" && yarn dev"
   },
   "dependencies": {

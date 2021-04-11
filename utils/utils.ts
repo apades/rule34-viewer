@@ -30,14 +30,14 @@ export function throttle(fn: () => void, time: number): () => void {
  * @param {cancelObj} [options.cancelObj='canceled'] Specify the error object to be rejected.
  * @returns {Function} Returns the new debounced function.
  */
-export function debounceAsync(
-  func: () => void,
+export function debounceAsync<T extends any>(
+  func: (...args: T[]) => void,
   wait = 0,
   { leading = false, cancelObj = 'canceled' } = {},
-): () => Promise<void> {
+): (...args: T[]) => Promise<(...args: T[]) => void> {
   let timerId: number, latestResolve: any, shouldCancel: boolean
 
-  return function (...args: any[]) {
+  return function (...args: T[]) {
     if (!latestResolve) {
       // The first call since last invocation.
       return new Promise((resolve, reject) => {
@@ -63,12 +63,12 @@ export function debounceAsync(
     })
   }
 
-  function invokeAtLeading(args, resolve, reject) {
+  function invokeAtLeading(args: T[], resolve, reject) {
     func.apply(this, args).then(resolve).catch(reject)
     shouldCancel = false
   }
 
-  function invokeAtTrailing(args, resolve, reject) {
+  function invokeAtTrailing(args: T[], resolve, reject) {
     if (shouldCancel && resolve !== latestResolve) {
       reject(cancelObj)
     } else {

@@ -1,23 +1,24 @@
+import ChipList from '@r/components/chipList'
+import { StateBase } from '@r/reducers'
+import { RootPageProps } from '@r/types/route'
+import request from '@r/utils/request'
+import { executePaser } from '@r/utils/ruleParser'
+import { useNavigation } from '@react-navigation/core'
 import React, { FC, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Divider, Text } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
-import { StateBase } from 'reducers'
-import ChipList from '../../components/chipList'
-import _config from '../../config/base.config'
-import request from '../../utils/request'
-import { executePaser } from '../../utils/ruleParser'
 
 type rProps = ConnectedProps<typeof connector> & {
   data: any
   id: number
-  navigation: any
   nowTag: string
   [k: string]: any
 }
 
 let TagsContainer: FC<rProps> = (props) => {
-  let { tags, id, isAdvancedTags, navigation, data } = props
+  let { tags, id, isAdvancedTags, data } = props
+  let navigation = useNavigation<RootPageProps<'detail'>['navigation']>()
 
   let [atags, setAtags] = useState<{ [k: string]: any }>({
     // copyrights: [],

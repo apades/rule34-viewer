@@ -1,8 +1,8 @@
+import { StateBase, RootActions } from '@r/reducers'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import React, { Dispatch, FC, memo, useState } from 'react'
 import { Appbar } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
-import { RootActions, StateBase } from 'reducers'
 
 type rProps = ConnectedProps<typeof connector> & {
   tags: string
@@ -50,8 +50,8 @@ const mapStateToProps = (state: StateBase) => {
   }
 }
 const mapDispatchToProps = {
-  likesToggle: (data: any) => (dispatch: Dispatch<RootActions>) =>
-    dispatch({ type: 'likes/img_toggle', id: data.id, data }),
+  likesToggle: (tag: string) => (dispatch: Dispatch<RootActions>) =>
+    dispatch({ type: 'likes/tag_toggle', tag }),
 }
 
 let connector = connect(mapStateToProps, mapDispatchToProps)

@@ -10,6 +10,7 @@ import { Image, ImageStyle, StyleSheet, View } from 'react-native'
 import { TouchableNativeFeedback } from 'react-native-gesture-handler'
 import { Colors, IconButton, Text } from 'react-native-paper'
 import { connect, ConnectedProps, shallowEqual } from 'react-redux'
+import { DetailData } from '../detail'
 
 // 获取屏幕宽度
 let width = _screen.width
@@ -39,7 +40,22 @@ const styles = StyleSheet.create({
   },
 })
 
+export type GalleryItemType = {
+  cover: string
+  id: number | string
+  data: DetailData
+}
+
+export type rGalleryItem = {
+  info: GalleryItem
+  list: GalleryItem[]
+  isLike: boolean
+  index: number
+  itemType: 'image'
+}
+
 type rProps = ConnectedProps<typeof connector> & {
+  // data: rGalleryItem
   data: GalleryItem
   index: number
   isLike: boolean

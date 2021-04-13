@@ -45,6 +45,7 @@ module.exports = {
     // 临时的
     '@typescript-eslint/no-explicit-any': 0,
     'react-hooks/exhaustive-deps': 0,
-    'no-case-declarations':0
+    'no-case-declarations':0,
+    '@typescript-eslint/explicit-module-boundary-types':0
   },
 }

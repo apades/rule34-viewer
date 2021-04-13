@@ -1,10 +1,9 @@
+import { StateBase } from '@r/reducers'
 import React, { FC, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Divider, Text } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
-import { StateBase } from 'reducers'
 import ChipList from '../../components/chipList'
-import _config from '../../config/base.config'
 import request from '../../utils/request'
 import { executePaser } from '../../utils/ruleParser'
 

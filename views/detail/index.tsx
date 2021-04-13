@@ -1,8 +1,9 @@
-import ChipList from '@r/components/chipList'
+import ChipList, { ChipListDataType } from '@r/components/chipList'
 import DebugInfo from '@r/components/debugInfo'
 import ImageContainer from '@r/components/imageContainer'
 import { useDp } from '@r/hooks'
 import StatuBarLayout from '@r/layout/statuBar'
+import { resolveDetailData } from '@r/package/ruleParser/resolve'
 import { StateBase } from '@r/reducers'
 import { _style } from '@r/style'
 import { RootPageProps } from '@r/types/route'
@@ -54,6 +55,21 @@ function RenderImageEl(uri: string, data: any) {
   )
 }
 
+// ! 目前只有图片detail
+export type DetailData = {
+  id: string | number
+  uri: string
+  originUrl?: string
+  tags?: {
+    [k: string]: ChipListDataType
+  }
+}
+// TODO 需要把ajax拿到的原始data 转换成 DetailData
+export type rDetailData = {
+  resolveData: DetailData
+  originData: any
+}
+
 type Props = RootPageProps<'detail'>
 type rProps = ConnectedProps<typeof connector> &
   Props & {
@@ -66,11 +82,15 @@ const Detail: FC<rProps> = (props) => {
   let dispatch = useDp()
 
   let data = route.params?.data
+  // let data = resolveDetailData(props.rule, route.params?.data)
 
   let uri = executePaser(props.rule.content.image, { $i: data })
 
   function RenderLike() {
-    let [like, setLike] = useState(props.getLikes(data.id))
+    let [like, setLike] = useState(false)
+    useEffect(() => {
+      setLike(props.isLike)
+    }, [])
     return (
       <FAB
         icon={like ? 'heart' : 'heart-outline'}
@@ -88,45 +108,45 @@ const Detail: FC<rProps> = (props) => {
     )
   }
 
-  function RenderReffer() {
-    let refferMap = {
-      'e621.net': (
-        <Image
-          source={{
-            uri:
-              'https://callstack.github.io/react-native-paper/screenshots/chip-1.png',
-          }}
-        />
-      ),
-    }
+  // function RenderReffer() {
+  //   let refferMap = {
+  //     'e621.net': (
+  //       <Image
+  //         source={{
+  //           uri:
+  //             'https://callstack.github.io/react-native-paper/screenshots/chip-1.png',
+  //         }}
+  //       />
+  //     ),
+  //   }
 
-    let reffers: string[] = (data?.source && data.source.split(' ')) || []
-    let dataList = reffers.map((reffer) => {
-      let durl = deurl(reffer)
-      console.log('durl', durl)
-      return {
-        label: durl.domain,
-        url: reffer,
-      }
-    })
+  //   let reffers: string[] = (data?.source && data.source.split(' ')) || []
+  //   let dataList = reffers.map((reffer) => {
+  //     let durl = deurl(reffer)
+  //     console.log('durl', durl)
+  //     return {
+  //       label: durl.domain,
+  //       url: reffer,
+  //     }
+  //   })
 
-    return (
-      !!dataList.length && (
-        <View>
-          <View>
-            <Text>reffers</Text>
-            <Divider />
-          </View>
-          <ChipList
-            dataList={dataList}
-            onPress={(data, index) => {
-              handleOpenUrl(dataList[index].url)
-            }}
-          />
-        </View>
-      )
-    )
-  }
+  //   return (
+  //     !!dataList.length && (
+  //       <View>
+  //         <View>
+  //           <Text>reffers</Text>
+  //           <Divider />
+  //         </View>
+  //         <ChipList
+  //           dataList={dataList}
+  //           onPress={(data, index) => {
+  //             handleOpenUrl(dataList[index].url)
+  //           }}
+  //         />
+  //       </View>
+  //     )
+  //   )
+  // }
 
   function RenderDebugInfo() {
     let [detail, setDetail] = useState(false)
@@ -151,7 +171,7 @@ const Detail: FC<rProps> = (props) => {
             nowTag={route.params?.nowTag}
             // tags={tags}
           />
-          <RenderReffer />
+          {/* <RenderReffer /> */}
           <View>
             <Button
               mode="contained"
@@ -177,7 +197,6 @@ const mapStateToProps = (state: StateBase, props: Props) => {
   let pageData = props.route.params.data
   return {
     isLike: !!state.likes.imgs[`rule34_${pageData.id}`],
-    getLikes: (id: number) => !!state.likes.imgs[`rule34_${id}`],
     rule: state.setting.rule,
   }
 }

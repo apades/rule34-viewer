@@ -14,8 +14,6 @@ export default {
     type: 'html',
     image:
       '@js:({$i})=>`https://rule34.xxx/images/${$i.directory}/${$i.image}`',
-    _tags:
-      '@map{copyright::@css:.tag-type-copyright a@text||character::@css:.tag-type-copyright a@text||artist::@css:.tag-type-artist a@text||general::@css:.tag-type-general a@text||metadata::@css:.tag-type-metadata a@text}@',
     tags:
       "@js:({$q})=>({ copyright:$q('.tag-type-copyright a').text(),character:$q('.tag-type-character a').text(),artist:$q('.tag-type-artist a').text(),general:$q('.tag-type-general a').text(),metadata:$q('.tag-type-metadata a').text()})",
   },

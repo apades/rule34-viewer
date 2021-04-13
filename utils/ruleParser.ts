@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import parse from 'node-html-parser'
 import { dykey } from '../types/index'
-import { $q, RuleDetailProps, RuleProps } from '../types/rule'
+import { $q, RuleDetailProps, RuleConfig } from '../types/rule'
 import request from './request'
 
 export function parserStringValue(string = '', obj: dykey = {}): string {
@@ -100,7 +100,7 @@ type ListData = {
 }
 
 export function createRuleParser(
-  rule: RuleProps,
+  rule: RuleConfig,
 ): {
   getListData(props: ListProps): Promise<ListData[]>
   getDetailData(props: DetailProps): Promise<RuleDetailProps>

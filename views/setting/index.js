@@ -1,11 +1,9 @@
+import * as fs from 'expo-file-system'
 import React from 'react'
-import { StatusBar, Text, ToastAndroid, View } from 'react-native'
-import { Button, Colors, Divider, Switch } from 'react-native-paper'
+import { Text, ToastAndroid, View } from 'react-native'
+import { Button, Colors, Switch } from 'react-native-paper'
 import { connect } from 'react-redux'
 import statuBarLayout from '../../layout/statuBar'
-import { _style } from '../../style'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as fs from 'expo-file-system'
 
 let Setting = connect((state) => ({
   likes: state.likes,

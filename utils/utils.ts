@@ -1,12 +1,6 @@
 import { dykey } from '@r/types'
 import {} from 'lodash'
 import { Linking } from 'react-native'
-import XMLParser from 'react-xml-parser'
-
-export function parserXml(xmlStr: string) {
-  let xml = new XMLParser().parseFromString(xmlStr)
-  return xml
-}
 
 export function throttle(fn: () => void, time: number): () => void {
   let save = true

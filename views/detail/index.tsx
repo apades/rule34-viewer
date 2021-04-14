@@ -7,7 +7,7 @@ import { resolveDetailData } from '@r/package/ruleParser/resolve'
 import { StateBase } from '@r/reducers'
 import { _style } from '@r/style'
 import { RootPageProps } from '@r/types/route'
-import { _env, _screen } from '@r/utils/env'
+import { ip, isDev, _env, _screen } from '@r/utils/env'
 import request from '@r/utils/request'
 import { executePaser } from '@r/utils/ruleParser'
 import { deurl, handleOpenUrl } from '@r/utils/utils'
@@ -18,7 +18,6 @@ import { connect, ConnectedProps } from 'react-redux'
 import TagsContainer from './tagsContainer'
 
 function RenderImageEl(uri: string, data: any) {
-  console.log('render img')
   // let _isVideo = data.tags.indexOf('webm') === -1
   let [isVideo, setIsVideo] = useState(false)
   let [firstLoad, setFirstLoad] = useState(false)
@@ -71,13 +70,9 @@ export type rDetailData = {
 }
 
 type Props = RootPageProps<'detail'>
-type rProps = ConnectedProps<typeof connector> &
-  Props & {
-    [k: string]: any
-  }
+type rProps = ConnectedProps<typeof connector> & Props
 
 const Detail: FC<rProps> = (props) => {
-  console.log('render contain')
   let { navigation, route } = props
   let dispatch = useDp()
 
@@ -85,6 +80,9 @@ const Detail: FC<rProps> = (props) => {
   // let data = resolveDetailData(props.rule, route.params?.data)
 
   let uri = executePaser(props.rule.content.image, { $i: data })
+  uri = isDev
+    ? `http://${ip}:3001/proxy-img?url=${encodeURIComponent(uri)}`
+    : uri
 
   function RenderLike() {
     let [like, setLike] = useState(false)
@@ -161,34 +159,31 @@ const Detail: FC<rProps> = (props) => {
 
   return (
     <StatuBarLayout style={{ position: 'relative' }}>
-      <>
-        <ScrollView>
-          {RenderImageEl(uri, data)}
-          <TagsContainer
-            data={data}
-            id={data.id}
-            navigation={navigation}
-            nowTag={route.params?.nowTag}
-            // tags={tags}
-          />
-          {/* <RenderReffer /> */}
-          <View>
-            <Button
-              mode="contained"
-              onPress={() =>
-                handleOpenUrl(
-                  `https://rule34.xxx/index.php?page=post&s=view&id=${data.id}`,
-                )
-              }
-            >
-              origin
-            </Button>
-          </View>
-          <View style={{ marginTop: 20 }}></View>
-        </ScrollView>
-        <RenderDebugInfo />
-        <RenderLike />
-      </>
+      <ScrollView>
+        {RenderImageEl(uri, data)}
+        <TagsContainer
+          data={data}
+          id={data.id}
+          nowTag={route.params?.nowTag}
+          // tags={tags}
+        />
+        {/* <RenderReffer /> */}
+        <View>
+          <Button
+            mode="contained"
+            onPress={() =>
+              handleOpenUrl(
+                `https://rule34.xxx/index.php?page=post&s=view&id=${data.id}`,
+              )
+            }
+          >
+            origin
+          </Button>
+        </View>
+        <View style={{ marginTop: 20 }}></View>
+      </ScrollView>
+      <RenderDebugInfo />
+      <RenderLike />
     </StatuBarLayout>
   )
 }

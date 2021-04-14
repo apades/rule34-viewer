@@ -18,7 +18,7 @@ LogBox.ignoreLogs(['Remote debugger'])
 
 export type RootStackParamList = {
   home: undefined
-  search: undefined
+  search: { value: string }
   detail: { data: GalleryItem; nowTag: string }
   gallery: Partial<{ tags: string; likeList: boolean }>
 }

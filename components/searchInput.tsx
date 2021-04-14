@@ -1,11 +1,19 @@
-import { useNavigation } from '@react-navigation/native'
-import React, { useEffect, useState } from 'react'
+import { StateBase } from '@r/reducers'
+import React, { FC, memo, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { TextInput } from 'react-native-paper'
-import { connect } from 'react-redux'
+import { connect, ConnectedProps } from 'react-redux'
 import { _style } from '../style'
 
-export const Comp_seachInput = connect((state) => ({}))(function (props) {
+export type searchInputProps = {
+  autoFocus: boolean
+  onChangeText: (text: string) => void
+  onSubmitEditing: (text: string) => void
+  value: string
+}
+type rProps = ConnectedProps<typeof connector> & searchInputProps
+
+let Comp_seachInput: FC<rProps> = (props) => {
   let [text, setText] = useState(props.value)
   useEffect(() => {
     setText(props.value)
@@ -42,4 +50,10 @@ export const Comp_seachInput = connect((state) => ({}))(function (props) {
       />
     </View>
   )
-})
+}
+const mapStateToProps = (state: StateBase) => {
+  return {}
+}
+const mapDispatchToProps = {}
+let connector = connect(mapStateToProps, mapDispatchToProps)
+export default connector(memo(Comp_seachInput))

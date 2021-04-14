@@ -39,7 +39,7 @@ export type RuleDetailProps = {
 // TODO rule规则定义问题
 // 如果像现在这种rule全是string，开发插件会很难用，并没有语法提示
 // 后续应该 rule:RuleProps -> _rule:RuleParserProps -> parser(_rule)
-export type RuleProps = {
+export type RuleConfig = {
   name: string
   home?: {
     template?: RuleTemplate
@@ -142,7 +142,7 @@ export type RuleParserProps = {
   }
 }
 
-export let testrule34: RuleProps = {
+export let testrule34: RuleConfig = {
   name: 'rule34',
   list: {
     url:

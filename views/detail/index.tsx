@@ -77,8 +77,9 @@ const Detail: FC<rProps> = (props) => {
   let dispatch = useDp()
 
   let data = route.params?.data
-  // let data = resolveDetailData(props.rule, route.params?.data)
 
+  // TODO 把所有datalist传过来，detail中可以滑动到上下张
+  let [index, setIndex] = useState(0)
   let uri = executePaser(props.rule.content.image, { $i: data })
   uri = isDev
     ? `http://${ip}:3001/proxy-img?url=${encodeURIComponent(uri)}`
@@ -106,45 +107,10 @@ const Detail: FC<rProps> = (props) => {
     )
   }
 
-  // function RenderReffer() {
-  //   let refferMap = {
-  //     'e621.net': (
-  //       <Image
-  //         source={{
-  //           uri:
-  //             'https://callstack.github.io/react-native-paper/screenshots/chip-1.png',
-  //         }}
-  //       />
-  //     ),
-  //   }
-
-  //   let reffers: string[] = (data?.source && data.source.split(' ')) || []
-  //   let dataList = reffers.map((reffer) => {
-  //     let durl = deurl(reffer)
-  //     console.log('durl', durl)
-  //     return {
-  //       label: durl.domain,
-  //       url: reffer,
-  //     }
-  //   })
-
-  //   return (
-  //     !!dataList.length && (
-  //       <View>
-  //         <View>
-  //           <Text>reffers</Text>
-  //           <Divider />
-  //         </View>
-  //         <ChipList
-  //           dataList={dataList}
-  //           onPress={(data, index) => {
-  //             handleOpenUrl(dataList[index].url)
-  //           }}
-  //         />
-  //       </View>
-  //     )
-  //   )
-  // }
+  let [touchStart, setTouchStart] = useState<{
+    x: number
+    y: number
+  }>({ x: 0, y: 0 })
 
   function RenderDebugInfo() {
     let [detail, setDetail] = useState(false)
@@ -159,7 +125,29 @@ const Detail: FC<rProps> = (props) => {
 
   return (
     <StatuBarLayout style={{ position: 'relative' }}>
-      <ScrollView>
+      <ScrollView
+        onTouchStart={(e) => {
+          let { pageX, pageY } = e.nativeEvent
+          console.log('onTouchStart')
+          setTouchStart({
+            x: pageX,
+            y: pageY,
+          })
+        }}
+        onTouchEnd={(e) => {
+          console.log('onTouchEnd')
+          let { pageX, pageY } = e.nativeEvent
+          let offset = touchStart.x - pageX
+          console.log(offset)
+          if (Math.abs(offset) >= _screen.width / 2) {
+            if (offset >= 0) {
+              console.log('move left')
+            } else {
+              console.log('move right')
+            }
+          }
+        }}
+      >
         {RenderImageEl(uri, data)}
         <TagsContainer
           data={data}

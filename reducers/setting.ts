@@ -31,7 +31,7 @@ type SettingChange = {
 }
 type SettingSetRule = {
   type: 'setting/setRule'
-  rule: any
+  ruleName: 'e621' | 'rule34'
 }
 type SettingLoadRules = {
   type: 'setting/loadRules'
@@ -51,7 +51,16 @@ const setting = (state = init, action: SettingAction): SettingDstate => {
       let { key, value } = action
       return { ...state, [key]: value }
     case 'setting/setRule':
-      return { ...state, rule: action.rule }
+      let rule = {}
+      switch (action.ruleName) {
+        case 'e621':
+          rule = rule_e621
+          break
+        case 'rule34':
+          rule = rule_rule34
+          break
+      }
+      return { ...state, rule }
     case 'setting/loadRules': {
       return { ...state, rules: action.rules, loaded: true }
     }

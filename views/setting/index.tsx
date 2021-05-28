@@ -53,14 +53,6 @@ let Page_Setting: FC<rProps> = (props) => {
   // )
 
   let clear = (key: any) => dispatch({ type: 'likes/clear', key })
-  let changeLikes = () => {
-    let imgs = { ...likes.imgs }
-    let newImgs: any = {}
-    clear('img')
-    let keys = Object.keys(imgs)
-    keys.forEach((key) => (newImgs[`rule34_${imgs[key].id}`] = imgs[key]))
-    dispatch({ type: 'likes/init', imgs: newImgs, initStore: true })
-  }
 
   // console.log(setting)
   return (
@@ -104,11 +96,6 @@ let Page_Setting: FC<rProps> = (props) => {
           <Text>length:{Object.keys(likes.imgs).length}</Text>
         </View>
 
-        {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Button mode="contained" onPress={() => changeLikes()}>
-            fixLikes
-          </Button>
-        </View> */}
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text>{props.rule.name}</Text>
           <Button

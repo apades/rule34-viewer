@@ -64,32 +64,30 @@ let TagsContainer: FC<rProps> = (props) => {
     })
   }
 
-  let el = <></>
-  if (Object.keys(atags).length)
-    el = (
-      <View>
-        {Object.keys(atags).map((type) => {
-          let dataList = atags[`${type}`]
-          return (
-            <View key={type}>
-              {dataList.length ? (
-                <>
-                  <Text>{type}</Text>
-                  <Divider />
-                  {ChipList({
-                    dataList,
-                    onPress,
-                    onLongPress,
-                  })}
-                </>
-              ) : (
-                <></>
-              )}
-            </View>
-          )
-        })}
-      </View>
-    )
+  let el = (
+    <View style={{ minHeight: 100, backgroundColor: '#fff' }}>
+      {Object.keys(atags).map((type) => {
+        let dataList = atags[`${type}`]
+        return (
+          <View key={type}>
+            {dataList.length ? (
+              <>
+                <Text>{type}</Text>
+                <Divider />
+                {ChipList({
+                  dataList,
+                  onPress,
+                  onLongPress,
+                })}
+              </>
+            ) : (
+              <></>
+            )}
+          </View>
+        )
+      })}
+    </View>
+  )
 
   return el
 }

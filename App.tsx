@@ -21,6 +21,7 @@ export type RootStackParamList = {
   search: { value: string }
   detail: { data: GalleryItem; nowTag: string }
   gallery: Partial<{ tags: string; likeList: boolean }>
+  setting: undefined
 }
 export type TabStackParamList = {
   collections: undefined

@@ -60,7 +60,8 @@ type rProps = ConnectedProps<typeof connector> & {
   index: number
   isLike: boolean
   navigation: RootPageProps<'gallery'>['navigation']
-  [k: string]: any
+  onClick?: (index?: number) => void
+  nowTag?: string
 }
 
 const RenderGalleryItem: FC<rProps> = function (props) {
@@ -89,10 +90,11 @@ const RenderGalleryItem: FC<rProps> = function (props) {
     return (
       <TouchableNativeFeedback
         onPress={() => {
-          navigation.push('detail', {
-            data: { ...data, cover: uri },
-            nowTag: props.nowTag,
-          })
+          // navigation.push('detail', {
+          //   data: { ...data, cover: uri },
+          //   nowTag: props.nowTag,
+          // })
+          props.onClick?.(props.index)
         }}
       >
         <View style={{ ...styles.imgContainer }}>
@@ -135,11 +137,9 @@ const mapStateToProps = (state: StateBase) => {
     rule: state.setting.rule,
   }
 }
-
 const mapDispatchToProps = {
   likeToggle,
 }
-
 let connector = connect(mapStateToProps, mapDispatchToProps)
 
 export default connector(

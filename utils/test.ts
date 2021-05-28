@@ -8,7 +8,6 @@ async function main() {
     pid: 0,
   })
 
-  debugger
   let detail = await rulefn.getDetailData({
     index: 19,
   })

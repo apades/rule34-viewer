@@ -3,8 +3,13 @@ import { StateBase } from '@r/reducers'
 import { _style } from '@r/style'
 import { GalleryItem } from '@r/types/itemType'
 import { RootPageProps } from '@r/types/route'
+import { isDev, ip } from '@r/utils/env'
 import request from '@r/utils/request'
-import { parserItemValue, parserStringValue } from '@r/utils/ruleParser'
+import {
+  executePaser,
+  parserItemValue,
+  parserStringValue,
+} from '@r/utils/ruleParser'
 import { genHandlerScrollEnd } from '@r/utils/utils'
 import { throttle } from 'lodash'
 import React, { FC, memo, useEffect, useState } from 'react'
@@ -12,6 +17,7 @@ import { Text, View } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import { FlatGrid } from 'react-native-super-grid'
 import { connect, ConnectedProps } from 'react-redux'
+import Viewer from '../viewer'
 import GalleryHeader from './header'
 import RenderGalleryItem from './item'
 
@@ -20,6 +26,7 @@ type rProps = ConnectedProps<typeof connector> & Props
 
 export type rData<T = any> = {
   isLike: boolean
+  img: string
   data: T
 }
 
@@ -35,6 +42,9 @@ const Gallery: FC<rProps> = function (props) {
   // loading
   let [loading, setLoading] = useState(false)
   let [firstLoad, setFirstLoad] = useState(true)
+
+  let [isModalVisible, setModalVisible] = useState(false)
+  let [index, setindex] = useState(0)
 
   useEffect(() => {
     initState()
@@ -54,10 +64,17 @@ const Gallery: FC<rProps> = function (props) {
     if (route?.params?.likeList) {
       let dataList: rData[] = Object.values(imgLikes)
         .reverse()
-        .map((d) => ({
-          isLike: true,
-          data: d,
-        }))
+        .map((d) => {
+          let uri = executePaser(props.rule.content.image, { $i: d })
+          uri = isDev
+            ? `http://${ip}:3001/proxy-img?url=${encodeURIComponent(uri)}`
+            : uri
+          return {
+            isLike: true,
+            data: d,
+            img: uri,
+          }
+        })
       setDataList(dataList)
       setFirstLoad(false)
       setLoading(false)
@@ -76,16 +93,24 @@ const Gallery: FC<rProps> = function (props) {
     console.log('requestUrl', requestUrl)
 
     request(requestUrl).then((res) => {
-      let resDataList = parserItemValue(
+      let resDataList: rData[] = parserItemValue(
         props.rule.discover?.list ?? '$',
         res,
-      ).map((d: GalleryItem) => {
-        let id = `rule34_${d.id}`
-        return {
-          isLike: !!imgLikes[id],
-          data: d,
-        }
-      })
+      ).map(
+        (d: GalleryItem): rData => {
+          let uri = executePaser(props.rule.content.image, { $i: d })
+          uri = isDev
+            ? `http://${ip}:3001/proxy-img?url=${encodeURIComponent(uri)}`
+            : uri
+
+          let id = `rule34_${d.id}`
+          return {
+            isLike: !!imgLikes[id],
+            data: d,
+            img: uri,
+          }
+        },
+      )
 
       function ejectData() {
         setDataList([...dataList, ...resDataList])
@@ -105,13 +130,14 @@ const Gallery: FC<rProps> = function (props) {
     })
   }
 
-  // container scroll event
-  let handlerScrollEnd = genHandlerScrollEnd(() => {
+  let loadMore = () => {
     if (!loading) {
       console.log('scroll end pid:', pid)
       loadData(pid + 1)
     }
-  })
+  }
+  // container scroll event
+  let handlerScrollEnd = genHandlerScrollEnd(loadMore)
 
   return (
     <View style={{ ..._style.wh('100%'), position: 'relative' }}>
@@ -127,7 +153,10 @@ const Gallery: FC<rProps> = function (props) {
               isLike={item.isLike}
               data={item.data}
               navigation={navigation}
-              nowTag={route.params?.tags}
+              onClick={() => {
+                setindex(index)
+                setModalVisible(true)
+              }}
             />
           )
         }}
@@ -157,6 +186,15 @@ const Gallery: FC<rProps> = function (props) {
           <ActivityIndicator animating={true} />
         </View>
       )}
+      <Viewer
+        datas={dataList}
+        images={dataList.map((d) => d.img)}
+        nowTag={route.params?.tags}
+        index={index}
+        setVisible={setModalVisible}
+        visible={isModalVisible}
+        loadMore={loadMore}
+      />
     </View>
   )
 }

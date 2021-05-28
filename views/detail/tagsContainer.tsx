@@ -1,6 +1,7 @@
 import ChipList from '@r/components/chipList'
 import { StateBase } from '@r/reducers'
 import { RootPageProps } from '@r/types/route'
+import { getCache, setCache } from '@r/utils/cache'
 import request from '@r/utils/request'
 import { executePaser } from '@r/utils/ruleParser'
 import { useNavigation } from '@react-navigation/native'
@@ -29,13 +30,20 @@ let TagsContainer: FC<rProps> = (props) => {
   })
 
   useEffect(() => {
-    if (props.rule.content.url) {
-      let requestUrl = executePaser(props.rule.content.url, {
+    let url = props.rule.content.url
+    if (url) {
+      let requestUrl = executePaser(url, {
         id,
       })
-      request(requestUrl).then((res) => {
-        let _tags = executePaser(props.rule.content.tags, res)
-        setAtags(_tags)
+
+      getCache(requestUrl).then((res) => {
+        if (res) setAtags(JSON.parse(res))
+        else
+          request(requestUrl).then((res) => {
+            let _tags = executePaser(props.rule.content.tags, res)
+            setAtags(_tags)
+            setCache(requestUrl, JSON.stringify(_tags))
+          })
       })
     } else {
       let _tags = executePaser(props.rule.content.tags, data)

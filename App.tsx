@@ -10,9 +10,10 @@ import { GalleryItem } from './types/itemType'
 import { isDev } from './utils/env'
 import view_collections from './views/collections'
 import Detail from './views/detail'
-import view_gallery from './views/gallery'
+import view_gallery, { rData } from './views/gallery'
 import Search from './views/search'
 import Setting from './views/setting'
+import Page_Viewer from './views/Viewer'
 
 LogBox.ignoreLogs(['Remote debugger'])
 
@@ -21,6 +22,7 @@ export type RootStackParamList = {
   search: { value: string }
   detail: { data: GalleryItem; nowTag: string }
   gallery: Partial<{ tags: string; likeList: boolean }>
+  viewer: { dataList: rData[]; index: number; page: number; nowTag: string }
   setting: undefined
 }
 export type TabStackParamList = {
@@ -108,6 +110,11 @@ function _RenderRouter(props: any) {
           <RootStack.Screen
             component={view_gallery}
             name="gallery"
+            options={{ header: () => null }}
+          />
+          <RootStack.Screen
+            component={Page_Viewer}
+            name="viewer"
             options={{ header: () => null }}
           />
         </RootStack.Navigator>

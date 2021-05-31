@@ -151,7 +151,6 @@ const Detail: FC<rProps> = (props) => {
         {RenderImageEl(uri, data)}
         <TagsContainer
           data={data}
-          id={data.id}
           nowTag={route.params?.nowTag}
           // tags={tags}
         />

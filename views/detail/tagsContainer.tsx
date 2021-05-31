@@ -6,20 +6,21 @@ import request from '@r/utils/request'
 import { executePaser } from '@r/utils/ruleParser'
 import { useNavigation } from '@react-navigation/native'
 import React, { FC, useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { ActivityIndicator, View } from 'react-native'
 import { Divider, Text } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
 
 type rProps = ConnectedProps<typeof connector> & {
+  /**orginData */
   data: any
-  id: number
   nowTag: string
-  [k: string]: any
 }
 
 let TagsContainer: FC<rProps> = (props) => {
-  let { tags, id, isAdvancedTags, data } = props
+  let { isAdvancedTags, data } = props
+  let id = data?.id
   let navigation = useNavigation<RootPageProps<'detail'>['navigation']>()
+  let [isLoading, setLoading] = useState(false)
 
   let [atags, setAtags] = useState<{ [k: string]: any }>({
     // copyrights: [],
@@ -30,6 +31,7 @@ let TagsContainer: FC<rProps> = (props) => {
   })
 
   useEffect(() => {
+    setLoading(true)
     let url = props.rule.content.url
     if (url) {
       let requestUrl = executePaser(url, {
@@ -43,13 +45,16 @@ let TagsContainer: FC<rProps> = (props) => {
             let _tags = executePaser(props.rule.content.tags, res)
             setAtags(_tags)
             setCache(requestUrl, JSON.stringify(_tags))
+            setLoading(false)
           })
+        setLoading(false)
       })
     } else {
       let _tags = executePaser(props.rule.content.tags, data)
       setAtags(_tags)
+      setLoading(false)
     }
-  }, [])
+  }, [data])
 
   function onPress(tag = '') {
     let tags = tag.replace(/\s/g, '_')
@@ -64,32 +69,32 @@ let TagsContainer: FC<rProps> = (props) => {
     })
   }
 
-  let el = (
+  return (
     <View style={{ minHeight: 100, backgroundColor: '#fff' }}>
-      {Object.keys(atags).map((type) => {
-        let dataList = atags[`${type}`]
-        return (
-          <View key={type}>
-            {dataList.length ? (
-              <>
-                <Text>{type}</Text>
-                <Divider />
-                {ChipList({
-                  dataList,
-                  onPress,
-                  onLongPress,
-                })}
-              </>
-            ) : (
-              <></>
-            )}
-          </View>
-        )
-      })}
+      {isLoading && <ActivityIndicator animating={true} />}
+      {!isLoading &&
+        Object.keys(atags).map((type) => {
+          let dataList = atags[`${type}`]
+          return (
+            <View key={type}>
+              {dataList.length ? (
+                <View>
+                  <Text>{type}</Text>
+                  <Divider />
+                  <ChipList
+                    dataList={dataList}
+                    onPress={onPress}
+                    onLongPress={onLongPress}
+                  />
+                </View>
+              ) : (
+                <></>
+              )}
+            </View>
+          )
+        })}
     </View>
   )
-
-  return el
 }
 
 const mapStateToProps = (state: StateBase) => {

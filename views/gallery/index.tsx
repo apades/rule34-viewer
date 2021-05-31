@@ -1,15 +1,8 @@
+import { getMoreGalleyData } from '@r/actions/ruleAction'
 import DebugInfo from '@r/components/debugInfo'
 import { StateBase } from '@r/reducers'
 import { _style } from '@r/style'
-import { GalleryItem } from '@r/types/itemType'
 import { RootPageProps } from '@r/types/route'
-import { isDev, ip } from '@r/utils/env'
-import request from '@r/utils/request'
-import {
-  executePaser,
-  parserItemValue,
-  parserStringValue,
-} from '@r/utils/ruleParser'
 import { genHandlerScrollEnd } from '@r/utils/utils'
 import { throttle } from 'lodash'
 import React, { FC, memo, useEffect, useState } from 'react'
@@ -17,7 +10,6 @@ import { Text, View } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import { FlatGrid } from 'react-native-super-grid'
 import { connect, ConnectedProps } from 'react-redux'
-import Viewer from '../viewer'
 import GalleryHeader from './header'
 import RenderGalleryItem from './item'
 
@@ -27,7 +19,12 @@ type rProps = ConnectedProps<typeof connector> & Props
 export type rData<T = any> = {
   isLike: boolean
   img: string
-  data: T
+  cover: string
+  // tags: {
+  //   [k: string]: string[]
+  // }
+  // originUrl: string
+  originData: T
 }
 
 const Gallery: FC<rProps> = function (props) {
@@ -43,8 +40,7 @@ const Gallery: FC<rProps> = function (props) {
   let [loading, setLoading] = useState(false)
   let [firstLoad, setFirstLoad] = useState(true)
 
-  let [isModalVisible, setModalVisible] = useState(false)
-  let [index, setindex] = useState(0)
+  let tags = route?.params?.tags ?? ''
 
   useEffect(() => {
     initState()
@@ -58,76 +54,45 @@ const Gallery: FC<rProps> = function (props) {
     setPid(pidInit)
   }
 
-  function loadData(pid: number) {
+  async function loadData(pid: number) {
     setLoading(true)
-    // imgLikes-mode
-    if (route?.params?.likeList) {
-      let dataList: rData[] = Object.values(imgLikes)
-        .reverse()
-        .map((d) => {
-          let uri = executePaser(props.rule.content.image, { $i: d })
-          uri = isDev
-            ? `http://${ip}:3001/proxy-img?url=${encodeURIComponent(uri)}`
-            : uri
-          return {
-            isLike: true,
-            data: d,
-            img: uri,
-          }
-        })
-      setDataList(dataList)
-      setFirstLoad(false)
-      setLoading(false)
-      return
-    }
+    // --- imgLikes-mode
+    // if (route?.params?.likeList) {
+    //   let dataList: rData[] = Object.values(imgLikes)
+    //     .reverse()
+    //     .map((d) => {
+    //       let uri = executePaser(props.rule.content.image, { $i: d })
+    //       uri = isDev
+    //         ? `http://${ip}:3001/proxy-img?url=${encodeURIComponent(uri)}`
+    //         : uri
+    //       return {
+    //         isLike: true,
+    //         data: d,
+    //         img: uri,
+    //       }
+    //     })
+    //   setDataList(dataList)
+    //   setFirstLoad(false)
+    //   setLoading(false)
+    //   return
+    // }
+    // --- imgLikes-mode
 
-    let tags = route?.params?.tags ?? ''
     console.log(`load ${tags}`)
 
-    // **script-load request**
-    let requestUrl = parserStringValue(props.rule.discover.url, {
+    let resDataList = await props.getMoreGalleyData({
       searchString: tags,
       pageLimit: 20,
       pageNum: pid,
     })
-    console.log('requestUrl', requestUrl)
 
-    request(requestUrl).then((res) => {
-      let resDataList: rData[] = parserItemValue(
-        props.rule.discover?.list ?? '$',
-        res,
-      ).map(
-        (d: GalleryItem): rData => {
-          let uri = executePaser(props.rule.content.image, { $i: d })
-          uri = isDev
-            ? `http://${ip}:3001/proxy-img?url=${encodeURIComponent(uri)}`
-            : uri
-
-          let id = `rule34_${d.id}`
-          return {
-            isLike: !!imgLikes[id],
-            data: d,
-            img: uri,
-          }
-        },
-      )
-
-      function ejectData() {
-        setDataList([...dataList, ...resDataList])
-        setLoading(false)
-      }
-
-      if (firstLoad) {
-        console.log('init Gallery')
-        setFirstLoad(() => {
-          ejectData()
-          return false
-        })
-      } else {
-        ejectData()
-      }
-      setPid(pid)
-    })
+    if (firstLoad) {
+      console.log('init Gallery')
+      setFirstLoad(false)
+    }
+    setDataList([...dataList, ...resDataList])
+    setLoading(false)
+    setPid(pid)
   }
 
   let loadMore = () => {
@@ -148,14 +113,16 @@ const Gallery: FC<rProps> = function (props) {
         renderItem={({ item, index }) => {
           return (
             <RenderGalleryItem
-              key={item.data.id}
+              key={item.originData.id}
               index={index}
-              isLike={item.isLike}
-              data={item.data}
-              navigation={navigation}
-              onClick={() => {
-                setindex(index)
-                setModalVisible(true)
+              data={item}
+              onPress={() => {
+                navigation.push('viewer', {
+                  dataList,
+                  index,
+                  page: pid,
+                  nowTag: tags,
+                })
               }}
             />
           )
@@ -186,15 +153,6 @@ const Gallery: FC<rProps> = function (props) {
           <ActivityIndicator animating={true} />
         </View>
       )}
-      <Viewer
-        datas={dataList}
-        images={dataList.map((d) => d.img)}
-        nowTag={route.params?.tags}
-        index={index}
-        setVisible={setModalVisible}
-        visible={isModalVisible}
-        loadMore={loadMore}
-      />
     </View>
   )
 }
@@ -205,7 +163,10 @@ const mapStateToProps = (state: StateBase) => {
     rule: state.setting.rule,
   }
 }
-const mapDispatchToProps = {}
+
+const mapDispatchToProps = {
+  getMoreGalleyData,
+}
 
 let connector = connect(mapStateToProps, mapDispatchToProps)
 

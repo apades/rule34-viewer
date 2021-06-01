@@ -1,46 +1,66 @@
+import ChipList from '@r/components/chipList'
+import { StateBase } from '@r/reducers'
+import { dykey } from '@r/types'
+import { RootPageProps } from '@r/types/route'
+import { getCache, setCache } from '@r/utils/cache'
+import request from '@r/utils/request'
+import { executePaser } from '@r/utils/ruleParser'
+import { useNavigation } from '@react-navigation/native'
 import React, { FC, useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { ActivityIndicator, View } from 'react-native'
 import { Divider, Text } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
-import { StateBase } from 'reducers'
-import ChipList from '../../components/chipList'
-import _config from '../../config/base.config'
-import request from '../../utils/request'
-import { executePaser } from '../../utils/ruleParser'
 
 type rProps = ConnectedProps<typeof connector> & {
+  /**orginData */
   data: any
-  id: number
-  navigation: any
   nowTag: string
-  [k: string]: any
 }
 
 let TagsContainer: FC<rProps> = (props) => {
-  let { tags, id, isAdvancedTags, navigation, data } = props
+  let { isAdvancedTags, data } = props
+  let id = data?.id
+  let navigation = useNavigation<RootPageProps<'detail'>['navigation']>()
+  let [isLoading, setLoading] = useState(false)
 
-  let [atags, setAtags] = useState<{ [k: string]: any }>({
-    // copyrights: [],
-    // characters: [],
-    // artists: [],
-    // generals: [],
-    // metadatas: [],
-  })
+  let [allTagsMap, setAllTagsMap] = useState<[string, string[]][]>([])
+
+  async function initTagsMap() {
+    let _setAllTagsMap = (obj: dykey) => {
+      setAllTagsMap(Object.entries(obj))
+    }
+
+    let url = props.rule.content.url
+    if (!url) {
+      let _tags = executePaser(props.rule.content.tags, data)
+      _setAllTagsMap(_tags)
+      return
+    }
+    let requestUrl = executePaser(url, {
+      id,
+    })
+
+    let cache = await getCache(requestUrl)
+    if (cache) {
+      return _setAllTagsMap(JSON.parse(cache))
+    }
+    let res = await request(requestUrl)
+    let _tags = executePaser(props.rule.content.tags, res)
+    _setAllTagsMap(_tags)
+    await setCache(requestUrl, JSON.stringify(_tags))
+    return
+  }
 
   useEffect(() => {
-    if (props.rule.content.url) {
-      let requestUrl = executePaser(props.rule.content.url, {
-        id,
+    setLoading(true)
+    initTagsMap()
+      .catch((err) => {
+        console.error('initTagsMap error', err)
       })
-      request(requestUrl).then((res) => {
-        let _tags = executePaser(props.rule.content.tags, res)
-        setAtags(_tags)
+      .finally(() => {
+        setLoading(false)
       })
-    } else {
-      let _tags = executePaser(props.rule.content.tags, data)
-      setAtags(_tags)
-    }
-  }, [])
+  }, [data])
 
   function onPress(tag = '') {
     let tags = tag.replace(/\s/g, '_')
@@ -55,34 +75,27 @@ let TagsContainer: FC<rProps> = (props) => {
     })
   }
 
-  let el = <></>
-  if (Object.keys(atags).length)
-    el = (
-      <View>
-        {Object.keys(atags).map((type) => {
-          let dataList = atags[`${type}`]
-          return (
-            <View key={type}>
-              {dataList.length ? (
-                <>
-                  <Text>{type}</Text>
-                  <Divider />
-                  {ChipList({
-                    dataList,
-                    onPress,
-                    onLongPress,
-                  })}
-                </>
-              ) : (
-                <></>
-              )}
-            </View>
-          )
-        })}
-      </View>
-    )
-
-  return el
+  return (
+    <View style={{ minHeight: 100, backgroundColor: '#fff' }}>
+      {isLoading && <ActivityIndicator animating={true} />}
+      {!isLoading &&
+        allTagsMap.map(([key, dataList]) => (
+          <View key={key}>
+            {!!dataList.length && (
+              <View>
+                <Text>{key}</Text>
+                <Divider />
+                <ChipList
+                  dataList={dataList}
+                  onPress={onPress}
+                  onLongPress={onLongPress}
+                />
+              </View>
+            )}
+          </View>
+        ))}
+    </View>
+  )
 }
 
 const mapStateToProps = (state: StateBase) => {

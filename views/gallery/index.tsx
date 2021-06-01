@@ -1,27 +1,36 @@
-import React, { Dispatch, FC, memo, useEffect, useState } from 'react'
+import { getMoreGalleyData } from '@r/actions/ruleAction'
+import DebugInfo from '@r/components/debugInfo'
+import { StateBase } from '@r/reducers'
+import { _style } from '@r/style'
+import { RootPageProps } from '@r/types/route'
+import { genHandlerScrollEnd } from '@r/utils/utils'
+import { throttle } from 'lodash'
+import React, { FC, memo, useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import { FlatGrid } from 'react-native-super-grid'
 import { connect, ConnectedProps } from 'react-redux'
-import { RootActions, StateBase } from 'reducers'
-import DebugInfo from '../../components/debugInfo'
-import { _style } from '../../style'
-import request from '../../utils/request'
-import { parserItemValue, parserStringValue } from '../../utils/ruleParser'
-import { genHandlerScrollEnd } from '../../utils/utils'
 import GalleryHeader from './header'
 import RenderGalleryItem from './item'
 
-type rProps = ConnectedProps<typeof connector> & {
-  [k: string]: any
+type Props = RootPageProps<'gallery'>
+type rProps = ConnectedProps<typeof connector> & Props
+
+export type rData<T = any> = {
+  isLike: boolean
+  content: string
+  cover: string
+  // tags: {
+  //   [k: string]: string[]
+  // }
+  // originUrl: string
+  originData: T
 }
 
 const Gallery: FC<rProps> = function (props) {
-  let { navigation, route, likesToggle } = props
-  console.log(`--- render ${route?.params?.tags ?? 'home'} gallery ---`)
-
+  let { navigation, route, imgLikes } = props
   // dataList
-  let [dataList, setDataList] = useState<any>([])
+  let [dataList, setDataList] = useState<rData[]>([])
 
   // pid
   let pidInit = props.rule?.config?.pageNumStart ?? 0
@@ -31,7 +40,8 @@ const Gallery: FC<rProps> = function (props) {
   let [loading, setLoading] = useState(false)
   let [firstLoad, setFirstLoad] = useState(true)
 
-  let { imgLikes } = props
+  let tags = route?.params?.tags ?? ''
+
   useEffect(() => {
     initState()
 
@@ -39,79 +49,86 @@ const Gallery: FC<rProps> = function (props) {
   }, [])
 
   function initState() {
-    console.log(`initState,${route.params?.tags ?? 'home'}`)
-    // reset dataList 关键
-    dataList.length = 0
-    setDataList(dataList)
+    console.log(`--- render ${route?.params?.tags ?? 'home'} gallery ---`)
+    setDataList([])
     setPid(pidInit)
   }
 
-  function loadData(pid: number) {
+  async function loadData(pid: number) {
     setLoading(true)
-    // imgLikes-mode
-    if (route?.params?.likeList) {
-      let dataList = Object.values(imgLikes).reverse()
-      setDataList(dataList)
-      setFirstLoad(false)
-      setLoading(false)
-      return
-    }
+    // --- imgLikes-mode
+    // if (route?.params?.likeList) {
+    //   let dataList: rData[] = Object.values(imgLikes)
+    //     .reverse()
+    //     .map((d) => {
+    //       let uri = executePaser(props.rule.content.image, { $i: d })
+    //       uri = isDev
+    //         ? `http://${ip}:3001/proxy-img?url=${encodeURIComponent(uri)}`
+    //         : uri
+    //       return {
+    //         isLike: true,
+    //         data: d,
+    //         img: uri,
+    //       }
+    //     })
+    //   setDataList(dataList)
+    //   setFirstLoad(false)
+    //   setLoading(false)
+    //   return
+    // }
+    // --- imgLikes-mode
 
-    let tags = route?.params?.tags ?? ''
     console.log(`load ${tags}`)
 
-    // **script-load request**
-    let requestUrl = parserStringValue(props.rule.discover.url, {
+    let resDataList = await props.getMoreGalleyData({
       searchString: tags,
       pageLimit: 20,
       pageNum: pid,
     })
-    console.log(requestUrl)
-    request(requestUrl).then((res) => {
-      let resDataList = parserItemValue(props.rule.discover?.list ?? '$', res)
-      function ejectData() {
-        let newDataList = [...dataList, ...resDataList]
-        setDataList(newDataList)
-        setLoading(false)
-      }
-      if (firstLoad) {
-        console.log('init Gallery')
-        setFirstLoad(() => {
-          ejectData()
-          return false
-        })
-      } else {
-        ejectData()
-      }
-      setPid(pid)
-    })
+
+    if (firstLoad) {
+      console.log('init Gallery')
+      setFirstLoad(false)
+    }
+    setDataList([...dataList, ...resDataList])
+    setLoading(false)
+    setPid(pid)
   }
 
-  // container scroll event
-  let handlerScrollEnd = genHandlerScrollEnd(() => {
+  let loadMore = () => {
     if (!loading) {
       console.log('scroll end pid:', pid)
       loadData(pid + 1)
     }
-  })
+  }
+  // container scroll event
+  let handlerScrollEnd = genHandlerScrollEnd(loadMore)
 
   return (
     <View style={{ ..._style.wh('100%'), position: 'relative' }}>
       <GalleryHeader tags={route.params?.tags || ''} />
       <FlatGrid
         data={dataList}
-        onScroll={handlerScrollEnd}
-        renderItem={({ item, index }) => (
-          <RenderGalleryItem
-            index={index}
-            isLike={!!imgLikes[`rule34_${item.id}`]}
-            item={item}
-            likesToggle={likesToggle}
-            navigation={navigation}
-            nowTag={route.params?.tags}
-          />
-        )}
+        onScroll={throttle(handlerScrollEnd)}
+        renderItem={({ item, index }) => {
+          return (
+            <RenderGalleryItem
+              key={item.originData.id}
+              index={index}
+              data={item}
+              onPress={() => {
+                navigation.push('viewer', {
+                  dataList,
+                  index,
+                  page: pid,
+                  nowTag: tags,
+                })
+              }}
+            />
+          )
+        }}
       />
+
       {firstLoad && (
         <View
           style={{
@@ -146,9 +163,9 @@ const mapStateToProps = (state: StateBase) => {
     rule: state.setting.rule,
   }
 }
+
 const mapDispatchToProps = {
-  likesToggle: (data: any) => (dispatch: Dispatch<RootActions>) =>
-    dispatch({ type: 'likes/img_toggle', id: data.id, data }),
+  getMoreGalleyData,
 }
 
 let connector = connect(mapStateToProps, mapDispatchToProps)

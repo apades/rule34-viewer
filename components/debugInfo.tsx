@@ -1,8 +1,8 @@
+import { StateBase } from '@r/reducers'
 import React, { FC, memo } from 'react'
 import { View } from 'react-native'
 import Draggable from 'react-native-draggable'
 import { connect, ConnectedProps } from 'react-redux'
-import { StateBase } from 'reducers'
 
 type rProps = ConnectedProps<typeof connector> & {
   [k: string]: any
@@ -11,19 +11,19 @@ type rProps = ConnectedProps<typeof connector> & {
 const DebugInfo: FC<rProps> = (props) => {
   let { setting, x, y } = props
 
-  return setting.debugMode ? (
-    <Draggable x={x ?? 0} y={y ?? 85}>
-      <View
-        style={{
-          backgroundColor: '#666',
-          padding: 5,
-        }}
-      >
-        {props.children}
-      </View>
-    </Draggable>
-  ) : (
-    <></>
+  return (
+    setting.debugMode && (
+      <Draggable x={x ?? 0} y={y ?? 85}>
+        <View
+          style={{
+            backgroundColor: '#666',
+            padding: 5,
+          }}
+        >
+          {props.children}
+        </View>
+      </Draggable>
+    )
   )
 }
 

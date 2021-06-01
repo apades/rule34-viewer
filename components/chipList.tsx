@@ -2,7 +2,7 @@ import React, { FC, ReactElement } from 'react'
 import { View, ViewStyle } from 'react-native'
 import { Chip, Text } from 'react-native-paper'
 
-type DataType =
+export type ChipListDataType =
   | string
   | {
       label: string
@@ -10,12 +10,12 @@ type DataType =
       [k: string]: any
     }
 type Props = {
-  dataList: DataType[]
-  onPress?: (data: DataType, index: number) => void
+  dataList: ChipListDataType[]
+  onPress?: (data: ChipListDataType, index: number) => void
   chipStyle?: ViewStyle
-  onLongPress?: (data: DataType) => void
-  renderItem?: (data: DataType, index: number) => ReactElement
-  renderChild?: (data: DataType, index: number) => ReactElement
+  onLongPress?: (data: ChipListDataType) => void
+  renderItem?: (data: ChipListDataType, index: number) => ReactElement
+  renderChild?: (data: ChipListDataType, index: number) => ReactElement
 }
 
 const ChipList: FC<Props> = (props) => {
@@ -46,20 +46,20 @@ const ChipList: FC<Props> = (props) => {
           ChipProps = data.ChipProps
         }
         return (
-          <View key={`${label}-${index}`} style={{ position: 'relative' }}>
+          <View key={`${label}`} style={{ position: 'relative' }}>
             {renderItem ? (
               renderItem(data, index)
             ) : (
               <Chip
-                onPress={() => {
-                  onPress(data, index)
-                }}
                 style={{
                   margin: 2,
                   ...chipStyle,
                 }}
                 {...ChipProps}
-                onLongPress={() => [onLongPress(data)]}
+                onPress={() => {
+                  console.log('press', data, index)
+                  onPress(data, index)
+                }}
               >
                 <Text>{label}</Text>
               </Chip>

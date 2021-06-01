@@ -1,13 +1,9 @@
+import { GalleryItem } from '@r/types/itemType'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-
-type LikeData = {
-  id: number
-  [k: string]: any
-}
 
 export type LikesDstate = {
   imgs: {
-    [k: string]: LikeData
+    [k: string]: GalleryItem
   }
   tags: {
     [k: string]: boolean
@@ -28,7 +24,7 @@ export type LikesAction =
 type LikesInit = {
   type: 'likes/init'
   imgs: {
-    [k: string]: LikeData
+    [k: string]: GalleryItem
   }
   tags: {
     [k: string]: boolean
@@ -38,7 +34,7 @@ type LikesInit = {
 type LikesImgToggle = {
   type: 'likes/img_toggle'
   id: number
-  data: LikeData
+  data: GalleryItem
 }
 type LikesTagToggle = {
   type: 'likes/tag_toggle'
@@ -68,7 +64,6 @@ const likes = (state = init, action: LikesAction): LikesDstate => {
       let id = `rule34_${action.id}`
       if (state.imgs[id]) delete state.imgs[id]
       else state.imgs[id] = action.data
-      // 这样不让他更新全部
       AsyncStorage.setItem('imgLikes', JSON.stringify(state.imgs))
       return state
     case 'likes/tag_toggle':

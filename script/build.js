@@ -31,18 +31,18 @@ async function main() {
     fs.unlinkSync(resolve('../app.config.js'))
 
     // 打tag
-    exec('git tag', (err, stdout, stderr) => {
-      if (err) console.log('err', err)
-      let verList = stdout.split(/\r|\n/)
+    // exec('git tag', (err, stdout, stderr) => {
+    //   if (err) console.log('err', err)
+    //   let verList = stdout.split(/\r|\n/)
 
-      let newVerList = verList[verList.length - 2].split('.')
-      newVerList[newVerList.length - 1] = +newVerList[newVerList.length - 1] + 1
+    //   let newVerList = verList[verList.length - 2].split('.')
+    //   newVerList[newVerList.length - 1] = +newVerList[newVerList.length - 1] + 1
 
-      let newVer = newVerList.join('.')
-      exec(`git tag ${newVer}`, (err, stdout, stderr) => {
-        if (err) console.log('add tag error', err)
-      })
-    })
+    //   let newVer = newVerList.join('.')
+    //   exec(`git tag ${newVer}`, (err, stdout, stderr) => {
+    //     if (err) console.log('add tag error', err)
+    //   })
+    // })
   } catch (error) {
     console.error(`build脚本发生错误`, error)
   }

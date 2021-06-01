@@ -1,27 +1,26 @@
+import ChipList, { ChipListDataType } from '@r/components/chipList'
+import DebugInfo from '@r/components/debugInfo'
+import ImageContainer from '@r/components/imageContainer'
+import { useDp } from '@r/hooks'
+import StatuBarLayout from '@r/layout/statuBar'
+import { resolveDetailData } from '@r/package/ruleParser/resolve'
+import { StateBase } from '@r/reducers'
+import { _style } from '@r/style'
+import { RootPageProps } from '@r/types/route'
+import { ip, isDev, _env, _screen } from '@r/utils/env'
+import request from '@r/utils/request'
+import { executePaser } from '@r/utils/ruleParser'
+import { deurl, handleOpenUrl } from '@r/utils/utils'
 import React, { FC, useEffect, useState } from 'react'
 import { Image, ScrollView, TouchableWithoutFeedback, View } from 'react-native'
 import { Button, Colors, Divider, FAB, Text } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
-import { StateBase } from 'reducers'
-import ChipList from '../../components/chipList'
-import DebugInfo from '../../components/debugInfo'
-import imageContainer from '../../components/imageContainer'
-import _config from '../../config/base.config'
-import statuBarLayout from '../../layout/statuBar'
-import { _style } from '../../style'
-import { _env, _screen } from '../../utils/env'
-import request from '../../utils/request'
-import { executePaser } from '../../utils/ruleParser'
-import { deurl, handleOpenUrl } from '../../utils/utils'
 import TagsContainer from './tagsContainer'
 
 function RenderImageEl(uri: string, data: any) {
-  console.log('render img')
   // let _isVideo = data.tags.indexOf('webm') === -1
   let [isVideo, setIsVideo] = useState(false)
   let [firstLoad, setFirstLoad] = useState(false)
-
-  let ImageEl
 
   useEffect(() => {
     if (!isVideo) {
@@ -33,53 +32,64 @@ function RenderImageEl(uri: string, data: any) {
     }
   }, [])
 
-  if (!_env.NSFW) {
-    ImageEl = <Text>img:{uri}</Text>
-  } else {
-    ImageEl =
-      !firstLoad && !isVideo
-        ? imageContainer({
-            source: { uri },
-          })
-        : imageContainer({
-            source: { uri: data.cover },
-            child: () =>
-              isVideo ? (
-                <View
-                  style={{
-                    ..._style.wh('100%'),
-                    ..._style.center(),
-                    position: 'absolute',
-                    backgroundColor: '#fff8',
-                  }}
-                >
-                  <Text style={{ fontSize: 20, color: Colors.blue400 }}>
-                    click reffers-&gt;web to play webm
-                  </Text>
-                </View>
-              ) : (
-                <></>
-              ),
-          })
-  }
-  return ImageEl
+  if (!_env.NSFW) return <Text>img:{uri}</Text>
+  if (!firstLoad && !isVideo) return <ImageContainer source={{ uri }} />
+  return (
+    <ImageContainer source={{ uri: data.cover }}>
+      {isVideo && (
+        <View
+          style={{
+            ..._style.wh('100%'),
+            ..._style.center(),
+            position: 'absolute',
+            backgroundColor: '#fff8',
+          }}
+        >
+          <Text style={{ fontSize: 20, color: Colors.blue400 }}>
+            click reffers-&gt;web to play webm
+          </Text>
+        </View>
+      )}
+    </ImageContainer>
+  )
 }
 
-type rProps = ConnectedProps<typeof connector> & {
-  [k: string]: any
+// ! 目前只有图片detail
+export type DetailData = {
+  id: string | number
+  uri: string
+  originUrl?: string
+  tags?: {
+    [k: string]: ChipListDataType
+  }
 }
+// TODO 需要把ajax拿到的原始data 转换成 DetailData
+export type rDetailData = {
+  resolveData: DetailData
+  originData: any
+}
+
+type Props = RootPageProps<'detail'>
+type rProps = ConnectedProps<typeof connector> & Props
 
 const Detail: FC<rProps> = (props) => {
-  console.log('render contain')
-  let { navigation, route, dispatch } = props
+  let { navigation, route } = props
+  let dispatch = useDp()
 
-  let data = route.params?.data ?? {}
+  let data = route.params?.data
 
+  // TODO 把所有datalist传过来，detail中可以滑动到上下张
+  let [index, setIndex] = useState(0)
   let uri = executePaser(props.rule.content.image, { $i: data })
+  uri = isDev
+    ? `http://${ip}:3001/proxy-img?url=${encodeURIComponent(uri)}`
+    : uri
 
   function RenderLike() {
-    let { getLikes } = props
-    let [like, setLike] = useState(getLikes(data.id))
+    let [like, setLike] = useState(false)
+    useEffect(() => {
+      setLike(props.isLike)
+    }, [])
     return (
       <FAB
         icon={like ? 'heart' : 'heart-outline'}
@@ -97,55 +107,10 @@ const Detail: FC<rProps> = (props) => {
     )
   }
 
-  // let tags = data?.tags?.split(' ').filter((str) => str !== '')
-  let tagsContainer = (
-    <TagsContainer
-      data={data}
-      id={data.id}
-      navigation={navigation}
-      nowTag={route.params?.nowTag}
-      // tags={tags}
-    />
-  )
-
-  function RenderReffer() {
-    let refferMap = {
-      'e621.net': (
-        <Image
-          source={{
-            uri:
-              'https://callstack.github.io/react-native-paper/screenshots/chip-1.png',
-          }}
-        />
-      ),
-    }
-
-    let reffers: string[] = (data?.source && data.source.split(' ')) || []
-    let dataList = reffers.map((reffer) => {
-      let durl = deurl(reffer)
-      return {
-        label: durl.domain,
-        url: reffer,
-      }
-    })
-
-    return dataList.length ? (
-      <View>
-        <View>
-          <Text>reffers</Text>
-          <Divider />
-        </View>
-        {ChipList({
-          dataList: dataList.map((d) => d.label),
-          onPress(data, index) {
-            handleOpenUrl(dataList[index])
-          },
-        })}
-      </View>
-    ) : (
-      <></>
-    )
-  }
+  let [touchStart, setTouchStart] = useState<{
+    x: number
+    y: number
+  }>({ x: 0, y: 0 })
 
   function RenderDebugInfo() {
     let [detail, setDetail] = useState(false)
@@ -158,38 +123,62 @@ const Detail: FC<rProps> = (props) => {
     )
   }
 
-  return statuBarLayout({
-    style: { position: 'relative' },
-    children: () => (
-      <>
-        <ScrollView>
-          {RenderImageEl(uri, data)}
-          {tagsContainer}
-          {RenderReffer()}
-          <View>
-            <Button
-              mode="contained"
-              onPress={() =>
-                handleOpenUrl(
-                  `https://rule34.xxx/index.php?page=post&s=view&id=${data.id}`,
-                )
-              }
-            >
-              origin
-            </Button>
-          </View>
-          <View style={{ marginTop: 20 }}></View>
-        </ScrollView>
-        {RenderDebugInfo()}
-        {RenderLike()}
-      </>
-    ),
-  })
+  return (
+    <StatuBarLayout style={{ position: 'relative' }}>
+      <ScrollView
+        onTouchStart={(e) => {
+          let { pageX, pageY } = e.nativeEvent
+          console.log('onTouchStart')
+          setTouchStart({
+            x: pageX,
+            y: pageY,
+          })
+        }}
+        onTouchEnd={(e) => {
+          console.log('onTouchEnd')
+          let { pageX, pageY } = e.nativeEvent
+          let offset = touchStart.x - pageX
+          console.log(offset)
+          if (Math.abs(offset) >= _screen.width / 2) {
+            if (offset >= 0) {
+              console.log('move left')
+            } else {
+              console.log('move right')
+            }
+          }
+        }}
+      >
+        {RenderImageEl(uri, data)}
+        <TagsContainer
+          data={data}
+          nowTag={route.params?.nowTag}
+          // tags={tags}
+        />
+        {/* <RenderReffer /> */}
+        <View>
+          <Button
+            mode="contained"
+            onPress={() =>
+              handleOpenUrl(
+                `https://rule34.xxx/index.php?page=post&s=view&id=${data.id}`,
+              )
+            }
+          >
+            origin
+          </Button>
+        </View>
+        <View style={{ marginTop: 20 }}></View>
+      </ScrollView>
+      <RenderDebugInfo />
+      <RenderLike />
+    </StatuBarLayout>
+  )
 }
 
-const mapStateToProps = (state: StateBase) => {
+const mapStateToProps = (state: StateBase, props: Props) => {
+  let pageData = props.route.params.data
   return {
-    getLikes: (id: number) => !!state.likes.imgs[`rule34_${id}`],
+    isLike: !!state.likes.imgs[`rule34_${pageData.id}`],
     rule: state.setting.rule,
   }
 }

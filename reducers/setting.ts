@@ -1,6 +1,7 @@
 import rule_rule34 from '../rules/rule34'
 import rule_e621 from '../rules/e621'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { omitOjbect } from '@r/utils/utils'
 
 export type SettingDstate = typeof init
 
@@ -17,6 +18,7 @@ export type SettingAction =
   | SettingChange
   | SettingSetRule
   | SettingLoadRules
+  | SettingSet
 
 type SettingDebug = {
   type: 'setting/debugMode'
@@ -29,11 +31,16 @@ type SettingChange = {
 }
 type SettingSetRule = {
   type: 'setting/setRule'
-  rule: any
+  ruleName: 'e621' | 'rule34'
 }
 type SettingLoadRules = {
   type: 'setting/loadRules'
   rules: any[]
+}
+type SettingSet = {
+  type: 'setting/set'
+} & {
+  [k in keyof SettingDstate]?: SettingDstate[k]
 }
 
 const setting = (state = init, action: SettingAction): SettingDstate => {
@@ -44,9 +51,23 @@ const setting = (state = init, action: SettingAction): SettingDstate => {
       let { key, value } = action
       return { ...state, [key]: value }
     case 'setting/setRule':
-      return { ...state, rule: action.rule }
+      let rule = {}
+      switch (action.ruleName) {
+        case 'e621':
+          rule = rule_e621
+          break
+        case 'rule34':
+          rule = rule_rule34
+          break
+      }
+      return { ...state, rule }
     case 'setting/loadRules': {
       return { ...state, rules: action.rules, loaded: true }
+    }
+    case 'setting/set': {
+      let data = omitOjbect(action, ['type'])
+      Object.assign(state, data)
+      return { ...state }
     }
     default:
       return state

@@ -1,32 +1,25 @@
+import { RootStackParamList, TabStackParamList } from '@r/App'
+import ChipList from '@r/components/chipList'
+import { StateBase } from '@r/reducers'
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import { CompositeNavigationProp, useIsFocused } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { RootStackParamList, TabStackParamList } from 'App'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import { StatusBar, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Button } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
-import { StateBase } from 'reducers'
-import ChipList from '../../components/chipList'
 
 type rProps = ConnectedProps<typeof connector> & {
   navigation: CompositeNavigationProp<
     BottomTabNavigationProp<TabStackParamList, 'collections'>,
     StackNavigationProp<RootStackParamList>
   >
-  [k: string]: any
 }
 
 const view_collections: FC<rProps> = (props) => {
-  let { navigation, getLikes } = props
+  let { navigation, likes } = props
   let focus = useIsFocused()
-  let [likes, setLikes] = useState(getLikes())
-
-  useEffect(() => {
-    let likes = getLikes()
-    setLikes(likes)
-  }, [focus])
 
   let collects = Object.keys(likes.tags)
 
@@ -43,19 +36,14 @@ const view_collections: FC<rProps> = (props) => {
             flexWrap: 'wrap',
           }}
         >
-          {ChipList({
-            dataList: collects,
-            onPress: (collect: string) => {
+          <ChipList
+            dataList={collects}
+            onPress={(collect: string) => {
               navigation.push('gallery', {
                 tags: collect,
               })
-            },
-            // renderChild: () => (
-            //   <View style={{ position: 'absolute', right: 0, top: -1 }}>
-            //     <Badge size={15}>1</Badge>
-            //   </View>
-            // ),
-          })}
+            }}
+          />
         </View>
         <View>
           <Button
@@ -79,7 +67,7 @@ const view_collections: FC<rProps> = (props) => {
 
 const mapStateToProps = (state: StateBase) => {
   return {
-    getLikes: () => state.likes,
+    likes: state.likes,
   }
 }
 const mapDispatchToProps = {}

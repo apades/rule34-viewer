@@ -6,20 +6,24 @@ import React, { useEffect } from 'react'
 import { LogBox, View } from 'react-native'
 import { connect, Provider } from 'react-redux'
 import store, { StateBase } from './reducers/index'
+import { GalleryItem } from './types/itemType'
 import { isDev } from './utils/env'
 import view_collections from './views/collections'
 import Detail from './views/detail'
-import view_gallery from './views/gallery'
+import view_gallery, { rData } from './views/gallery'
 import Search from './views/search'
 import Setting from './views/setting'
+import Page_Viewer from './views/Viewer'
 
 LogBox.ignoreLogs(['Remote debugger'])
 
 export type RootStackParamList = {
   home: undefined
-  search: undefined
-  detail: undefined
-  gallery: { tags: string } | { likeList: true } | undefined
+  search: { value: string }
+  detail: { data: GalleryItem; nowTag: string }
+  gallery: Partial<{ tags: string; likeList: boolean }>
+  viewer: { dataList: rData[]; index: number; page: number; nowTag: string }
+  setting: undefined
 }
 export type TabStackParamList = {
   collections: undefined
@@ -38,18 +42,18 @@ function _RenderRouter(props: any) {
     _initStore()
   }, [])
   async function _initStore() {
-    let [tags, imgs, histories, ruleName] = await Promise.all([
+    let [tags, imgs, histories] = await Promise.all([
       AsyncStorage.getItem('tagLikes'),
       AsyncStorage.getItem('imgLikes'),
       AsyncStorage.getItem('searchHistories'),
-      AsyncStorage.getItem('setting/rule'),
+      // AsyncStorage.getItem('setting/rule'),
     ])
     tags = JSON.parse(tags)
     imgs = JSON.parse(imgs)
     histories = JSON.parse(histories)
     dispatch({ type: 'likes/init', tags, imgs })
     dispatch({ type: 'search/initHis', histories })
-    dispatch({ type: 'setting/setRule', ruleName })
+    // dispatch({ type: 'setting/setRule', ruleName })
   }
 
   function HomeComponent() {
@@ -106,6 +110,11 @@ function _RenderRouter(props: any) {
           <RootStack.Screen
             component={view_gallery}
             name="gallery"
+            options={{ header: () => null }}
+          />
+          <RootStack.Screen
+            component={Page_Viewer}
+            name="viewer"
             options={{ header: () => null }}
           />
         </RootStack.Navigator>

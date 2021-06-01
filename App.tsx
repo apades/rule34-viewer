@@ -13,7 +13,7 @@ import Detail from './views/detail'
 import view_gallery, { rData } from './views/gallery'
 import Search from './views/search'
 import Setting from './views/setting'
-import Page_Viewer from './views/Viewer'
+import Page_Viewer from './views/viewer'
 
 LogBox.ignoreLogs(['Remote debugger'])
 

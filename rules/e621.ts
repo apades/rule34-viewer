@@ -20,5 +20,6 @@ export default {
     }`,
     tags: '$.tags',
     reffers: '$.sources',
+    originUrl: 'https://e621.net/posts/@{id}',
   },
 }

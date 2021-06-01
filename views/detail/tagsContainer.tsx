@@ -1,5 +1,6 @@
 import ChipList from '@r/components/chipList'
 import { StateBase } from '@r/reducers'
+import { dykey } from '@r/types'
 import { RootPageProps } from '@r/types/route'
 import { getCache, setCache } from '@r/utils/cache'
 import request from '@r/utils/request'
@@ -22,38 +23,43 @@ let TagsContainer: FC<rProps> = (props) => {
   let navigation = useNavigation<RootPageProps<'detail'>['navigation']>()
   let [isLoading, setLoading] = useState(false)
 
-  let [atags, setAtags] = useState<{ [k: string]: any }>({
-    // copyrights: [],
-    // characters: [],
-    // artists: [],
-    // generals: [],
-    // metadatas: [],
-  })
+  let [allTagsMap, setAllTagsMap] = useState<[string, string[]][]>([])
+
+  async function initTagsMap() {
+    let _setAllTagsMap = (obj: dykey) => {
+      setAllTagsMap(Object.entries(obj))
+    }
+
+    let url = props.rule.content.url
+    if (!url) {
+      let _tags = executePaser(props.rule.content.tags, data)
+      _setAllTagsMap(_tags)
+      return
+    }
+    let requestUrl = executePaser(url, {
+      id,
+    })
+
+    let cache = await getCache(requestUrl)
+    if (cache) {
+      return _setAllTagsMap(JSON.parse(cache))
+    }
+    let res = await request(requestUrl)
+    let _tags = executePaser(props.rule.content.tags, res)
+    _setAllTagsMap(_tags)
+    await setCache(requestUrl, JSON.stringify(_tags))
+    return
+  }
 
   useEffect(() => {
     setLoading(true)
-    let url = props.rule.content.url
-    if (url) {
-      let requestUrl = executePaser(url, {
-        id,
+    initTagsMap()
+      .catch((err) => {
+        console.error('initTagsMap error', err)
       })
-
-      getCache(requestUrl).then((res) => {
-        if (res) setAtags(JSON.parse(res))
-        else
-          request(requestUrl).then((res) => {
-            let _tags = executePaser(props.rule.content.tags, res)
-            setAtags(_tags)
-            setCache(requestUrl, JSON.stringify(_tags))
-            setLoading(false)
-          })
+      .finally(() => {
         setLoading(false)
       })
-    } else {
-      let _tags = executePaser(props.rule.content.tags, data)
-      setAtags(_tags)
-      setLoading(false)
-    }
   }, [data])
 
   function onPress(tag = '') {
@@ -73,26 +79,21 @@ let TagsContainer: FC<rProps> = (props) => {
     <View style={{ minHeight: 100, backgroundColor: '#fff' }}>
       {isLoading && <ActivityIndicator animating={true} />}
       {!isLoading &&
-        Object.keys(atags).map((type) => {
-          let dataList = atags[`${type}`]
-          return (
-            <View key={type}>
-              {dataList.length ? (
-                <View>
-                  <Text>{type}</Text>
-                  <Divider />
-                  <ChipList
-                    dataList={dataList}
-                    onPress={onPress}
-                    onLongPress={onLongPress}
-                  />
-                </View>
-              ) : (
-                <></>
-              )}
-            </View>
-          )
-        })}
+        allTagsMap.map(([key, dataList]) => (
+          <View key={key}>
+            {!!dataList.length && (
+              <View>
+                <Text>{key}</Text>
+                <Divider />
+                <ChipList
+                  dataList={dataList}
+                  onPress={onPress}
+                  onLongPress={onLongPress}
+                />
+              </View>
+            )}
+          </View>
+        ))}
     </View>
   )
 }

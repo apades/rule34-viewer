@@ -63,10 +63,22 @@ export const getMoreGalleyData = (option: {
       return {
         isLike: !!imgLikes[id],
         originData: item,
-        img: getImageUrl(item)(dispatch, getState),
+        content: getImageUrl(item)(dispatch, getState),
         cover: getCoverUrl(item)(dispatch, getState),
       }
     },
   )
   return resDataList
+}
+
+export const getContentOriginUrl = (option: { id: number }) => (
+  dispatch: Dp,
+  getState: GetState,
+): string => {
+  let rule = getState().setting.rule.content
+  return rule.url
+    ? executePaser(rule.url, option)
+    : rule.originUrl
+    ? executePaser(rule.originUrl, option)
+    : ''
 }

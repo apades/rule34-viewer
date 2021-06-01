@@ -1,16 +1,15 @@
-import { getMoreGalleyData } from '@r/actions/ruleAction'
+import { getContentOriginUrl, getMoreGalleyData } from '@r/actions/ruleAction'
 import { useDp } from '@r/hooks'
 import { StateBase } from '@r/reducers'
 import { RootPageProps } from '@r/types/route'
 import { _screen } from '@r/utils/env'
 import { handleOpenUrl } from '@r/utils/utils'
 import React, { FC, memo, useEffect, useRef, useState } from 'react'
-import { Modal, View, Text } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { Image, Text, View } from 'react-native'
 import ImageViewer from 'react-native-image-zoom-viewer'
+import { IImageInfo } from 'react-native-image-zoom-viewer/built/image-viewer.type'
 import { ActivityIndicator, Button, FAB } from 'react-native-paper'
-import Animated from 'react-native-reanimated'
-import { Easing } from 'react-native-reanimated'
+import Animated, { Easing } from 'react-native-reanimated'
 import { connect, ConnectedProps } from 'react-redux'
 import TagsContainer from '../detail/tagsContainer'
 import { rData } from '../gallery'
@@ -18,9 +17,8 @@ import { rData } from '../gallery'
 export type ViewerProps = RootPageProps<'viewer'>
 type rProps = ConnectedProps<typeof connector> & ViewerProps
 
-let initHeight = (_screen.height / 100) * 90
+let initTop = (_screen.height / 100) * 93
 let Page_Viewer: FC<rProps> = (props) => {
-  let { navigation } = props
   let {
     index: InitIndex,
     dataList: _dataList,
@@ -28,8 +26,6 @@ let Page_Viewer: FC<rProps> = (props) => {
     nowTag,
   } = props.route.params
   let dispatch = useDp()
-
-  const bottomAnim = useRef(new Animated.Value(-100)).current
 
   let [index, setindex] = useState(InitIndex)
   let [page, setPage] = useState(_page)
@@ -40,26 +36,15 @@ let Page_Viewer: FC<rProps> = (props) => {
 
   useEffect(() => {
     let rdata = dataList[index]
-    console.log('rdata', rdata)
+    // console.log('rdata', rdata)
     setNowData(rdata)
     setLike(rdata?.isLike)
   }, [index, dataList])
 
   let [mStartY, setmStartY] = useState(0)
-  let [bottom, setbottom] = useState<number>(-100)
+  let [isCanSlidBottom, setCanSlidBottom] = useState(true)
+  let top = useRef(new Animated.Value(initTop)).current
   let [height, setheight] = useState(0)
-
-  let setInitBottom = (_height = height) => {
-    let _bottom = (_height / 100) * 90 * -1
-    console.log('setInitBottom', _bottom)
-    setbottom(_bottom)
-
-    Animated.timing(bottomAnim, {
-      duration: 300,
-      toValue: _bottom,
-      easing: Easing.inOut(Easing.ease),
-    }).start()
-  }
 
   async function loadMore() {
     let resDataList = await props.getMoreGalleyData({
@@ -70,7 +55,16 @@ let Page_Viewer: FC<rProps> = (props) => {
     setDataList((list) => [...list, ...resDataList])
     setPage(page + 1)
   }
-  let imageUrls = dataList.map((i) => ({ url: i.img }))
+  let imageUrls: IImageInfo[] = dataList.map((i) => {
+    let isVideo = /\.(webm|mp4)$/.test(i.content)
+    return {
+      url: isVideo ? i.cover : i.content,
+      props: {
+        isVideo,
+        cover: i.cover,
+      },
+    }
+  })
 
   return (
     <View
@@ -89,18 +83,50 @@ let Page_Viewer: FC<rProps> = (props) => {
         }}
         onClick={() => {
           console.log('click to hide bottom')
-          setInitBottom()
+          // setInitBottom()
+          setCanSlidBottom(true)
+          Animated.timing(top, {
+            duration: 300,
+            toValue: initTop,
+            easing: Easing.inOut(Easing.ease),
+          }).start()
         }}
         saveToLocalByLongPress={false}
         onLongPress={() => {
           console.log('onLongPress')
         }}
+        renderImage={(props) => {
+          let { source, style } = props
+          console.log('props', props)
+          if (props.isVideo)
+            return (
+              <View
+                style={{
+                  ...style,
+                  backgroundColor: '#f00',
+                  position: 'relative',
+                }}
+              >
+                <Image source={{ uri: source.uri }} style={{ ...style }} />
+                <Text
+                  style={{
+                    color: '#fff',
+                    position: 'absolute',
+                    bottom: '50%',
+                    zIndex: 100,
+                  }}
+                >
+                  this is video, click origin to watch
+                </Text>
+              </View>
+            )
+          return <Image source={{ uri: source.uri }} style={{ ...style }} />
+        }}
         loadingRender={() => <ActivityIndicator animating={true} />}
       />
-      {/* mask 用来上滑拉出bottom */}
       <View
         style={{
-          zIndex: bottom === 0 ? 9 : 11,
+          zIndex: isCanSlidBottom ? 11 : 9,
           backgroundColor: '#fff',
           width: '100%',
           height: 100,
@@ -114,10 +140,10 @@ let Page_Viewer: FC<rProps> = (props) => {
         onTouchMove={(e) => {
           let y = e.nativeEvent.pageY
           if (mStartY - y >= 30) {
-            setbottom(0)
-            Animated.timing(bottomAnim, {
+            setCanSlidBottom(false)
+            Animated.timing(top, {
               duration: 300,
-              toValue: 0,
+              toValue: height,
               easing: Easing.inOut(Easing.ease),
             }).start()
           }
@@ -130,15 +156,13 @@ let Page_Viewer: FC<rProps> = (props) => {
           width: '100%',
           position: 'absolute',
           maxHeight: _screen.height / 2,
-          bottom: bottomAnim,
+          // bottom: bottomAnim,
+          top,
         }}
         onLayout={(e) => {
           let _height = e.nativeEvent.layout.height
           if (height === _height || _height === 135) return
-          setTimeout(() => {
-            setInitBottom(_height)
-            setheight(_height)
-          }, 0)
+          setheight(_height)
         }}
       >
         <TagsContainer data={data} nowTag={''} />
@@ -146,9 +170,7 @@ let Page_Viewer: FC<rProps> = (props) => {
           <Button
             mode="contained"
             onPress={() =>
-              handleOpenUrl(
-                `https://rule34.xxx/index.php?page=post&s=view&id=${data.id}`,
-              )
+              handleOpenUrl(props.getContentOriginUrl({ id: data.id }))
             }
           >
             origin
@@ -176,13 +198,12 @@ let Page_Viewer: FC<rProps> = (props) => {
 }
 
 const mapStateToProps = (state: StateBase) => {
-  return {
-    rule: state.setting.rule,
-  }
+  return {}
 }
 
 const mapDispatchToProps = {
   getMoreGalleyData,
+  getContentOriginUrl,
 }
 let connector = connect(mapStateToProps, mapDispatchToProps)
 export default connector(memo(Page_Viewer))

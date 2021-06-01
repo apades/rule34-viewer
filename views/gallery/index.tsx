@@ -18,7 +18,7 @@ type rProps = ConnectedProps<typeof connector> & Props
 
 export type rData<T = any> = {
   isLike: boolean
-  img: string
+  content: string
   cover: string
   // tags: {
   //   [k: string]: string[]

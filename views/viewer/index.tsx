@@ -17,7 +17,7 @@ import { rData } from '../gallery'
 export type ViewerProps = RootPageProps<'viewer'>
 type rProps = ConnectedProps<typeof connector> & ViewerProps
 
-let initTop = (_screen.height / 100) * 93
+let initTop = (_screen.height / 100) * 85
 let Page_Viewer: FC<rProps> = (props) => {
   let {
     index: InitIndex,
@@ -29,9 +29,10 @@ let Page_Viewer: FC<rProps> = (props) => {
 
   let [index, setindex] = useState(InitIndex)
   let [page, setPage] = useState(_page)
-  let [dataList, setDataList] = useState(_dataList)
+  let [dataList, setDataList] = useState([..._dataList])
   let [like, setLike] = useState(false)
   let [nowData, setNowData] = useState<rData>(_dataList[InitIndex])
+  let [isAnimating, setAnimating] = useState(false)
   let data = nowData?.originData
 
   useEffect(() => {
@@ -97,7 +98,7 @@ let Page_Viewer: FC<rProps> = (props) => {
         }}
         renderImage={(props) => {
           let { source, style } = props
-          console.log('props', props)
+          // console.log('props', props)
           if (props.isVideo)
             return (
               <View
@@ -131,7 +132,7 @@ let Page_Viewer: FC<rProps> = (props) => {
           width: '100%',
           height: 100,
           position: 'absolute',
-          opacity: 0.1,
+          opacity: 0,
           bottom: 0,
         }}
         onTouchStart={(e) => {
@@ -139,13 +140,16 @@ let Page_Viewer: FC<rProps> = (props) => {
         }}
         onTouchMove={(e) => {
           let y = e.nativeEvent.pageY
-          if (mStartY - y >= 30) {
+          if (mStartY - y >= 30 && !isAnimating) {
             setCanSlidBottom(false)
+            setAnimating(true)
             Animated.timing(top, {
               duration: 300,
-              toValue: height,
+              toValue: _screen.height - height - 70,
               easing: Easing.inOut(Easing.ease),
-            }).start()
+            }).start((data) => {
+              if (data.finished) setAnimating(false)
+            })
           }
         }}
       ></View>
@@ -161,12 +165,11 @@ let Page_Viewer: FC<rProps> = (props) => {
         }}
         onLayout={(e) => {
           let _height = e.nativeEvent.layout.height
-          if (height === _height || _height === 135) return
           setheight(_height)
         }}
       >
         <TagsContainer data={data} nowTag={''} />
-        <View>
+        <View style={{ height: 35 }}>
           <Button
             mode="contained"
             onPress={() =>

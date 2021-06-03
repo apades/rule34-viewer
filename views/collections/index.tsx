@@ -1,11 +1,15 @@
-import { RootStackParamList, TabStackParamList } from '@r/App'
+import { RootStackParamList, TabStackParamList } from '@r/AppRouter'
 import ChipList from '@r/components/chipList'
 import { StateBase } from '@r/reducers'
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
-import { CompositeNavigationProp, useIsFocused } from '@react-navigation/native'
+import {
+  CompositeNavigationProp,
+  useIsFocused,
+  useRoute,
+} from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import React, { FC } from 'react'
-import { StatusBar, View } from 'react-native'
+import { StatusBar, Text, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Button } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
@@ -19,49 +23,29 @@ type rProps = ConnectedProps<typeof connector> & {
 
 const view_collections: FC<rProps> = (props) => {
   let { navigation, likes } = props
-  let focus = useIsFocused()
+  let route = useRoute()
 
   let collects = Object.keys(likes.tags)
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView>
       <View
-        style={{ height: StatusBar.currentHeight, backgroundColor: '#fff' }}
-      ></View>
-      <ScrollView>
-        <View
-          style={{
-            alignItems: 'baseline',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
+        style={{
+          alignItems: 'baseline',
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+        }}
+      >
+        <ChipList
+          dataList={collects}
+          onPress={(collect: string) => {
+            navigation.push('gallery', {
+              tags: collect,
+            })
           }}
-        >
-          <ChipList
-            dataList={collects}
-            onPress={(collect: string) => {
-              navigation.push('gallery', {
-                tags: collect,
-              })
-            }}
-          />
-        </View>
-        <View>
-          <Button
-            mode="contained"
-            onPress={() => {
-              navigation.push('gallery', {
-                likeList: true,
-              })
-            }}
-          >
-            img likes
-          </Button>
-        </View>
-      </ScrollView>
-      {/* <DebugInfo>
-        <Text>tags:{Object.keys(likes.tags).join(',')}</Text>
-      </DebugInfo> */}
-    </View>
+        />
+      </View>
+    </ScrollView>
   )
 }
 

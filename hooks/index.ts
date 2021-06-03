@@ -1,4 +1,4 @@
-import { RootStackParamList } from '@r/App'
+import { RootStackParamList } from '@r/AppRouter'
 import { Dp } from '@r/types/redux'
 import { RootPageProps } from '@r/types/route'
 import { useNavigation } from '@react-navigation/native'

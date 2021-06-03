@@ -5,11 +5,6 @@ type Props = {
   style?: Partial<StyleProp<ViewStyle>>
 }
 let StatuBarLayout: FC<Props> = ({ style, children }) => (
-  <View style={{ flex: 1, ...style }}>
-    <View
-      style={{ height: StatusBar.currentHeight, backgroundColor: '#fff' }}
-    ></View>
-    {children}
-  </View>
+  <View style={{ flex: 1, ...style }}>{children}</View>
 )
 export default StatuBarLayout

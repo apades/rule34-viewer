@@ -1,6 +1,6 @@
 import { RouteProp } from '@react-navigation/native'
 import { loadRules, setRule } from '../actions/settingAction'
-import { RootStackParamList } from '../App'
+import { RootStackParamList } from '../AppRouter'
 import React, { FC, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'

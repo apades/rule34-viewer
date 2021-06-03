@@ -76,4 +76,4 @@ const mapStateToProps = (state: StateBase) => {
 }
 const mapDispatchToProps = {}
 let connector = connect(mapStateToProps, mapDispatchToProps)
-export default connector(memo(SearchHistoryContainer))
+export default connector(SearchHistoryContainer)

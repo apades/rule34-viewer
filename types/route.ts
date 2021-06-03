@@ -1,4 +1,4 @@
-import { RootStackParamList } from '@r/App'
+import { RootStackParamList } from '@r/AppRouter'
 import { RouteProp } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 

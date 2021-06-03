@@ -84,7 +84,6 @@ let Page_Viewer: FC<rProps> = (props) => {
         }}
         onClick={() => {
           console.log('click to hide bottom')
-          // setInitBottom()
           setCanSlidBottom(true)
           Animated.timing(top, {
             duration: 300,
@@ -160,7 +159,6 @@ let Page_Viewer: FC<rProps> = (props) => {
           width: '100%',
           position: 'absolute',
           maxHeight: _screen.height / 2,
-          // bottom: bottomAnim,
           top,
         }}
         onLayout={(e) => {

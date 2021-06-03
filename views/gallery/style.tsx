@@ -7,6 +7,7 @@ let width = _screen.width
 
 export const ItemStyles = StyleSheet.create({
   itemContainer: {
+    // ..._style.wh(width / 2),
     position: 'relative',
   },
   tooltipContainer: {
@@ -21,7 +22,8 @@ export const ItemStyles = StyleSheet.create({
     tintColor: '#6cf',
   },
   img: {
-    ..._style.wh(_env.NSFW ? width / 2 : 10),
+    // ..._style.wh(_env.NSFW ? width / 2 : 10),
+    ..._style.wh(width / 2),
     resizeMode: 'contain',
   },
   imgContainer: {

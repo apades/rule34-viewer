@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 
 export const useDp = (): Dp => useDispatch<Dp>()
 export function useNav<
-  K extends keyof RootStackParamList
+  K extends keyof RootStackParamList,
 >(): StackNavigationProp<RootStackParamList, K> {
   return useNavigation<RootPageProps<K>['navigation']>()
 }

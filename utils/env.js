@@ -1,17 +1,13 @@
-import Constants from 'expo-constants'
 import { Dimensions } from 'react-native'
 
-export const _env = Constants.manifest.extra
-// export const _env = {
-//   NSFW: true,
-// }
+export const _env = {
+  proxy_server: !!process.env.LOCALIP,
+  NSFW: process.env.NSFW === 'true',
+}
 
-export const ip = Constants.linkingUri.match(
-  /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/,
-)[0]
+export const ip = process.env.LOCALIP
 
 export const isDev = process.env.NODE_ENV === 'development'
-// export const isDev = false
 
 let data = Dimensions.get('screen')
 export const _screen = {

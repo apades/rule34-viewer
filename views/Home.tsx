@@ -1,12 +1,12 @@
 import { RouteProp } from '@react-navigation/native'
-import { loadRules, setRule } from 'actions/settingAction'
-import { RootStackParamList } from 'App'
+import { loadRules, setRule } from '../actions/settingAction'
+import { RootStackParamList } from '../App'
 import React, { FC, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import { Button, Modal, TextInput } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
-import { StateBase } from 'reducers'
+import { StateBase } from '../reducers'
 
 type Props = RouteProp<RootStackParamList, 'home'>
 type rProps = ConnectedProps<typeof connector> & Props
@@ -33,7 +33,7 @@ const Home: FC<rProps> = (props) => {
       </View>
       <Button>add rule</Button>
       <Modal visible={showRuleModal}>
-        <TextInput />
+        <TextInput textAlign="left" />
       </Modal>
     </View>
   )

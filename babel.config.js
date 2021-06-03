@@ -1,7 +1,7 @@
 module.exports = function (api) {
-  api.cache(true)
+  api.cache(false)
   return {
-    presets: ['babel-preset-expo'],
+    presets: ['module:metro-react-native-babel-preset'],
     plugins: [
       [
         'module-resolver',
@@ -11,6 +11,13 @@ module.exports = function (api) {
           },
         },
       ],
+      [
+        'transform-inline-environment-variables',
+        {
+          include: ['NSFW', 'LOCALIP'],
+        },
+      ],
+      'react-native-paper/babel',
     ],
   }
 }

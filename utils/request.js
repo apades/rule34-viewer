@@ -1,6 +1,7 @@
 import Axios from 'axios'
-import { _env, ip } from './env'
+import { _env, ip, _screen } from './env'
 
+console.log('ip', _env, _screen)
 let request = Axios.create({
   // baseURL: _env.baseURL,
   baseURL: (_env.proxy_server && `http://${ip}:3001`) || '',

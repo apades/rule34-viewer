@@ -1,7 +1,6 @@
 import { useDp } from '@r/hooks'
 import { StateBase } from '@r/reducers'
 import { RootPageProps } from '@r/types/route'
-import * as fs from 'expo-file-system'
 import React, { FC, memo } from 'react'
 import { Text, ToastAndroid, View } from 'react-native'
 import { Button, Colors, Switch } from 'react-native-paper'
@@ -17,34 +16,34 @@ let Page_Setting: FC<rProps> = (props) => {
   let { likes, setting } = props
   // let dir = fs.documentDirectory
   let dir = 'file:///storage/emulated/0/'
-  async function writeFile(filename: any, content: any) {
-    let uri = `${dir}${filename}.txt`
-    return fs
-      .writeAsStringAsync(uri, content, {
-        encoding: fs.EncodingType.UTF8,
-      })
-      .then(
-        () =>
-          ToastAndroid.showWithGravity(
-            `导出成功 ${dir}`,
-            ToastAndroid.LONG,
-            ToastAndroid.BOTTOM,
-          ),
-        (rej) =>
-          ToastAndroid.showWithGravity(
-            `导出失败 ${rej}`,
-            ToastAndroid.LONG,
-            ToastAndroid.BOTTOM,
-          ),
-      )
-      .catch((err) =>
-        ToastAndroid.showWithGravity(
-          `发生错误 ${err}`,
-          ToastAndroid.LONG,
-          ToastAndroid.BOTTOM,
-        ),
-      )
-  }
+  // async function writeFile(filename: any, content: any) {
+  //   let uri = `${dir}${filename}.txt`
+  //   return fs
+  //     .writeAsStringAsync(uri, content, {
+  //       encoding: fs.EncodingType.UTF8,
+  //     })
+  //     .then(
+  //       () =>
+  //         ToastAndroid.showWithGravity(
+  //           `导出成功 ${dir}`,
+  //           ToastAndroid.LONG,
+  //           ToastAndroid.BOTTOM,
+  //         ),
+  //       (rej) =>
+  //         ToastAndroid.showWithGravity(
+  //           `导出失败 ${rej}`,
+  //           ToastAndroid.LONG,
+  //           ToastAndroid.BOTTOM,
+  //         ),
+  //     )
+  //     .catch((err) =>
+  //       ToastAndroid.showWithGravity(
+  //         `发生错误 ${err}`,
+  //         ToastAndroid.LONG,
+  //         ToastAndroid.BOTTOM,
+  //       ),
+  //     )
+  // }
   // fs.readAsStringAsync(dir + 'tags.txt', {
   //   encoding: fs.EncodingType.UTF8,
   // }).then((res) => console.log(res))
@@ -65,7 +64,7 @@ let Page_Setting: FC<rProps> = (props) => {
           <Text>tags</Text>
           <Button
             mode="contained"
-            onPress={() => writeFile('tags', JSON.stringify(likes.tags))}
+            // onPress={() => writeFile('tags', JSON.stringify(likes.tags))}
           >
             export
           </Button>
@@ -82,7 +81,7 @@ let Page_Setting: FC<rProps> = (props) => {
           <Text>imgs</Text>
           <Button
             mode="contained"
-            onPress={() => writeFile('imgs', JSON.stringify(likes.imgs))}
+            // onPress={() => writeFile('imgs', JSON.stringify(likes.imgs))}
           >
             export
           </Button>

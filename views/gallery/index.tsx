@@ -3,6 +3,7 @@ import DebugInfo from '@r/components/debugInfo'
 import { StateBase } from '@r/reducers'
 import { _style } from '@r/style'
 import { RootPageProps } from '@r/types/route'
+import { _screen } from '@r/utils/env'
 import { genHandlerScrollEnd } from '@r/utils/utils'
 import { throttle } from 'lodash'
 import React, { FC, memo, useEffect, useState } from 'react'
@@ -110,6 +111,7 @@ const Gallery: FC<rProps> = function (props) {
       <FlatGrid
         data={dataList}
         onScroll={throttle(handlerScrollEnd)}
+        itemDimension={_screen.width / 3}
         renderItem={({ item, index }) => {
           return (
             <RenderGalleryItem

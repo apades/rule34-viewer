@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+// 这个没法用了，找不到原因
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { useEffect } from 'react'
@@ -7,13 +9,18 @@ import { LogBox, View } from 'react-native'
 import { connect, Provider } from 'react-redux'
 import store, { StateBase } from './reducers/index'
 import { GalleryItem } from './types/itemType'
-import { isDev } from './utils/env'
+import { isDev, _env } from './utils/env'
 import view_collections from './views/collections'
 import Detail from './views/detail'
 import view_gallery, { rData } from './views/gallery'
 import Search from './views/search'
 import Setting from './views/setting'
 import Page_Viewer from './views/viewer'
+import {
+  Button,
+  IconButton,
+  Provider as PaperProvider,
+} from 'react-native-paper'
 
 LogBox.ignoreLogs(['Remote debugger'])
 
@@ -49,6 +56,10 @@ function _RenderRouter(props: any) {
       // AsyncStorage.getItem('setting/rule'),
     ])
     tags = JSON.parse(tags)
+    if (!_env.NSFW) {
+      ;(tags as any) = tags ?? {}
+      ;(tags as any)['sfw'] = true
+    }
     imgs = JSON.parse(imgs)
     histories = JSON.parse(histories)
     dispatch({ type: 'likes/init', tags, imgs })
@@ -80,7 +91,7 @@ function _RenderRouter(props: any) {
           component={Setting}
           name="Setting"
           options={{
-            tabBarIcon: 'settings',
+            tabBarIcon: 'account-settings',
             tabBarLabel: 'setting',
           }}
         />
@@ -131,7 +142,9 @@ const RenderRouter = connect((state: StateBase) => {
 function App(): JSX.Element {
   return (
     <Provider store={store}>
-      <RenderRouter />
+      <PaperProvider>
+        <RenderRouter />
+      </PaperProvider>
     </Provider>
   )
 }

@@ -1,6 +1,7 @@
 import { getContentOriginUrl, getMoreGalleyData } from '@r/actions/ruleAction'
 import { useDp } from '@r/hooks'
 import { StateBase } from '@r/reducers'
+import { _style } from '@r/style'
 import { RootPageProps } from '@r/types/route'
 import { _screen } from '@r/utils/env'
 import { handleOpenUrl } from '@r/utils/utils'
@@ -10,12 +11,21 @@ import {
   Image,
   NativeModules,
   Text,
+  TouchableNativeFeedback,
   View,
 } from 'react-native'
+import fs from 'react-native-fs'
 import ImageViewer from 'react-native-image-zoom-viewer'
 import { IImageInfo } from 'react-native-image-zoom-viewer/built/image-viewer.type'
-import { ActivityIndicator, Button, FAB } from 'react-native-paper'
+import {
+  ActivityIndicator,
+  Button,
+  Dialog,
+  FAB,
+  Portal,
+} from 'react-native-paper'
 import Animated, { Easing } from 'react-native-reanimated'
+import Toast from 'react-native-toast-message'
 import { connect, ConnectedProps } from 'react-redux'
 import TagsContainer from '../detail/tagsContainer'
 import { rData } from '../gallery'
@@ -38,8 +48,28 @@ let Page_Viewer: FC<rProps> = (props) => {
   let [dataList, setDataList] = useState([..._dataList])
   let [like, setLike] = useState(false)
   let [nowData, setNowData] = useState<rData>(_dataList[InitIndex])
+  let [imageUrls, setImageUrls] = useState<IImageInfo[]>([])
   let [isAnimating, setAnimating] = useState(false)
   let data = nowData?.originData
+
+  let [isSaveModalShow, setSaveModalShow] = useState(false)
+
+  let generIImageInfoList = (list: rData[]) =>
+    list.map((i) => {
+      let isVideo = /\.(webm|mp4)$/.test(i.content)
+      return {
+        url: isVideo ? i.cover : i.content,
+        props: {
+          isVideo,
+          cover: i.cover,
+        },
+      }
+    })
+
+  useEffect(() => {
+    let list: IImageInfo[] = generIImageInfoList(_dataList)
+    setImageUrls(list)
+  }, [])
 
   useEffect(() => {
     let rdata = dataList[index]
@@ -71,24 +101,20 @@ let Page_Viewer: FC<rProps> = (props) => {
   let [height, setheight] = useState(0)
 
   async function loadMore() {
-    let resDataList = await props.getMoreGalleyData({
+    console.log('loadMore')
+    let resDataList: rData[] = await props.getMoreGalleyData({
       pageLimit: 20,
       pageNum: page + 1,
       searchString: nowTag,
     })
     setDataList((list) => [...list, ...resDataList])
+    setImageUrls((l) => [...l, ...generIImageInfoList(resDataList)])
     setPage(page + 1)
   }
-  let imageUrls: IImageInfo[] = dataList.map((i) => {
-    let isVideo = /\.(webm|mp4)$/.test(i.content)
-    return {
-      url: isVideo ? i.cover : i.content,
-      props: {
-        isVideo,
-        cover: i.cover,
-      },
-    }
-  })
+
+  useEffect(() => {
+    if (index === dataList.length - 1) loadMore()
+  }, [index])
 
   return (
     <View
@@ -97,14 +123,24 @@ let Page_Viewer: FC<rProps> = (props) => {
         flex: 1,
       }}
     >
+      <View
+        style={{
+          ..._style.wh('100%'),
+          backgroundColor: '#000',
+          position: 'absolute',
+          top: 0,
+          zIndex: 9,
+          justifyContent: 'center',
+        }}
+      >
+        <ActivityIndicator animating={true} />
+      </View>
       <ImageViewer
         // TODO 这里出现了末尾时data正常，但是中间image加载异常，黑屏且没法滑动
         imageUrls={imageUrls}
+        key={imageUrls.length}
         index={index}
-        onChange={(i) => {
-          setindex(i)
-          if (i === dataList.length - 1) loadMore()
-        }}
+        onChange={(i) => setindex(i)}
         onClick={() => {
           console.log('click to hide bottom')
           setCanSlidBottom(true)
@@ -117,6 +153,7 @@ let Page_Viewer: FC<rProps> = (props) => {
         saveToLocalByLongPress={false}
         onLongPress={() => {
           console.log('onLongPress')
+          setSaveModalShow(true)
         }}
         renderImage={(props) => {
           let { source, style } = props
@@ -146,6 +183,9 @@ let Page_Viewer: FC<rProps> = (props) => {
           return <Image source={{ uri: source.uri }} style={{ ...style }} />
         }}
         loadingRender={() => <ActivityIndicator animating={true} />}
+        style={{
+          zIndex: 10,
+        }}
       />
       <View
         style={{
@@ -189,18 +229,23 @@ let Page_Viewer: FC<rProps> = (props) => {
           setheight(_height)
         }}
       >
-        <TagsContainer data={data} nowTag={''} />
-        <View style={{ height: 35 }}>
-          <Button
-            mode="contained"
-            onPress={() =>
-              handleOpenUrl(props.getContentOriginUrl({ id: data.id }))
-            }
-          >
-            origin
-          </Button>
-        </View>
+        {data && (
+          <>
+            <TagsContainer data={data} nowTag={''} />
+            <View style={{ height: 35 }}>
+              <Button
+                mode="contained"
+                onPress={() =>
+                  handleOpenUrl(props.getContentOriginUrl({ id: data.id }))
+                }
+              >
+                origin
+              </Button>
+            </View>
+          </>
+        )}
       </Animated.ScrollView>
+
       <FAB
         key={`${like}-${index}`}
         icon={like ? 'heart' : 'heart-outline'}
@@ -217,6 +262,47 @@ let Page_Viewer: FC<rProps> = (props) => {
           zIndex: 12,
         }}
       />
+
+      <Portal>
+        <Dialog
+          visible={isSaveModalShow}
+          onDismiss={() => setSaveModalShow(false)}
+          style={{
+            zIndex: 1000,
+          }}
+        >
+          <Dialog.Content>
+            <TouchableNativeFeedback
+              onPress={() => {
+                setSaveModalShow(false)
+                let url = nowData.content
+                let ext = url.match(/.*\.(.*?)$/)?.[1],
+                  name = `${new Date().getTime()}.${ext}`
+                fs.downloadFile({
+                  fromUrl: url,
+                  toFile: `${fs.ExternalStorageDirectoryPath}/Download/${name}`,
+                })
+                  .promise.then((e) => {
+                    console.log('download e', e)
+                    Toast.show({
+                      type: 'success',
+                      text1: `save as /Download/${name}`,
+                    })
+                  })
+                  .catch((err) => {
+                    console.error('download err', err)
+                    Toast.show({
+                      type: 'error',
+                      text1: 'someError',
+                    })
+                  })
+              }}
+            >
+              <Text>save</Text>
+            </TouchableNativeFeedback>
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
     </View>
   )
 }

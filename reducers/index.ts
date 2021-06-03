@@ -4,11 +4,13 @@ import { applyMiddleware, combineReducers, createStore } from 'redux'
 import likes, { LikesAction, LikesDstate } from './likes'
 import search, { SearchAction, SearchDstate } from './search'
 import setting, { SettingAction, SettingDstate } from './setting'
+import state, { StateAction, StateDstate } from './state'
 
 let rootReducer = combineReducers({
   likes,
   search,
   setting,
+  state,
 })
 let store = (function configureStore() {
   const middlewares = [thunkMiddleware]
@@ -25,5 +27,10 @@ export type StateBase = {
   likes: LikesDstate
   search: SearchDstate
   setting: SettingDstate
+  state: StateDstate
 }
-export type RootActions = LikesAction | SearchAction | SettingAction
+export type RootActions =
+  | LikesAction
+  | SearchAction
+  | SettingAction
+  | StateAction

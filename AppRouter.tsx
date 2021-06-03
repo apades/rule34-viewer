@@ -1,7 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
-import { NavigationContainer } from '@react-navigation/native'
+import {
+  NavigationContainer,
+  PartialRoute,
+  Route,
+} from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { FC, useEffect } from 'react'
 import { View } from 'react-native'
@@ -15,6 +19,8 @@ import view_collections from './views/collections'
 import Detail from './views/detail'
 import Setting from './views/setting'
 import Page_Viewer from './views/viewer'
+import { ConnectedProps, connect } from 'react-redux'
+import { StateBase } from './reducers'
 
 export type RootStackParamList = {
   home: undefined
@@ -92,8 +98,12 @@ let RootRouter = () => (
     />
   </RootStack.Navigator>
 )
-let AppRouter: FC = (props) => {
-  // init store
+
+export type AppRouterProps = {
+  // ...
+}
+type rProps = ConnectedProps<typeof connector> & AppRouterProps
+let AppRouter: FC<rProps> = (props) => {
   let dispatch = useDp()
 
   useEffect(() => {
@@ -102,6 +112,7 @@ let AppRouter: FC = (props) => {
     dispatch({ type: 'setting/debugMode', value: isDev })
     _initStore()
   }, [])
+
   async function _initStore() {
     let [tags, imgs, histories]: [any, any, any] = await Promise.all([
       AsyncStorage.getItem('tagLikes'),
@@ -123,9 +134,14 @@ let AppRouter: FC = (props) => {
   return (
     <View style={{ flex: 1, position: 'relative' }}>
       <NavigationContainer
-        onStateChange={(state) =>
-          console.log('router stacks', state.routes?.[0].state.routes)
-        }
+        onStateChange={(state) => {
+          let routers = state.routes?.[0].state.routes ?? []
+          let lastRouter = routers[routers.length - 1] as any
+          dispatch({
+            type: 'state/set',
+            lastRouter,
+          })
+        }}
       >
         <drawer.Navigator
           initialRouteName="_home"
@@ -134,7 +150,7 @@ let AppRouter: FC = (props) => {
             backgroundColor: '#fff',
             width: 240,
           }}
-          edgeWidth={_screen.width / 2}
+          edgeWidth={props.canUseDrawer ? _screen.width / 2 : 0}
         >
           <drawer.Screen name="_home" component={RootRouter}></drawer.Screen>
         </drawer.Navigator>
@@ -143,4 +159,12 @@ let AppRouter: FC = (props) => {
   )
 }
 
-export default AppRouter
+const mapStateToProps = (state: StateBase) => {
+  let lastRouter = state.state.lastRouter
+  return {
+    canUseDrawer: !['viewer'].includes(lastRouter?.name),
+  }
+}
+const mapDispatchToProps = {}
+let connector = connect(mapStateToProps, mapDispatchToProps)
+export default connector(AppRouter)

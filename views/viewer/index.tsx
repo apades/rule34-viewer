@@ -5,7 +5,13 @@ import { RootPageProps } from '@r/types/route'
 import { _screen } from '@r/utils/env'
 import { handleOpenUrl } from '@r/utils/utils'
 import React, { FC, memo, useEffect, useRef, useState } from 'react'
-import { Image, Text, View } from 'react-native'
+import {
+  DeviceEventEmitter,
+  Image,
+  NativeModules,
+  Text,
+  View,
+} from 'react-native'
 import ImageViewer from 'react-native-image-zoom-viewer'
 import { IImageInfo } from 'react-native-image-zoom-viewer/built/image-viewer.type'
 import { ActivityIndicator, Button, FAB } from 'react-native-paper'
@@ -41,6 +47,23 @@ let Page_Viewer: FC<rProps> = (props) => {
     setNowData(rdata)
     setLike(rdata?.isLike)
   }, [index, dataList])
+
+  useEffect(() => {
+    NativeModules.KeyEventLister.audioSwitch(true)
+    let listener = DeviceEventEmitter.addListener('keyup', (e) => {
+      if (e.keyCode === 24) {
+        console.log('up')
+        setindex((i) => ++i)
+      }
+      if (e.keyCode === 25) {
+        setindex((i) => (i === 0 ? 0 : --i))
+      }
+    })
+    return () => {
+      listener.remove()
+      NativeModules.KeyEventLister.audioSwitch(false)
+    }
+  }, [props.canVolume2TurnPage])
 
   let [mStartY, setmStartY] = useState(0)
   let [isCanSlidBottom, setCanSlidBottom] = useState(true)
@@ -199,7 +222,10 @@ let Page_Viewer: FC<rProps> = (props) => {
 }
 
 const mapStateToProps = (state: StateBase) => {
-  return {}
+  let lastRouter = state.state.lastRouter
+  return {
+    canVolume2TurnPage: 'viewer' === lastRouter?.name,
+  }
 }
 
 const mapDispatchToProps = {

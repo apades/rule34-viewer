@@ -10,11 +10,13 @@ The release of version 1.1-alpha is publish, only support Android now because it
 - Add tag/image to like list
 -  <del>Localized storage like list , (rewrting to local sql type)</del>
 - Search and auto complete
+- Volume button to up/down viewer page
+- Save image to external storage
 # some problems
 - ugly UI
 - Some unoptimized crash issues
 # target
-- Support most other websites, like pixiv etc.
+- Support real customize js rule
 - Beautiful UI
 - tags update notification
 # dev

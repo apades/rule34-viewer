@@ -4,14 +4,11 @@
   "license": "MIT",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "dev": "concurrently \"sh run.sh\" \"yarn dev_server\" ",
-    "dev_a": "concurrently \"cross-env ENV_NAME=dev_a expo start\" \"yarn dev_server\" ",
-    "dev_server": "cd proxy_server && yarn dev",
-    "and": "sh run.sh",
+    "dev": "concurrently \"sh run.sh\" \"yarn proxy_server\" ",
+    "dev_origin": "cross-env NSFW=true react-native run-android",
+    "proxy_server": "cd proxy_server && yarn dev",
     "build":"node ./script/addTag && cd android && ./gradlew assembleRelease",
-    "_build": "node ./script/build && node ./script/addTag && expo build:android -t apk",
-    "server": "cd proxy_server && yarn dev",
-    "redux": "set REACT_DEBUGGER=\"unset ELECTRON_RUN_AS_NODE && open -g 'rndebugger://set-debugger-loc?host=localhost&port=19001'\" && yarn dev"
+    "redux_test": "set REACT_DEBUGGER=\"unset ELECTRON_RUN_AS_NODE && open -g 'rndebugger://set-debugger-loc?host=localhost&port=19001'\" && yarn dev"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.1",

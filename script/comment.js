@@ -26,7 +26,9 @@ inq
   ])
   .then((res) => {
     try {
-      execSync(`git add . && git commit -am ${res['ctype']} ${res['comment']}`)
+      execSync(
+        `git add . && git commit -am "${res['ctype']} ${res['comment']}"`,
+      )
     } catch (error) {
       console.log(error.toString())
     }

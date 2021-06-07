@@ -80,13 +80,13 @@ let Page_Viewer: FC<rProps> = (props) => {
 
   useEffect(() => {
     NativeModules.KeyEventLister.audioSwitch(true)
-    let listener = DeviceEventEmitter.addListener('keyup', (e) => {
+    let listener = DeviceEventEmitter.addListener('keydown', (e) => {
       if (e.keyCode === 24) {
         console.log('up')
-        setindex((i) => ++i)
+        setindex((i) => (i === 0 ? 0 : --i))
       }
       if (e.keyCode === 25) {
-        setindex((i) => (i === 0 ? 0 : --i))
+        setindex((i) => ++i)
       }
     })
     return () => {

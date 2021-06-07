@@ -5,8 +5,7 @@ export default {
     pageNumStart: 1,
   },
   discover: {
-    url:
-      'https://e621.net/posts.json?tags=@{searchString}&limit=@{pageLimit}&page=@{pageNum}',
+    url: 'https://e621.net/posts.json?tags=@{searchString}&limit=@{pageLimit}&page=@{pageNum}',
     list: '$.posts',
     cover: `@js:($)=> {
       var md5 = $.file.md5

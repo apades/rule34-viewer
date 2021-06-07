@@ -22,8 +22,8 @@ export const ItemStyles = StyleSheet.create({
     tintColor: '#6cf',
   },
   img: {
-    // ..._style.wh(_env.NSFW ? width / 2 : 10),
-    ..._style.wh(width / 2),
+    ..._style.wh(_env.NSFW ? width / 2 : 10),
+    // ..._style.wh(width / 2),
     resizeMode: 'contain',
   },
   imgContainer: {

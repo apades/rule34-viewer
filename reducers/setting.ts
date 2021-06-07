@@ -31,7 +31,7 @@ type SettingChange = {
 }
 type SettingSetRule = {
   type: 'setting/setRule'
-  ruleName: 'e621' | 'rule34'
+  ruleName: string
 }
 type SettingLoadRules = {
   type: 'setting/loadRules'

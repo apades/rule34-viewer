@@ -99,9 +99,7 @@ type ListData = {
   cover: string
 }
 
-export function createRuleParser(
-  rule: RuleConfig,
-): {
+export function createRuleParser(rule: RuleConfig): {
   getListData(props: ListProps): Promise<ListData[]>
   getDetailData(props: DetailProps): Promise<RuleDetailProps>
 } {

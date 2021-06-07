@@ -32,17 +32,24 @@ export type RuleDetailProps = {
   ctype: RuleContentType
 } & {
   ctype: 'image' | 'manga'
-} & ({
-  gtype?: 'json'
-  url?: string | ((props: RuleItemValues & RuleItemInListValues) => string)
-  image: string | ((props: RuleJsonIndieItemValues) => string)
-  tags?: string | ((props: RuleJsonIndieItemValues) => dykey)
-} | {
-  gtype?: 'xml'
-  url?: string | ((props: RuleItemValues & RuleItemInListValues) => string)
-  image: string | ((props: RuleXmlIndieItemValues) => string)
-  tags?: string | ((props: RuleXmlIndieItemValues) => dykey)
-})
+} & (
+    | {
+        gtype?: 'json'
+        url?:
+          | string
+          | ((props: RuleItemValues & RuleItemInListValues) => string)
+        image: string | ((props: RuleJsonIndieItemValues) => string)
+        tags?: string | ((props: RuleJsonIndieItemValues) => dykey)
+      }
+    | {
+        gtype?: 'xml'
+        url?:
+          | string
+          | ((props: RuleItemValues & RuleItemInListValues) => string)
+        image: string | ((props: RuleXmlIndieItemValues) => string)
+        tags?: string | ((props: RuleXmlIndieItemValues) => dykey)
+      }
+  )
 
 // TODO rule规则定义问题
 // 如果像现在这种rule全是string，开发插件会很难用，并没有语法提示
@@ -68,9 +75,7 @@ export type RuleProps = {
 }
 
 // TODO 定义新rule ts用户版本的Props
-export type $q = (
-  selector: string,
-) => {
+export type $q = (selector: string) => {
   text: () => string[]
   attr: (key: string) => string[]
 }
@@ -80,25 +85,26 @@ export type HtmlTypeProps = { $q: $q }
 
 export type _RuleProps = {
   name: string
-  home?: {
-  }
+  home?: {}
   list: {
     url: string | ((props: RuleListValues) => string)
   } & (
     | {
-      gtype?: 'json'
-      list?: string | ((props: RuleJsonListValues) => dykey[])
+        gtype?: 'json'
+        list?: string | ((props: RuleJsonListValues) => dykey[])
 
-      cover?: string | ((props: RuleJsonListValues & RuleItemInListValues) => string)
-    }
+        cover?:
+          | string
+          | ((props: RuleJsonListValues & RuleItemInListValues) => string)
+      }
     | {
-      gtype?: 'xml'
-      list?: string | ((props: ListProps & HtmlTypeProps) => dykey[])
+        gtype?: 'xml'
+        list?: string | ((props: ListProps & HtmlTypeProps) => dykey[])
 
-      cover?:
-      | string
-      | ((props: ListProps & ItemProps & HtmlTypeProps) => dykey[])
-    }
+        cover?:
+          | string
+          | ((props: ListProps & ItemProps & HtmlTypeProps) => dykey[])
+      }
   )
 
   detail: RuleDetailProps
@@ -122,15 +128,15 @@ type RuleUrlType = {
 type RuleDataType = {
   data: string
 } & (
-    | {
+  | {
       gtype: 'xml'
       type: 'js'
     }
-    | {
+  | {
       gtype: 'json'
       type: 'js' | 'json'
     }
-  )
+)
 export type RuleParserProps = {
   list: {
     url: RuleUrlType
@@ -139,14 +145,16 @@ export type RuleParserProps = {
   }
 }
 
-export type RuleEvalType = {
-  type: 'json'
-  // eslint-disable-next-line prettier/prettier
+export type RuleEvalType =
+  | {
+      type: 'json'
+      // eslint-disable-next-line prettier/prettier
   code: `$${string | ''}`
-} | {
-  type: 'js'
-  code: `@js:${string}`
-}
+    }
+  | {
+      type: 'js'
+      code: `@js:${string}`
+    }
 // ---#js props---
 // --##list
 type RuleListValues = {
@@ -168,24 +176,31 @@ type RuleItemInListValues<T = dykey> = RuleItemValues & {
   $i: T
   $list: T[]
 }
-type RuleJsonIndieItemValues<T = dykey> = RuleItemValues & RuleItemInListValues<T> & {
-  $: T
-}
-type RuleXmlIndieItemValues<T = dykey> = RuleItemValues & RuleItemInListValues<T> & {
-  $q: $q
-}
+type RuleJsonIndieItemValues<T = dykey> = RuleItemValues &
+  RuleItemInListValues<T> & {
+    $: T
+  }
+type RuleXmlIndieItemValues<T = dykey> = RuleItemValues &
+  RuleItemInListValues<T> & {
+    $q: $q
+  }
 // ---#js props---
 
 let r34new: _RuleProps = {
   name: 'rule34',
   list: {
-    url: ({ pid, listName }) => `https://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&tags=${listName}&limit=20&pid=${pid}`,
+    url: ({ pid, listName }) =>
+      `https://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&tags=${listName}&limit=20&pid=${pid}`,
     gtype: 'json',
     list: '$',
-    cover: ({ $i }) => `https://rule34.xxx/thumbnails/${$i.directory}/thumbnail_${$i.image.replace(/^(.*)\\..*?$/, '$1.jpg')}`
+    cover: ({ $i }) =>
+      `https://rule34.xxx/thumbnails/${
+        $i.directory
+      }/thumbnail_${$i.image.replace(/^(.*)\\..*?$/, '$1.jpg')}`,
   },
   detail: {
-    url: ({ $i }) => `https://rule34.xxx/index.php?page=post&s=view&id=${$i.id}`,
+    url: ({ $i }) =>
+      `https://rule34.xxx/index.php?page=post&s=view&id=${$i.id}`,
     gtype: 'xml',
     ctype: 'image',
     image: ({ $i }) => `https://rule34.xxx/images/${$i.directory}/${$i.image}`,
@@ -194,9 +209,9 @@ let r34new: _RuleProps = {
       character: $q('.tag-type-character a').text(),
       artist: $q('.tag-type-artist a').text(),
       general: $q('.tag-type-general a').text(),
-      metadata: $q('.tag-type-metadata a').text()
-    })
-  }
+      metadata: $q('.tag-type-metadata a').text(),
+    }),
+  },
 }
 
 let data = {
@@ -214,8 +229,7 @@ let data = {
     sample_height: 587,
     sample_width: 850,
     score: 6,
-    tags:
-      '2020 anal anal_sex anthro bodily_fluids closed_eyes dacad duo eeveelution english_text genital_fluids genitals knot male male/male male_penetrated male_penetrating male_penetrating_male monochrome nintendo penetration penis pok&eacute;mon_(species) pokemon precum sketch sylveon text video_games',
+    tags: '2020 anal anal_sex anthro bodily_fluids closed_eyes dacad duo eeveelution english_text genital_fluids genitals knot male male/male male_penetrated male_penetrating male_penetrating_male monochrome nintendo penetration penis pok&eacute;mon_(species) pokemon precum sketch sylveon text video_games',
     width: 1123,
   },
   cover:

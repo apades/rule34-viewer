@@ -3,7 +3,6 @@ import request from '@r/utils/request'
 import { executePaser } from '@r/utils/ruleParser'
 import { DetailData } from '@r/views/detail'
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function resolveDetailData(rule: any, data: any): DetailData {
   let tags
   if (rule.content.url) {

@@ -1,6 +1,5 @@
 import { get } from 'lodash'
-import { dykey } from 'types'
-import { RuleEvalType } from './types'
+import { dykey, RuleEvalType } from './types'
 
 function parserItemValue<T>(path = '', data: any): T {
   let v = { $: data }

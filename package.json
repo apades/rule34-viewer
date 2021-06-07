@@ -7,7 +7,8 @@
     "dev": "concurrently \"sh run.sh\" \"yarn proxy_server\" ",
     "dev_origin": "cross-env NSFW=true react-native run-android",
     "proxy_server": "cd proxy_server && yarn dev",
-    "build":"node ./script/addTag && cd android && ./gradlew assembleRelease",
+    "c": "node script/comment.js ",
+    "build": "node ./script/addTag && cd android && ./gradlew assembleRelease",
     "redux_test": "set REACT_DEBUGGER=\"unset ELECTRON_RUN_AS_NODE && open -g 'rndebugger://set-debugger-loc?host=localhost&port=19001'\" && yarn dev"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "@react-navigation/native": "^5.8.2",
     "@react-navigation/stack": "^5.14.5",
     "axios": "^0.21.0",
+    "inquirer": "^8.1.0",
     "lodash": "^4.17.20",
     "node-html-parser": "^2.0.2",
     "react": "17.0.1",
@@ -47,6 +49,7 @@
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
+    "@types/inquirer": "^7.3.1",
     "@types/lodash": "^4.14.167",
     "@types/react": "^17.0.0",
     "@types/react-native": "0.63.40",

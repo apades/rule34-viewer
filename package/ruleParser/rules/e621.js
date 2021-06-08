@@ -1,4 +1,4 @@
-/**@type {import('')} */
+/**@type {import('./type').RuleType} */
 // eslint-disable-next-line no-undef
 config = {
   name: 'e621',

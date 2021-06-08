@@ -1,147 +1,73 @@
+import { Concat, DeepLeafKeys, dykey, omitOjbect } from '@r/utils/typeUtils'
 import { get } from 'lodash'
+import { RuleResultKeysMap, RuleType } from './rules/type'
 import parse from 'node-html-parser'
-import Axios from 'axios'
-import { dykey } from './types'
-import { $q, RuleDetailProps, RuleProps } from './types'
 
-export function parserStringValue(string = '', obj: dykey = {}): string {
-  // console.log('parserStringValue', string, Object.keys(obj))
-  let keyArr = string.match(/@\{.*?\}/g)
-  keyArr.forEach(
-    (key) =>
-      (string = string.replace(`${key}`, obj[key.replace(/[\@\{\}]/g, '')])),
-  )
-  return string
-}
+type baseProps<T> = T &
+  Partial<{
+    searchString: string
+    pageLimit: number
+    pageNum: number
+    id: string | number
+  }>
 
-export function parserItemValue(path = '', data: dykey = {}): any {
-  let v = { $: data }
-  return get(v, path)
-}
+let rule: RuleType
+export let setRule = (r: RuleType) => (rule = r)
+export let getRule = () => rule
 
-export function _evalScript(script: string, props: dykey): string {
-  let _rs
-  let _props = props
+function getRuleResult(key: Concat<'discover', 'url'>, props: any): string
+function getRuleResult(key: Concat<'discover', 'cover'>, props: any): string
+function getRuleResult(
+  key: Concat<'content', 'url' | 'image' | 'reffers'>,
+  props: any,
+): string
+function getRuleResult(
+  key: DeepLeafKeys<RuleResultKeysMap>,
+  props?: baseProps<any>,
+) {
+  // init props
+  let baseProps = omitOjbect(props, [
+    'id',
+    'pageLimit',
+    'pageNum',
+    'searchString',
+  ])
+  let ruleScript = get(rule, key)
 
-  let scriptStr = `_rs=(${script.replace('@js:', '')})(_props)`
-  eval(scriptStr)
-  return _rs
-}
-function _executePaser(script: string, data: dykey, keyData?: dykey): any {
-  if (/^@js/.test(script)) return _evalScript(script, data)
-  if (/^\$/.test(script)) return parserItemValue(script, data.$)
-  if (script.match(/@\{.*?\}/)) return parserStringValue(script, keyData)
+  // --- execute string script
+  function isString(input: string) {
+    if (input[0] === '$') return executeDeepDataStringScript(input, baseProps)
+    else return executeAtStringScript(input, baseProps)
+  }
+  function executeAtStringScript(string: string = ruleScript, obj: dykey = {}) {
+    let keyArr = string.match(/@\{.*?\}/g)
+    keyArr.forEach(
+      (key) =>
+        (string = string.replace(`${key}`, obj[key.replace(/[\@\{\}]/g, '')])),
+    )
+    return string
+  }
+  function executeDeepDataStringScript(
+    path: string = ruleScript,
+    dataBasePath: any,
+  ) {
+    return get(get(props, dataBasePath), path)
+  }
+  // --- execute string script
 
-  return ''
-}
-
-export type DetailProps = {
-  // id: number
-  index: number
-}
-export type ListProps = {
-  listName: string
-  pid: number | string
-}
-type EvalListProps = {
-  $: dykey[]
-  $q?: $q
-}
-type EvalItemProps = {
-  $?: dykey
-  $q?: $q
-  $list: dykey[]
-  $i: dykey
-}
-type ListData = {
-  data: dykey
-  cover: string
-}
-
-export function createRuleParser(rule: RuleProps): {
-  getListData(props: ListProps): Promise<ListData[]>
-  getDetailData(props: DetailProps): Promise<RuleDetailProps>
-} {
-  let list: ListData[] = [],
-    listRoot: ReturnType<typeof parse> = null,
-    itemRoot: ReturnType<typeof parse> = null
-
-  let $q = (root: ReturnType<typeof parse>) => (queryStr: string) => {
-    let els = Array.from(root.querySelectorAll(queryStr))
-    return {
-      text: () => els.map((el) => el.text),
-      attr: (key: string) => els.map((el) => el.getAttribute(key)),
+  switch (key) {
+    case 'discover.url':
+      return executeAtStringScript(ruleScript, baseProps)
+    case 'discover.cover': {
+      if (typeof ruleScript === 'string') return isString(ruleScript)
+      if (typeof ruleScript === 'function') return eval(ruleScript)
+      return ''
+    }
+    case 'content.url':
+    case 'content.image':
+    case 'content.reffers': {
+      return ''
     }
   }
-
-  return {
-    async getListData(props: ListProps): Promise<ListData[]> {
-      let rlist = rule.list
-
-      let url = parserStringValue(rlist.url, props)
-      let res = (await Axios(url)).data
-
-      // let resList: dykey[] = []
-      let dataProps: EvalListProps = {
-        $: [],
-      }
-      switch (rlist.gtype) {
-        case 'json': {
-          dataProps.$ = _executePaser(rlist.list, {
-            $: res,
-          }) as dykey[]
-          break
-        }
-        case 'xml': {
-          listRoot = parse(res)
-          dataProps.$q = $q(listRoot)
-          dataProps.$ = _executePaser(rlist.list, dataProps) as dykey[]
-          break
-        }
-      }
-
-      let _list: ListData[] = dataProps.$.map((d, i) => {
-        let itemDataProps: EvalItemProps = {
-          $i: dataProps.$[i],
-          $list: dataProps.$,
-        }
-        return {
-          data: d,
-          cover: _executePaser(rlist.cover, itemDataProps) as string,
-        }
-      })
-
-      list.push(..._list)
-      return list
-    },
-    async getDetailData(props: DetailProps): Promise<RuleDetailProps> {
-      let rdetail = rule.detail,
-        dataProps: EvalItemProps = {
-          $list: list,
-          $i: list[props.index].data,
-        }
-      if (rdetail.url) {
-        let url = parserStringValue(rdetail.url, {
-          id: list[props.index],
-        })
-        let res = (await Axios(url)).data
-        switch (rdetail.gtype) {
-          case 'json': {
-            dataProps.$ = res
-            break
-          }
-          case 'xml': {
-            itemRoot = parse(res)
-            dataProps.$q = $q(itemRoot)
-            break
-          }
-        }
-      }
-
-      return {
-        ctype: rdetail.ctype,
-        image: _executePaser(rdetail.image, dataProps),
-      }
-    },
-  }
+  throw new Error(`can't execute this script: ${key}`)
 }

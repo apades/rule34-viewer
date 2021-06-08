@@ -183,63 +183,16 @@ export function getValues<T extends dykey, B extends (keyof T)[]>(
   return rs
 }
 
-let test1 = {
-  a1: 'asda',
-  b() {
-    return 'asd'
-  },
-}
-
-type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
-  T,
->() => T extends Y ? 1 : 2
-  ? A
-  : B
-
-type WritableKeys<T> = {
-  [P in keyof T]: IfEquals<{ [Q in P]: T[P] }, { -readonly [Q in P]: T[P] }, P>
-}[keyof T]
-
-type DeepWritablePrimitive =
-  | undefined
-  | null
-  | boolean
-  | string
-  | number
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  | Function
-/**返回去除readOnly字段的type */
-export type DeepWritable<T> = T extends DeepWritablePrimitive
-  ? T
-  : T extends Array<infer U>
-  ? DeepWritableArray<U>
-  : T extends Map<infer K, infer V>
-  ? DeepWritableMap<K, V>
-  : T extends Set<infer T>
-  ? DeepWriableSet<T>
-  : DeepWritableObject<T>
-
-type DeepWritableArray<T> = Array<DeepWritable<T>>
-type DeepWritableMap<K, V> = Map<K, DeepWritable<V>>
-type DeepWriableSet<T> = Set<DeepWritable<T>>
-
-type DeepWritableObject<T> = {
-  [K in WritableKeys<T>]: DeepWritable<T[K]>
-}
-
-/**Partial 特殊字段必须版 */
-export type PartialExclude<A, B extends keyof A> = Partial<A> &
-  {
-    [K in B]: A[K]
-  }
-/**Partial 特殊字段选填版 */
-export type PartialInclude<A, B extends keyof A> = Partial<A> &
-  {
-    [K in keyof Omit<A, B>]: A[K]
-  }
-
 export function omitOjbect<T, K extends keyof T>(obj: T, key: K[]): Omit<T, K> {
   let rs = { ...obj }
   key.forEach((k) => delete rs[k])
   return rs
+}
+
+export function arrayInsert<T>(tarr: T[], index: number, arr: T[]): T[] {
+  let _tarr = [...tarr]
+  let left = _tarr.splice(0, index),
+    right = _tarr
+
+  return [...left, ...arr, ...right]
 }

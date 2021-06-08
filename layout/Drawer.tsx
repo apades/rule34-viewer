@@ -31,8 +31,12 @@ let Layout_Drawer: FC<rProps> = (props) => {
             visible={isMenuVisible}
             onDismiss={() => setMenuVisible(false)}
             anchor={
-              <Button onPress={() => setMenuVisible(true)} icon="chevron-down">
-                <Text>{props.rule.name}</Text>
+              <Button
+                uppercase={false}
+                onPress={() => setMenuVisible(true)}
+                icon="chevron-down"
+              >
+                {props.rule.name}
               </Button>
             }
           >

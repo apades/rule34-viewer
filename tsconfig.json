@@ -16,10 +16,7 @@
     "allowJs": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "watch": true,
-    "types": [
-      "jest"
-    ]
+    "watch": true
   },
   "include": [
     "./**/*"

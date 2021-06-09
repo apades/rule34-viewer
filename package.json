@@ -10,7 +10,8 @@
     "c": "node script/comment.js ",
     "build": "node ./script/addTag && cd android && ./gradlew assembleRelease",
     "redux_test": "set REACT_DEBUGGER=\"unset ELECTRON_RUN_AS_NODE && open -g 'rndebugger://set-debugger-loc?host=localhost&port=19001'\" && yarn dev",
-    "test":"jest --verbose ./package"
+    "testAll":"jest --verbose ./package",
+    "test":" ts-node package\\ruleParser\\test\\run.ts "
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.1",

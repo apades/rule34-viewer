@@ -1,6 +1,7 @@
 // TODO 临时用的request
 import request from './request'
 import { Concat, DeepLeafKeys, dykey, omitOjbect } from '../../utils/typeUtils'
+import htmlParser from 'node-html-parser'
 import { get } from 'lodash'
 import { RuleType } from './rules/type'
 
@@ -47,7 +48,10 @@ let getRuleResult: {
   // ---content
   (
     key: Concat<'content', 'url' | 'image' | 'reffers'>,
-    props: any,
+    props: {
+      id: number | string
+      $item?: any
+    },
   ): Promise<string>
   (key: Concat<'content', 'tags'>, props: any): Promise<{
     [k: string]: string[]
@@ -61,7 +65,9 @@ getRuleResult = async function (
 ) {
   let rule = getRule()
   let ruleScript = get(rule, key)
-  // init props
+  let isString = typeof ruleScript === 'string',
+    isFn = typeof ruleScript === 'function'
+  // ----init props----
   let baseProps = {
     id: props.id,
     pageLimit: props.pageLimit ?? 20,
@@ -69,11 +75,26 @@ getRuleResult = async function (
     searchString: props.searchString,
   }
 
-  // rule init
-  // omitOjbect(props, ['id', 'pageLimit', 'pageNum', 'searchString'])
+  // ----content type:'html' init----
+  let $root: ReturnType<typeof htmlParser>,
+    $query = function (queryStr: string) {
+      let els = $root.querySelectorAll(queryStr)
+      return {
+        text: () => els.map((el) => el.text),
+      }
+    }
+  if (
+    key !== 'content.url' &&
+    key.indexOf('content.') === 0 &&
+    get(rule, 'content.type') === 'html'
+  ) {
+    let url = await getRuleResult('content.url', props)
+    let htmlString = (await request(url)) as any as string
+    $root = htmlParser(htmlString)
+  }
 
-  // --- execute string script
-  function isString(input: string) {
+  // ----execute string script----
+  function stringRunner(input: string) {
     if (input[0] === '$') return executeDeepDataStringScript(props, input)
     else return executeAtStringScript(input, baseProps)
   }
@@ -92,38 +113,63 @@ getRuleResult = async function (
     path = path.replace(/\$\.?/, '')
     return path.length ? get(dataBase, path) : dataBase
   }
-  // --- execute string script
+
+  // ----execute html crawl----
+  function htmlCrawlRunner(htmlString: string) {
+    let root = htmlParser(htmlString)
+  }
 
   switch (key) {
     case 'discover.url':
       return executeAtStringScript(ruleScript, baseProps)
     case 'discover.list': {
-      let url = executeAtStringScript(get(rule, 'discover.url'), baseProps)
+      let url = await getRuleResult('discover.url', props)
 
       let res = await request(url)
       let list = []
-      if (typeof ruleScript === 'string')
-        list = executeDeepDataStringScript(ruleScript, res)
-      if (typeof ruleScript === 'function') list = ruleScript(baseProps)
+      if (isString) list = executeDeepDataStringScript(ruleScript, res)
+      if (isFn) list = ruleScript(baseProps)
       return list
     }
     case 'discover.cover': {
       let cover = ''
-      if (typeof ruleScript === 'string') cover = isString(ruleScript)
-      if (typeof ruleScript === 'function') cover = ruleScript(props)
+      if (isString) cover = stringRunner(ruleScript)
+      if (isFn) cover = ruleScript(props)
       return cover
     }
-    case 'content.url':
-    case 'content.image':
+    // -----content-----
+    case 'content.url': {
+      if (!ruleScript) {
+        ruleScript = get(rule, 'content.originUrl')
+        isString = typeof ruleScript === 'string'
+        isFn = typeof ruleScript === 'function'
+      }
+      if (isString) return executeAtStringScript(ruleScript, props)
+      if (isFn) return ruleScript(props)
+      return ''
+    }
+    case 'content.image': {
+      if (isString) return stringRunner(ruleScript)
+      if (isFn) return ruleScript(props)
+      return ''
+    }
     case 'content.reffers': {
       return ''
     }
+    case 'content.tags': {
+      if (isFn) return ruleScript({ ...props, $root, $query })
+      if (isString) return executeDeepDataStringScript(ruleScript, props.$item)
+      return {}
+    }
+    // ----chore----
     case 'content.type':
     case 'discover.type': {
       return ruleScript
     }
   }
   throw new Error(`can't execute this script: ${key}`)
+
+  // return mainRunner(key)
 }
 
 export default getRuleResult

@@ -22,9 +22,28 @@ let getCache = (key: string, cb: (val?: any) => void) =>
   cacheMap.has(key) ? cacheMap.get(key) : cb()
 
 let getRuleResult: {
-  (key: Concat<'discover', 'url'>, props: any): Promise<string>
-  (key: Concat<'discover', 'cover'>, props: any): Promise<string>
-  (key: Concat<'discover', 'list'>, props: any): Promise<any[]>
+  (
+    key: Concat<'discover', 'url'>,
+    props: {
+      searchString: string
+      pageLimit: number
+      pageNum: number
+    },
+  ): Promise<string>
+  (
+    key: Concat<'discover', 'list'>,
+    props: {
+      searchString: string
+      pageLimit: number
+      pageNum: number
+    },
+  ): Promise<any[]>
+  (
+    key: Concat<'discover', 'cover'>,
+    props: {
+      $item: any
+    },
+  ): Promise<string>
   // ---content
   (
     key: Concat<'content', 'url' | 'image' | 'reffers'>,
@@ -40,16 +59,18 @@ getRuleResult = async function (
   key: DeepLeafKeys<RuleType>,
   props?: baseProps<any>,
 ) {
+  let rule = getRule()
+  let ruleScript = get(rule, key)
   // init props
   let baseProps = {
     id: props.id,
-    pageLimit: props.pageLimit,
-    pageNum: props.pageNum,
+    pageLimit: props.pageLimit ?? 20,
+    pageNum: (rule.config?.pageNumStart ?? 0) + props.pageNum,
     searchString: props.searchString,
   }
-  omitOjbect(props, ['id', 'pageLimit', 'pageNum', 'searchString'])
-  let rule = getRule()
-  let ruleScript = get(rule, key)
+
+  // rule init
+  // omitOjbect(props, ['id', 'pageLimit', 'pageNum', 'searchString'])
 
   // --- execute string script
   function isString(input: string) {
@@ -87,9 +108,10 @@ getRuleResult = async function (
       return list
     }
     case 'discover.cover': {
-      if (typeof ruleScript === 'string') return isString(ruleScript)
-      if (typeof ruleScript === 'function') return eval(ruleScript)
-      return ''
+      let cover = ''
+      if (typeof ruleScript === 'string') cover = isString(ruleScript)
+      if (typeof ruleScript === 'function') cover = ruleScript(props)
+      return cover
     }
     case 'content.url':
     case 'content.image':

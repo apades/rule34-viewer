@@ -10,7 +10,7 @@ var config = {
     cover({ $item }) {
       return `https://rule34.xxx/thumbnails/${
         $item.directory
-      }/thumbnail_${$item.image.replace(/^(.*)\\..*?$/, '$1.jpg')}`
+      }/thumbnail_${$item.image.replace(/^(.*)\..*?$/, '$1.jpg')}`
     },
   },
   content: {

@@ -1,4 +1,4 @@
-type RuleBaseConfig = Partial<{
+export type RuleBaseConfig = Partial<{
   /**第一页开始数，默认为0*/
   pageNumStart: number
   /**一页个数，默认20 */

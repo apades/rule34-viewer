@@ -16,12 +16,15 @@
     "allowJs": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "watch": true
+    "watch": true,
+    "types": [
+      "jest"
+    ]
   },
   "include": [
     "./**/*"
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
 }

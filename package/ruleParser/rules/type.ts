@@ -10,6 +10,8 @@ type RuleBaseFnProps = {
   $item: any
   /**原始最外层数据 */
   $origin: any
+  /**相当于css的dom选择器，content.type === 'html' 时可用 */
+  $query: query
 }
 type RuleBaseFnOrStringProps<RT> = (props: RuleBaseFnProps) => RT | string
 
@@ -35,7 +37,9 @@ export type RuleType = {
 
   discover: {
     url: string
-    list: string
+    type?: 'html' | 'json'
+    /**返回的值将成为$item */
+    list: RuleBaseFnOrStringProps<any[]>
     cover: RuleBaseFnOrStringProps<string>
   }
   content: {
@@ -47,26 +51,6 @@ export type RuleType = {
     tags: RuleContentFnOrStringProps<{ [k: string]: string[] }>
     reffers: RuleContentFnOrStringProps<string>
     originUrl: string
-  }
-}
-
-export type RuleResultKeysMap = {
-  name: string
-  host: string
-
-  theme: string
-  config: RuleBaseConfig
-
-  discover: {
-    url: string
-    cover: string
-  }
-  content: {
-    url: string
-    type: 'html' | 'json'
-    image: string
-    tags: { [k: string]: string[] }
-    reffers: string
   }
 }
 

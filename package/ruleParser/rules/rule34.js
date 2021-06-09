@@ -1,6 +1,5 @@
-/**@type {import('')} */
-// eslint-disable-next-line no-undef
-config = {
+/**@type {import('./type').RuleType} */
+var config = {
   name: 'rule34',
   host: 'https://rule34.xx',
   theme: '#6cf',

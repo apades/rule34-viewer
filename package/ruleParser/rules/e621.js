@@ -1,6 +1,5 @@
 /**@type {import('./type').RuleType} */
-// eslint-disable-next-line no-undef
-config = {
+var config = {
   name: 'e621',
   host: 'https://e621.net/',
   theme: '#012e56',

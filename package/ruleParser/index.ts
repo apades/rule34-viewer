@@ -1,7 +1,8 @@
-import { Concat, DeepLeafKeys, dykey, omitOjbect } from '@r/utils/typeUtils'
+// TODO 临时用的request
+import request from './request'
+import { Concat, DeepLeafKeys, dykey, omitOjbect } from '../../utils/typeUtils'
 import { get } from 'lodash'
-import { RuleResultKeysMap, RuleType } from './rules/type'
-import parse from 'node-html-parser'
+import { RuleType } from './rules/type'
 
 type baseProps<T> = T &
   Partial<{
@@ -12,31 +13,47 @@ type baseProps<T> = T &
   }>
 
 let rule: RuleType
-export let setRule = (r: RuleType) => (rule = r)
+export let setRule = (r: RuleType) => {
+  rule = r
+}
 export let getRule = () => rule
+let cacheMap = new Map()
+let getCache = (key: string, cb: (val?: any) => void) =>
+  cacheMap.has(key) ? cacheMap.get(key) : cb()
 
-function getRuleResult(key: Concat<'discover', 'url'>, props: any): string
-function getRuleResult(key: Concat<'discover', 'cover'>, props: any): string
-function getRuleResult(
-  key: Concat<'content', 'url' | 'image' | 'reffers'>,
-  props: any,
-): string
-function getRuleResult(
-  key: DeepLeafKeys<RuleResultKeysMap>,
+let getRuleResult: {
+  (key: Concat<'discover', 'url'>, props: any): Promise<string>
+  (key: Concat<'discover', 'cover'>, props: any): Promise<string>
+  (key: Concat<'discover', 'list'>, props: any): Promise<any[]>
+  // ---content
+  (
+    key: Concat<'content', 'url' | 'image' | 'reffers'>,
+    props: any,
+  ): Promise<string>
+  (key: Concat<'content', 'tags'>, props: any): Promise<{
+    [k: string]: string[]
+  }>
+  (key: Concat<'content' | 'discover', 'type'>): Promise<'html' | 'json'>
+}
+
+getRuleResult = async function (
+  key: DeepLeafKeys<RuleType>,
   props?: baseProps<any>,
 ) {
   // init props
-  let baseProps = omitOjbect(props, [
-    'id',
-    'pageLimit',
-    'pageNum',
-    'searchString',
-  ])
+  let baseProps = {
+    id: props.id,
+    pageLimit: props.pageLimit,
+    pageNum: props.pageNum,
+    searchString: props.searchString,
+  }
+  omitOjbect(props, ['id', 'pageLimit', 'pageNum', 'searchString'])
+  let rule = getRule()
   let ruleScript = get(rule, key)
 
   // --- execute string script
   function isString(input: string) {
-    if (input[0] === '$') return executeDeepDataStringScript(input, baseProps)
+    if (input[0] === '$') return executeDeepDataStringScript(props, input)
     else return executeAtStringScript(input, baseProps)
   }
   function executeAtStringScript(string: string = ruleScript, obj: dykey = {}) {
@@ -49,15 +66,26 @@ function getRuleResult(
   }
   function executeDeepDataStringScript(
     path: string = ruleScript,
-    dataBasePath: any,
+    dataBase: any,
   ) {
-    return get(get(props, dataBasePath), path)
+    path = path.replace(/\$\.?/, '')
+    return path.length ? get(dataBase, path) : dataBase
   }
   // --- execute string script
 
   switch (key) {
     case 'discover.url':
       return executeAtStringScript(ruleScript, baseProps)
+    case 'discover.list': {
+      let url = executeAtStringScript(get(rule, 'discover.url'), baseProps)
+
+      let res = await request(url)
+      let list = []
+      if (typeof ruleScript === 'string')
+        list = executeDeepDataStringScript(ruleScript, res)
+      if (typeof ruleScript === 'function') list = ruleScript(baseProps)
+      return list
+    }
     case 'discover.cover': {
       if (typeof ruleScript === 'string') return isString(ruleScript)
       if (typeof ruleScript === 'function') return eval(ruleScript)
@@ -68,6 +96,12 @@ function getRuleResult(
     case 'content.reffers': {
       return ''
     }
+    case 'content.type':
+    case 'discover.type': {
+      return ruleScript
+    }
   }
   throw new Error(`can't execute this script: ${key}`)
 }
+
+export default getRuleResult

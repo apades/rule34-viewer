@@ -1,7 +1,5 @@
 import koaRouter from '@koa/router'
-import { search } from 'booru'
 import { request } from './request'
-var e2k = require('koa-connect')
 
 let router = new koaRouter()
 router
@@ -9,7 +7,12 @@ router
   .get('/proxy', async (ctx) => {
     let url = decodeURIComponent(ctx.query.url)
     console.log(`${'proxy:'.green} ${url}`)
-    let res = await request(url, { responseType: 'arraybuffer' })
+    let res = await request(url, {
+      responseType: 'arraybuffer',
+      headers: {
+        cookie: ctx.req.headers?.cookie ?? '',
+      },
+    })
 
     Object.entries(res?.headers ?? {}).forEach(([key, val]) => {
       ctx.set(key, val)

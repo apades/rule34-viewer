@@ -12,15 +12,12 @@
     "apicache": "^1.5.3",
     "axios": "^0.21.0",
     "booru": "^2.3.3",
-    "cheerio": "^1.0.0-rc.3",
     "colors": "^1.4.0",
-    "http-proxy-middleware": "^1.0.6",
     "https-proxy-agent": "^5.0.0",
     "koa": "^2.13.0",
     "koa-connect": "^2.1.0",
     "koa-logger": "^3.2.1",
-    "lodash": "^4.17.20",
-    "xml-js": "^1.6.11"
+    "lodash": "^4.17.20"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

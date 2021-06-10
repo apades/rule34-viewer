@@ -5,26 +5,26 @@ var e2k = require('koa-connect')
 
 let router = new koaRouter()
 router
-  .get('/', () => 'yeah')
+  .get('/', (ctx) => (ctx.body = 'yeah'))
   .get('/proxy', async (ctx) => {
-    let { url } = ctx.query
-    url = decodeURIComponent(url)
-    console.log(`proxy: ${url}`)
-    let body = await request(url)
-    ctx.body = body
-  })
-  .get('/booru/:site/:tags', async ({ params, query }) => {
-    let tags = [...params.tags.split(',')]
+    let url = decodeURIComponent(ctx.query.url)
+    console.log(`${'proxy:'.green} ${url}`)
+    let res = await request(url, { responseType: 'arraybuffer' })
 
-    let data = await search(params.site, tags, query)
-    return data
+    Object.entries(res?.headers ?? {}).forEach(([key, val]) => {
+      ctx.set(key, val)
+    })
+    ctx.body = res.data
   })
+  // TODO 去除旧的
   .get('/proxy-img', async (ctx) => {
     let url = decodeURIComponent(ctx.query.url)
-    console.log(url)
     let res = await request(url, { responseType: 'arraybuffer' })
-    ctx.set('content-type', 'image/png')
-    ctx.body = res
+
+    Object.entries(res.headers).forEach(([key, val]) => {
+      ctx.set(key, val)
+    })
+    ctx.body = res.data
   })
 
 export default router

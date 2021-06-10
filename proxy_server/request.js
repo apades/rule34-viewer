@@ -11,11 +11,7 @@ let request = axios.create({
 })
 
 request.interceptors.response.use(
-  (res) => {
-    return ['get', 'post', 'delete'].includes(res.config.method)
-      ? res.data
-      : res
-  },
+  (res) => res,
   (err) => {
     console.error('axios error'.red)
     writeFileSync(resolve(__dirname, './axios-error.log'), err, 'utf8')

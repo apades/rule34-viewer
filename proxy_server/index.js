@@ -14,12 +14,13 @@ var midd = e2k(cache('1 hours'))
 app.use(midd)
 // cache
 
+app.use(router.routes())
 // 这里use顺序反的话就没法设置cors了
 app.use(async (ctx, next) => {
   await next()
   ctx.set('Access-Control-Allow-Origin', '*')
 })
 
-app.use(router.routes())
-
-app.listen(3001)
+app.listen(3001, () => {
+  console.log(`listen in ${'http://localhost:3001/'.green}`)
+})

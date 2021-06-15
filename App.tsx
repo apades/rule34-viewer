@@ -1,6 +1,6 @@
 import React from 'react'
 import { LogBox } from 'react-native'
-import { Provider as PaperProvider } from 'react-native-paper'
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper'
 import { Provider } from 'react-redux'
 import AppRouter from './AppRouter'
 import Toast from 'react-native-toast-message'
@@ -8,11 +8,17 @@ import store from './reducers/index'
 
 LogBox.ignoreLogs(['Remote debugger'])
 
+let theme: typeof DefaultTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+  },
+}
 function App(): JSX.Element {
   return (
     <>
       <Provider store={store}>
-        <PaperProvider>
+        <PaperProvider theme={theme}>
           <AppRouter />
         </PaperProvider>
       </Provider>

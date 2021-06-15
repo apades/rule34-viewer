@@ -36,60 +36,6 @@ const RootStack = createStackNavigator<RootStackParamList>()
 let tab = createMaterialBottomTabNavigator<TabStackParamList>()
 let drawer = createDrawerNavigator()
 
-let HomeComponent = () => (
-  <tab.Navigator initialRouteName="homeGallery">
-    <tab.Screen
-      component={view_collections}
-      name="collections"
-      options={{
-        tabBarIcon: 'heart',
-        tabBarLabel: 'collects',
-      }}
-    />
-    <tab.Screen
-      component={view_gallery}
-      name="homeGallery"
-      options={{
-        tabBarIcon: 'view-list',
-        tabBarLabel: 'gallery',
-      }}
-    />
-    <tab.Screen
-      component={Setting}
-      name="Setting"
-      options={{
-        tabBarIcon: 'account-settings',
-        tabBarLabel: 'setting',
-      }}
-    />
-  </tab.Navigator>
-)
-
-let RootRouter = () => (
-  <RootStack.Navigator initialRouteName="home">
-    <RootStack.Screen
-      component={HomeComponent}
-      name="home"
-      options={{ header: () => null }}
-    />
-    <RootStack.Screen
-      component={Search}
-      name="search"
-      options={{ header: () => null }}
-    />
-    <RootStack.Screen
-      component={view_gallery}
-      name="gallery"
-      options={{ header: () => null }}
-    />
-    <RootStack.Screen
-      component={Page_Viewer}
-      name="viewer"
-      options={{ header: () => null }}
-    />
-  </RootStack.Navigator>
-)
-
 export type AppRouterProps = {
   // ...
 }
@@ -113,6 +59,63 @@ let AppRouter: FC<rProps> = (props) => {
     })
     _initStore()
   }, [])
+
+  let HomeComponent = () => (
+    <tab.Navigator
+      barStyle={{ backgroundColor: props.theme }}
+      initialRouteName="homeGallery"
+    >
+      <tab.Screen
+        component={view_collections}
+        name="collections"
+        options={{
+          tabBarIcon: 'heart',
+          tabBarLabel: 'collects',
+        }}
+      />
+      <tab.Screen
+        component={view_gallery}
+        name="homeGallery"
+        options={{
+          tabBarIcon: 'view-list',
+          tabBarLabel: 'gallery',
+        }}
+      />
+      <tab.Screen
+        component={Setting}
+        name="Setting"
+        options={{
+          tabBarIcon: 'account-settings',
+          tabBarLabel: 'setting',
+        }}
+      />
+    </tab.Navigator>
+  )
+
+  let RootRouter = () => (
+    <RootStack.Navigator initialRouteName="home">
+      <RootStack.Screen
+        component={HomeComponent}
+        name="home"
+        options={{ header: () => null }}
+      />
+      <RootStack.Screen
+        component={Search}
+        name="search"
+        options={{ header: () => null }}
+      />
+      <RootStack.Screen
+        component={view_gallery}
+        name="gallery"
+        options={{ header: () => null }}
+      />
+      <RootStack.Screen
+        component={Page_Viewer}
+        name="viewer"
+        options={{ header: () => null }}
+      />
+    </RootStack.Navigator>
+  )
 
   async function _initStore() {
     let [tags, imgs, histories]: [any, any, any] = await Promise.all([
@@ -163,6 +166,7 @@ const mapStateToProps = (state: StateBase) => {
   let lastRouter = state.state.lastRouter
   return {
     canUseDrawer: !['viewer'].includes(lastRouter?.name),
+    theme: state.setting.rule.theme,
   }
 }
 const mapDispatchToProps = {}

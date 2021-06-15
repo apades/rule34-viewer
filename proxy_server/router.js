@@ -14,9 +14,10 @@ router
       },
     })
 
-    Object.entries(res?.headers ?? {}).forEach(([key, val]) => {
-      ctx.set(key, val)
-    })
+    // Object.entries(res?.headers ?? {}).forEach(([key, val]) => {
+    //   ctx.set(key, val)
+    // })
+    ctx.set('Content-Type', res.headers?.['Content-Type'] ?? 'text')
     ctx.body = res.data
   })
   // TODO 去除旧的

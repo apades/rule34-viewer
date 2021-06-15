@@ -4,7 +4,8 @@
   "license": "MIT",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "dev": "concurrently \"sh run.sh\" \"yarn proxy_server\" ",
+    "dev": "concurrently \"sh ./script/run.sh false\" \"yarn proxy_server\" ",
+    "dev_a": "concurrently \"sh ./script/run.sh true\" \"yarn proxy_server\" ",
     "dev_origin": "cross-env NSFW=true react-native run-android",
     "proxy_server": "cd proxy_server && yarn dev",
     "c": "node script/comment.js ",

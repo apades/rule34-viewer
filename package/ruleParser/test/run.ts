@@ -1,7 +1,7 @@
 import getRuleResult, { setRequest, setRule } from '..'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
-import request from '../request'
+import request from './request'
 
 let type: 'rule34' | 'e621' = 'rule34'
 let ruleText = readFileSync(resolve(__dirname, `../rules/${type}.js`), 'utf-8')

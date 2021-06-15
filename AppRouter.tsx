@@ -13,7 +13,6 @@ import { GalleryItem } from './types/itemType'
 import { isDev, _env, _screen } from './utils/env'
 import { getRuleList, initAppFolder } from './utils/fs'
 import view_collections from './views/collections'
-import Detail from './views/detail'
 import view_gallery, { rData } from './views/gallery'
 import Search from './views/search'
 import Setting from './views/setting'
@@ -76,11 +75,6 @@ let RootRouter = () => (
     <RootStack.Screen
       component={Search}
       name="search"
-      options={{ header: () => null }}
-    />
-    <RootStack.Screen
-      component={Detail}
-      name="detail"
       options={{ header: () => null }}
     />
     <RootStack.Screen

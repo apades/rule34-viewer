@@ -1,7 +1,5 @@
 import axios from 'axios'
 import HttpsProxyAgent from 'https-proxy-agent'
-import { writeFileSync } from 'fs'
-import { resolve } from 'path'
 
 let request = axios.create({
   httpsAgent: new HttpsProxyAgent('http://localhost:10809'),
@@ -14,7 +12,6 @@ request.interceptors.response.use(
   (res) => res,
   (err) => {
     console.error('axios error'.red)
-    writeFileSync(resolve(__dirname, './axios-error.log'), err, 'utf8')
   },
 )
 

@@ -52,9 +52,7 @@ const RenderGalleryItem: FC<rProps> = function (props) {
 }
 
 const mapStateToProps = (state: StateBase) => {
-  return {
-    rule: state.setting.rule,
-  }
+  return {}
 }
 const mapDispatchToProps = {
   likeToggle,

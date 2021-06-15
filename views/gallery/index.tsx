@@ -86,6 +86,7 @@ const Gallery: FC<rProps> = function (props) {
       pageLimit: 20,
       pageNum: pid,
     })
+    console.log('resDataList', resDataList)
 
     if (firstLoad) {
       console.log('init Gallery')

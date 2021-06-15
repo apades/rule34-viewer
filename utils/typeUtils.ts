@@ -67,3 +67,5 @@ export function omitOjbect<T, K extends keyof T>(obj: T, key: K[]): Omit<T, K> {
   key.forEach((k) => delete rs[k])
   return rs
 }
+
+export type ParamType<T> = T extends (...args: infer P) => any ? P : T

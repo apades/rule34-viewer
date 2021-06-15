@@ -1,9 +1,10 @@
 // TODO 临时用的request
-import request from './request'
+// import request from './request'
 import { Concat, DeepLeafKeys, dykey, omitOjbect } from '../../utils/typeUtils'
 import htmlParser from 'node-html-parser'
 import { get } from 'lodash'
 import { RuleType } from './rules/type'
+import { AxiosInstance } from '@r/proxy_server/node_modules/axios'
 
 type baseProps<T> = T &
   Partial<{
@@ -12,6 +13,9 @@ type baseProps<T> = T &
     pageNum: number
     id: string | number
   }>
+let request: AxiosInstance = null
+export let setRequest = (req: AxiosInstance) => (request = req)
+let getRequeset = () => request
 
 let rule: RuleType
 export let setRule = (r: RuleType) => {
@@ -50,10 +54,16 @@ let getRuleResult: {
     key: Concat<'content', 'url' | 'image' | 'reffers'>,
     props: {
       id: number | string
-      $item?: any
+      $item: any
     },
   ): Promise<string>
-  (key: Concat<'content', 'tags'>, props: any): Promise<{
+  (
+    key: Concat<'content', 'tags'>,
+    props: {
+      id: number | string
+      $item: any
+    },
+  ): Promise<{
     [k: string]: string[]
   }>
   (key: Concat<'content' | 'discover', 'type'>): Promise<'html' | 'json'>
@@ -63,6 +73,8 @@ getRuleResult = async function (
   key: DeepLeafKeys<RuleType>,
   props?: baseProps<any>,
 ) {
+  let request = getRequeset()
+  if (!request) return Promise.reject('未初始化request')
   let rule = getRule()
   let ruleScript = get(rule, key)
   let isString = typeof ruleScript === 'string',

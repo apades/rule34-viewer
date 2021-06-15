@@ -50,7 +50,7 @@ let Page_Viewer: FC<rProps> = (props) => {
   let [nowData, setNowData] = useState<rData>(_dataList[InitIndex])
   let [imageUrls, setImageUrls] = useState<IImageInfo[]>([])
   let [isAnimating, setAnimating] = useState(false)
-  let data = nowData?.originData
+  let $item = nowData?.originData
 
   let [isSaveModalShow, setSaveModalShow] = useState(false)
 
@@ -139,8 +139,14 @@ let Page_Viewer: FC<rProps> = (props) => {
         // TODO 这里出现了末尾时data正常，但是中间image加载异常，黑屏且没法滑动
         imageUrls={imageUrls}
         key={imageUrls.length}
-        index={index}
-        onChange={(i) => setindex(i)}
+        index={InitIndex}
+        onChange={(i) =>
+          setTimeout(() => {
+            setindex(i)
+          }, 0)
+        }
+        pageAnimateTime={100}
+        useNativeDriver={true}
         onClick={() => {
           console.log('click to hide bottom')
           setCanSlidBottom(true)
@@ -229,14 +235,16 @@ let Page_Viewer: FC<rProps> = (props) => {
           setheight(_height)
         }}
       >
-        {data && (
+        {$item && (
           <>
-            <TagsContainer data={data} nowTag={''} />
+            <TagsContainer data={$item} nowTag={''} />
             <View style={{ height: 35 }}>
               <Button
                 mode="contained"
                 onPress={() =>
-                  handleOpenUrl(props.getContentOriginUrl({ id: data.id }))
+                  props
+                    .getContentOriginUrl({ id: $item.id, $item })
+                    .then((url) => handleOpenUrl(url))
                 }
               >
                 origin
@@ -250,9 +258,9 @@ let Page_Viewer: FC<rProps> = (props) => {
         key={`${like}-${index}`}
         icon={like ? 'heart' : 'heart-outline'}
         onPress={() => {
-          console.log(`like!,${data.id}`)
+          console.log(`like!,${$item.id}`)
           nowData.isLike = !nowData.isLike
-          dispatch({ type: 'likes/img_toggle', id: data.id, data })
+          dispatch({ type: 'likes/img_toggle', id: $item.id, data: $item })
           setLike(!like)
         }}
         style={{

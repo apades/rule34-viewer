@@ -30,6 +30,10 @@ let Layout_Drawer: FC<rProps> = (props) => {
           <Menu
             visible={isMenuVisible}
             onDismiss={() => setMenuVisible(false)}
+            contentStyle={{
+              top: 30,
+              left: 60,
+            }}
             anchor={
               <Button
                 uppercase={false}
@@ -44,13 +48,13 @@ let Layout_Drawer: FC<rProps> = (props) => {
               <Menu.Item
                 key={v}
                 onPress={() => {
-                  dispatch({
-                    type: 'setting/setRule',
-                    ruleName: v,
-                  })
                   setMenuVisible(false)
                 }}
                 title={v}
+                style={{
+                  width: 100,
+                  height: 30,
+                }}
               />
             ))}
           </Menu>

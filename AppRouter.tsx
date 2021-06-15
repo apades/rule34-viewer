@@ -1,26 +1,23 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
-import {
-  NavigationContainer,
-  PartialRoute,
-  Route,
-} from '@react-navigation/native'
+import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React, { FC, useEffect } from 'react'
 import { View } from 'react-native'
+import { connect, ConnectedProps } from 'react-redux'
 import { useDp } from './hooks'
 import Drawer from './layout/Drawer'
+import { StateBase } from './reducers'
 import { GalleryItem } from './types/itemType'
 import { isDev, _env, _screen } from './utils/env'
-import view_gallery, { rData } from './views/gallery'
-import Search from './views/search'
+import { getRuleList, initAppFolder } from './utils/fs'
 import view_collections from './views/collections'
 import Detail from './views/detail'
+import view_gallery, { rData } from './views/gallery'
+import Search from './views/search'
 import Setting from './views/setting'
 import Page_Viewer from './views/viewer'
-import { ConnectedProps, connect } from 'react-redux'
-import { StateBase } from './reducers'
 
 export type RootStackParamList = {
   home: undefined
@@ -41,7 +38,7 @@ let tab = createMaterialBottomTabNavigator<TabStackParamList>()
 let drawer = createDrawerNavigator()
 
 let HomeComponent = () => (
-  <tab.Navigator initialRouteName="collections">
+  <tab.Navigator initialRouteName="homeGallery">
     <tab.Screen
       component={view_collections}
       name="collections"
@@ -109,7 +106,17 @@ let AppRouter: FC<rProps> = (props) => {
   useEffect(() => {
     console.log('init app')
 
-    dispatch({ type: 'setting/debugMode', value: isDev })
+    dispatch({ type: 'setting/set', debugMode: isDev })
+    initAppFolder().then(async () => {
+      let list = await getRuleList()
+      dispatch({
+        type: 'setting/set',
+        ruleList: list.map((l) => ({
+          fileName: l,
+          name: l.replace(/(.*)\..*?$/, '$1'),
+        })),
+      })
+    })
     _initStore()
   }, [])
 
@@ -129,7 +136,6 @@ let AppRouter: FC<rProps> = (props) => {
     histories = JSON.parse(histories)
     dispatch({ type: 'likes/init', tags, imgs })
     dispatch({ type: 'search/initHis', histories })
-    // dispatch({ type: 'setting/setRule', ruleName })
   }
   return (
     <View style={{ flex: 1, position: 'relative' }}>

@@ -95,25 +95,12 @@ let Page_Setting: FC<rProps> = (props) => {
           <Text>length:{Object.keys(likes.imgs).length}</Text>
         </View>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text>{props.rule.name}</Text>
-          <Button
-            mode="contained"
-            onPress={() => {
-              dispatch({
-                type: 'setting/setRule',
-                ruleName: props.rule.name === 'rule34' ? 'e621' : 'rule34',
-              })
-            }}
-          >
-            change
-          </Button>
-        </View>
-
         <View>
           <Text>debug mode</Text>
           <Switch
-            onValueChange={() => dispatch({ type: 'setting/debugMode' })}
+            onValueChange={() =>
+              dispatch({ type: 'setting/set', debugMode: !setting.debugMode })
+            }
             value={setting.debugMode}
           />
         </View>
@@ -125,7 +112,6 @@ const mapStateToProps = (state: StateBase) => {
   return {
     likes: state.likes,
     setting: state.setting,
-    rule: state.setting.rule,
   }
 }
 const mapDispatchToProps = {}

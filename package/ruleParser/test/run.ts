@@ -1,11 +1,13 @@
-import getRuleResult, { setRule } from '..'
+import getRuleResult, { setRequest, setRule } from '..'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
+import request from '../request'
 
-let type: 'rule34' | 'e621' = 'e621'
+let type: 'rule34' | 'e621' = 'rule34'
 let ruleText = readFileSync(resolve(__dirname, `../rules/${type}.js`), 'utf-8')
 let _setRule = setRule
 eval(`${ruleText};_setRule(config)`)
+setRequest(request)
 // ---
 ;(async () => {
   let list: any[] = [],
@@ -19,7 +21,7 @@ eval(`${ruleText};_setRule(config)`)
 
   console.log(list.length)
 
-  getRuleResult('content.tags', {
+  getRuleResult('content.image', {
     id: $item.id,
     $item,
   }).then((cover) => console.log(cover))

@@ -17,7 +17,7 @@ router
     // Object.entries(res?.headers ?? {}).forEach(([key, val]) => {
     //   ctx.set(key, val)
     // })
-    ctx.set('Content-Type', res.headers?.['Content-Type'] ?? 'text')
+    ctx.set('Content-Type', res?.headers?.['Content-Type'] ?? 'text')
     ctx.body = res.data
   })
   // TODO 去除旧的
@@ -25,10 +25,8 @@ router
     let url = decodeURIComponent(ctx.query.url)
     let res = await request(url, { responseType: 'arraybuffer' })
 
-    Object.entries(res.headers).forEach(([key, val]) => {
-      ctx.set(key, val)
-    })
-    ctx.body = res.data
+    ctx.set('content-type', 'image/png')
+    ctx.body = res
   })
 
 export default router

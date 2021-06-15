@@ -16,6 +16,7 @@ import { Button, Colors, FAB, Text } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
 import TagsContainer from './tagsContainer'
 
+// ! 这个暂时被弃用了
 function RenderImageEl(uri: string, data: any) {
   // let _isVideo = data.tags.indexOf('webm') === -1
   let [isVideo, setIsVideo] = useState(false)

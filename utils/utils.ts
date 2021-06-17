@@ -1,6 +1,7 @@
 import { dykey } from '@r/types'
 import {} from 'lodash'
 import { Linking } from 'react-native'
+import { ParamType } from './typeUtils'
 
 export function throttle(fn: () => void, time: number): () => void {
   let save = true
@@ -57,12 +58,12 @@ export function debounceAsync<T extends any>(
     })
   }
 
-  function invokeAtLeading(args: T[], resolve, reject) {
+  function invokeAtLeading(args: T[], resolve: any, reject: any) {
     func.apply(this, args).then(resolve).catch(reject)
     shouldCancel = false
   }
 
-  function invokeAtTrailing(args: T[], resolve, reject) {
+  function invokeAtTrailing(args: T[], resolve: any, reject: any) {
     if (shouldCancel && resolve !== latestResolve) {
       reject(cancelObj)
     } else {
@@ -97,7 +98,7 @@ export function genHandlerScrollEnd(
       layoutMeasurement,
       contentOffset,
       contentSize,
-    }) {
+    }: any) {
       return (
         layoutMeasurement.height + contentOffset.y >= contentSize.height - 1
       )
@@ -195,4 +196,49 @@ export function arrayInsert<T>(tarr: T[], index: number, arr: T[]): T[] {
     right = _tarr
 
   return [...left, ...arr, ...right]
+}
+
+let logBoxDisableMap: {
+  [key: string]: {
+    color?: string
+    disable?: boolean
+  }
+} = {}
+let generRandomColor = (seed: number) =>
+  `#${Math.floor(seed * 16777215).toString(16)}`
+
+export function _logBox(key: string): typeof console {
+  let _console = { ...console }
+  let _log = console.log
+  if (!logBoxDisableMap[key]) {
+    let num: any = [...key]
+      .map((t) => t.charCodeAt(0))
+      .reduce((rs, val) => rs + val, 0)
+      .toString()
+      .split('')
+      .reverse()
+      .join('')
+
+    num = num - 0
+    while (num > 1) {
+      num /= 10
+    }
+    logBoxDisableMap[key] = {
+      color: generRandomColor(num),
+    }
+  }
+  _console.log = (...arg: ParamType<typeof _log>) => {
+    let data = logBoxDisableMap[key]
+    !data.disable && _log(`%c${key}:`, `color:${data.color};`, ...arg)
+  }
+  return _console
+}
+
+_logBox.disable = function (keys: string[] | string) {
+  if (!Array.isArray(keys)) keys = [keys]
+  keys.forEach((k) => {
+    logBoxDisableMap[k] = {
+      disable: true,
+    }
+  })
 }

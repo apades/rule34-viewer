@@ -4,10 +4,6 @@ var config = {
   host: 'https://e621.net/',
   theme: '#012e56',
 
-  config: {
-    pageNumStart: 1,
-  },
-
   discover: {
     url: 'https://e621.net/posts.json?tags=@{searchString}&limit=@{pageLimit}&page=@{pageNum}',
     list: '$.posts',

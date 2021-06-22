@@ -3,6 +3,7 @@ var config = {
   name: 'e621',
   host: 'https://e621.net/',
   theme: '#012e56',
+  contentType: 'gallery',
 
   discover: {
     url: 'https://e621.net/posts.json?tags=@{searchString}&limit=@{pageLimit}&page=@{pageNum}',

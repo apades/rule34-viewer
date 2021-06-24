@@ -5,6 +5,7 @@ import htmlParser from 'node-html-parser'
 import { get } from 'lodash'
 import { RuleType } from './rules/type'
 import { AxiosInstance } from '@r/proxy_server/node_modules/axios'
+import { _logBox } from '@r/utils/utils'
 
 type baseProps<T> = T &
   Partial<{
@@ -17,6 +18,7 @@ let request: AxiosInstance = null
 export let setRequest = (req: AxiosInstance) => (request = req)
 let getRequeset = () => request
 
+let console = _logBox('getRuleResult')
 let rule: RuleType
 export let setRule = (r: RuleType) => {
   rule = r
@@ -95,6 +97,7 @@ getRuleResult = async function (
         text: () => els.map((el) => el.text),
       }
     }
+  // TODO 这里导致了list都请求了html页面
   if (
     key !== 'content.url' &&
     key.indexOf('content.') === 0 &&
@@ -169,6 +172,7 @@ getRuleResult = async function (
       return ''
     }
     case 'content.tags': {
+      console.log('content.tags')
       if (isFn) return ruleScript({ ...props, $root, $query })
       if (isString) return executeDeepDataStringScript(ruleScript, props.$item)
       return {}

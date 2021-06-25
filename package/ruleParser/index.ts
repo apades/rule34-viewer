@@ -5,6 +5,7 @@ import htmlParser from 'node-html-parser'
 import { get } from 'lodash'
 import { RuleType } from './rules/type'
 import { AxiosInstance } from '@r/proxy_server/node_modules/axios'
+import { $q } from '@r/types/rule'
 
 type baseProps<T> = T &
   Partial<{
@@ -15,7 +16,7 @@ type baseProps<T> = T &
   }>
 let request: AxiosInstance = null
 export let setRequest = (req: AxiosInstance) => (request = req)
-let getRequeset = () => request
+export let getRequeset = () => request
 
 let rule: RuleType
 export let setRule = (r: RuleType) => {
@@ -85,14 +86,16 @@ getRuleResult = async function (
     pageLimit: props.pageLimit ?? 20,
     pageNum: (rule.config?.pageNumStart ?? 0) + props.pageNum,
     searchString: props.searchString,
+    request,
   }
 
   // ----content type:'html' init----
   let $root: ReturnType<typeof htmlParser>,
-    $query = function (queryStr: string) {
+    $query: $q = function (queryStr: string) {
       let els = $root.querySelectorAll(queryStr)
       return {
         text: () => els.map((el) => el.text),
+        attr: (key: string) => els.map((el) => el.getAttribute(key)),
       }
     }
   if (

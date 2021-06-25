@@ -1,3 +1,6 @@
+import { AxiosInstance } from '@r/proxy_server/node_modules/axios'
+import htmlParser from 'node-html-parser'
+
 type dykey<T = any> = {
   [k: string]: T
 }
@@ -17,9 +20,9 @@ type RuleBaseFnProps = {
   /**原始最外层数据 */
   $origin: any
   /**相当于css的dom选择器，content.type === 'html' 时可用 */
-  $query: query
-  /**请求header设置 */
-  $setHeader: (header: dykey<string>) => void
+  query: query
+  request: AxiosInstance
+  htmlParser: typeof htmlParser
 }
 type RuleBaseFnOrStringProps<RT> = (props: RuleBaseFnProps) => RT | string
 

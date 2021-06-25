@@ -1,5 +1,6 @@
 import { getContentTags } from '@r/actions/ruleAction'
 import ChipList from '@r/components/chipList'
+import getRuleResult from '@r/package/ruleParser'
 import { StateBase } from '@r/reducers'
 import { dykey } from '@r/types'
 import { RootPageProps } from '@r/types/route'
@@ -16,6 +17,7 @@ type rProps = ConnectedProps<typeof connector> & {
   /**orginData */
   data: any
   nowTag: string
+  onLoaded?(): void
 }
 let TagsContainer: FC<rProps> = (props) => {
   let { data } = props
@@ -31,7 +33,7 @@ let TagsContainer: FC<rProps> = (props) => {
       setAllTagsMap(Object.entries(obj))
     }
 
-    let url = props.rule.content.url
+    let url = await getRuleResult('content.url', { id, $item: data })
     if (!url) {
       let _tags = await props.getContentTags({
         $item: data,
@@ -58,12 +60,16 @@ let TagsContainer: FC<rProps> = (props) => {
   useEffect(() => {
     let isInit = true
     setLoading(true)
+    console.log('update')
     initTagsMap()
       .catch((err) => {
         console.error('initTagsMap error', err)
       })
       .finally(() => {
-        if (isInit) setLoading(false)
+        if (isInit) {
+          setLoading(false)
+          props.onLoaded?.()
+        }
       })
     return () => {
       isInit = false

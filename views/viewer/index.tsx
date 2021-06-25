@@ -32,7 +32,7 @@ import { rData } from '../gallery'
 export type ViewerProps = RootPageProps<'viewer'>
 type rProps = ConnectedProps<typeof connector> & ViewerProps
 
-let initTop = (_screen.height / 100) * 85
+let initTop = _screen.height
 let Page_Viewer: FC<rProps> = (props) => {
   let {
     index: InitIndex,

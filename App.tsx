@@ -8,7 +8,7 @@ import store from './reducers/index'
 import { _logBox } from './utils/utils'
 
 LogBox.ignoreLogs(['Remote debugger'])
-_logBox.disable(['TagsContainer'])
+_logBox.disable([''])
 
 let theme: typeof DefaultTheme = {
   ...DefaultTheme,

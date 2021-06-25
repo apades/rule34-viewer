@@ -11,7 +11,7 @@ var config = {
     cover({ $item }) {
       return `https://rule34.xxx/thumbnails/${
         $item.directory
-      }/thumbnail_${$item.image.replace(/^(.*)\..*?$/, '$1.jpg')}`
+      }/thumbnail_${$item.image?.replace?.(/^(.*)\..*?$/, '$1.jpg')}`
     },
   },
   content: {
@@ -20,7 +20,19 @@ var config = {
     image({ $item }) {
       return `https://rule34.xxx/images/${$item.directory}/${$item.image}`
     },
-    tags({ $query }) {
+    async tags({ request, htmlParser, $item }) {
+      let res = (
+        await request(
+          `https://rule34.xxx/index.php?page=post&s=view&id=${$item.id}`,
+        )
+      ).data
+      let $root = htmlParser(res)
+      let $query = function (queryStr) {
+        let els = $root.querySelectorAll(queryStr)
+        return {
+          text: () => els.map((el) => el.text),
+        }
+      }
       return {
         copyright: $query('.tag-type-copyright a').text(),
         character: $query('.tag-type-character a').text(),

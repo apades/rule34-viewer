@@ -24,20 +24,25 @@ type RuleBaseFnProps = {
   request: AxiosInstance
   htmlParser: typeof htmlParser
 }
-type RuleBaseFnOrStringProps<RT> = (props: RuleBaseFnProps) => RT | string
+type RuleBaseFnOrStringProps<RT> =
+  | ((props: RuleBaseFnProps) => RT)
+  | RT
+  | string
 
 type query = (q: string) => {
   list: query[]
-  text: () => string
-  attr: (key: string) => string
+  text: () => string[]
+  attr: (key: string) => string[]
 }
-
 type RuleContentFnProps = RuleBaseFnProps & {
   id: string
   /**相当于css的dom选择器，content.type === 'html' 时可用 */
   $query: query
 }
-type RuleContentFnOrStringProps<RT> = (props: RuleContentFnProps) => RT | string
+type RuleContentFnOrStringProps<RT> =
+  | ((props: RuleContentFnProps) => RT)
+  | RT
+  | string
 
 type RuleTypeBase = {
   name: string
@@ -93,8 +98,17 @@ type RuleManga = RuleTypeBase & {
     url?: RuleContentFnOrStringProps<string>
     /**默认为json */
     type?: 'html' | 'json'
-    imageList: RuleContentFnOrStringProps<string[]>
-    tags: RuleContentFnOrStringProps<{ [k: string]: string[] }>
+    imageList?: RuleContentFnOrStringProps<string[]>
+    getImg?: (props: {
+      $lastItem: any
+      $contentItem: any
+      $index: number
+      request: AxiosInstance
+    }) => Promise<{
+      img: string
+      isEnd?: boolean
+    }>
+    tags?: RuleContentFnOrStringProps<{ [k: string]: string[] }>
     reffers?: RuleContentFnOrStringProps<string>
     originUrl?: string
   }

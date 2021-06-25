@@ -16,7 +16,7 @@ type baseProps<T> = T &
   }>
 let request: AxiosInstance = null
 export let setRequest = (req: AxiosInstance) => (request = req)
-let getRequeset = () => request
+export let getRequeset = () => request
 
 let console = _logBox('getRuleResult')
 let rule: RuleType

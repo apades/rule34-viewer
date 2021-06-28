@@ -13,7 +13,9 @@ let config = (() => {
         'https://img.kukudm.com/xpic/%E6%9D%A5%E8%87%AA%E6%B7%B1%E6%B8%8A.jpg',
       desc: 'test 来自深渊',
       title: '来自深渊',
-      list: ({ $query }) => {
+      list: async ({ xmlParser, request }) => {
+        let html = (await request('https://m.kkkkdm.com/comiclist/2044/')).data
+        let $query = xmlParser(html)
         let idList = $query('#list > li > a')
           .attr('href')
           .map((id) => ({
@@ -29,7 +31,7 @@ let config = (() => {
           $index + 1
         }.htm`
         let reg = /<IMG.*?m2007\+\"(.*?)\'>/
-        let resHtml: string = (await request(reqUrl)) as any
+        let resHtml = (await request(reqUrl)).data
         return {
           img: `https://tu.kukudm.com/${resHtml.match(reg)[1]}`,
           isEnd: resHtml.indexOf('/exit/exit.htm') !== -1,

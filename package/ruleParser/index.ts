@@ -1,11 +1,10 @@
 // TODO 临时用的request
 // import request from './request'
 import { Concat, DeepLeafKeys, dykey, omitOjbect } from '../../utils/typeUtils'
-import htmlParser from 'node-html-parser'
+import xmlParser from 'node-html-parser'
 import { get } from 'lodash'
 import { RuleType } from './rules/type'
 import { AxiosInstance } from '@r/proxy_server/node_modules/axios'
-import { _logBox } from '@r/utils/utils'
 
 type baseProps<T> = T &
   Partial<{
@@ -18,7 +17,6 @@ let request: AxiosInstance = null
 export let setRequest = (req: AxiosInstance) => (request = req)
 export let getRequeset = () => request
 
-let console = _logBox('getRuleResult')
 let rule: RuleType
 export let setRule = (r: RuleType) => {
   rule = r
@@ -68,6 +66,13 @@ let getRuleResult: {
   ): Promise<{
     [k: string]: string[]
   }>
+  (
+    key: Concat<'content', 'getImg'>,
+    props: {
+      $index: number
+      $item: any
+    },
+  ): Promise<{ img: string; isEnd: boolean }>
   (key: Concat<'content' | 'discover', 'type'>): Promise<'html' | 'json'>
 }
 
@@ -83,12 +88,21 @@ getRuleResult = async function (
     isFn = typeof ruleScript === 'function'
   // ----init props----
   let baseProps = {
-    id: props.id,
+    id: props.id ?? '',
     pageLimit: props.pageLimit ?? 20,
     pageNum: (rule.config?.pageNumStart ?? 0) + props.pageNum,
-    searchString: props.searchString,
+    searchString: props.searchString ?? '',
     request,
-    htmlParser,
+    xmlParser: (xml: string) => {
+      let $root = xmlParser(xml)
+      return function (queryStr: string) {
+        let els = $root.querySelectorAll(queryStr)
+        return {
+          text: () => els.map((el) => el.text),
+          attr: (key: string) => els.map((el) => el.getAttribute(key)),
+        }
+      }
+    },
     ...props,
   }
 
@@ -98,7 +112,7 @@ getRuleResult = async function (
     else return executeAtStringScript(input, baseProps)
   }
   function executeAtStringScript(string: string = ruleScript, obj: dykey = {}) {
-    let keyArr = string.match(/@\{.*?\}/g)
+    let keyArr = string.match(/@\{.*?\}/g) ?? []
     keyArr.forEach(
       (key) =>
         (string = string.replace(`${key}`, obj[key.replace(/[\@\{\}]/g, '')])),
@@ -120,7 +134,6 @@ getRuleResult = async function (
       let url = await getRuleResult('discover.url', baseProps)
 
       let res = (await request(url)).data
-      console.log('res', res)
       let list = []
       if (isString) list = executeDeepDataStringScript(ruleScript, res)
       if (isFn) list = await ruleScript(baseProps)
@@ -162,6 +175,11 @@ getRuleResult = async function (
     case 'content.type':
     case 'discover.type': {
       return ruleScript
+    }
+    // ----manga----
+    case 'content.getImg': {
+      if (!isFn) return { img: '', isEnd: true }
+      return ruleScript(baseProps)
     }
   }
   throw new Error(`can't execute this script: ${key}`)

@@ -7,11 +7,7 @@ let request = Axios.create({
 })
 
 request.interceptors.response.use(
-  (res) => {
-    return ['get', 'post', 'delete', 'put'].includes(res.config.method)
-      ? res.data
-      : res
-  },
+  (res) => res,
   (err) => {
     console.error('axios error', err)
     throw err

@@ -1,4 +1,5 @@
-import { AxiosInstance } from '@r/proxy_server/node_modules/axios'
+import { DeepLeafKeys } from '@r/utils/typeUtils'
+import { AxiosInstance } from 'axios'
 import htmlParser from 'node-html-parser'
 
 type dykey<T = any> = {
@@ -22,10 +23,11 @@ type RuleBaseFnProps = {
   /**相当于css的dom选择器，content.type === 'html' 时可用 */
   query: query
   request: AxiosInstance
-  htmlParser: typeof htmlParser
+  xmlParser: (xml: string) => query
 }
 type RuleBaseFnOrStringProps<RT> =
   | ((props: RuleBaseFnProps) => RT)
+  | ((props: RuleBaseFnProps) => Promise<RT>)
   | RT
   | string
 
@@ -41,6 +43,7 @@ type RuleContentFnProps = RuleBaseFnProps & {
 }
 type RuleContentFnOrStringProps<RT> =
   | ((props: RuleContentFnProps) => RT)
+  | ((props: RuleContentFnProps) => Promise<RT>)
   | RT
   | string
 
@@ -92,7 +95,7 @@ type RuleManga = RuleTypeBase & {
     cover: RuleBaseFnOrStringProps<string>
     tags?: RuleContentFnOrStringProps<{ [k: string]: string[] }>
   }
-  search: RuleManga['discover']
+  // search: RuleManga['discover']
   content: {
     /**如果设置，则单独爬该数据 */
     url?: RuleContentFnOrStringProps<string>
@@ -100,8 +103,7 @@ type RuleManga = RuleTypeBase & {
     type?: 'html' | 'json'
     imageList?: RuleContentFnOrStringProps<string[]>
     getImg?: (props: {
-      $lastItem: any
-      $contentItem: any
+      $item: any
       $index: number
       request: AxiosInstance
     }) => Promise<{
@@ -114,5 +116,4 @@ type RuleManga = RuleTypeBase & {
   }
 }
 export type RuleType = RuleGallery | RuleManga
-
 // export type RuleResultKeys = DeepLeafKeys<RuleResultKeysMap>

@@ -4,7 +4,7 @@ import rule34Text from '@r/package/ruleParser/rules/rule34.text'
 import { GalleryItem } from '@r/types/itemType'
 import { Dp, GetState } from '@r/types/redux'
 import { ip, isDev } from '@r/utils/env'
-import request from '@r/utils/request'
+import request from '@r/utils/ruleRequest'
 import { rData } from '@r/views/gallery'
 
 let _setRule = setRule

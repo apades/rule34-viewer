@@ -1,5 +1,7 @@
 import { getContentOriginUrl, getMoreGalleyData } from '@r/actions/ruleAction'
 import { useDp } from '@r/hooks'
+import ImageViewer from 'react-native-image-zoom-viewer/src/index'
+import { IImageInfo } from 'react-native-image-zoom-viewer/src/image-viewer.type'
 import { StateBase } from '@r/reducers'
 import { _style } from '@r/style'
 import { RootPageProps } from '@r/types/route'
@@ -15,8 +17,6 @@ import {
   View,
 } from 'react-native'
 import fs from 'react-native-fs'
-import ImageViewer from 'react-native-image-zoom-viewer'
-import { IImageInfo } from 'react-native-image-zoom-viewer/built/image-viewer.type'
 import {
   ActivityIndicator,
   Button,
@@ -29,11 +29,10 @@ import Toast from 'react-native-toast-message'
 import { connect, ConnectedProps } from 'react-redux'
 import TagsContainer from '../detail/tagsContainer'
 import { rData } from '../gallery'
-
 export type ViewerProps = RootPageProps<'viewer'>
 type rProps = ConnectedProps<typeof connector> & ViewerProps
 
-let initTop = (_screen.height / 100) * 85
+let initTop = _screen.height
 let Page_Viewer: FC<rProps> = (props) => {
   let {
     index: InitIndex,
@@ -82,7 +81,6 @@ let Page_Viewer: FC<rProps> = (props) => {
     NativeModules.KeyEventLister.audioSwitch(true)
     let listener = DeviceEventEmitter.addListener('keydown', (e) => {
       if (e.keyCode === 24) {
-        console.log('up')
         setindex((i) => (i === 0 ? 0 : --i))
       }
       if (e.keyCode === 25) {
@@ -138,8 +136,8 @@ let Page_Viewer: FC<rProps> = (props) => {
       <ImageViewer
         // TODO 这里出现了末尾时data正常，但是中间image加载异常，黑屏且没法滑动
         imageUrls={imageUrls}
-        key={imageUrls.length}
-        index={InitIndex}
+        enablePreload={true}
+        index={index}
         onChange={(i) =>
           setTimeout(() => {
             setindex(i)
@@ -163,7 +161,6 @@ let Page_Viewer: FC<rProps> = (props) => {
         }}
         renderImage={(props) => {
           let { source, style } = props
-          // console.log('props', props)
           if (props.isVideo)
             return (
               <View

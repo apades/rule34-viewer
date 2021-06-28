@@ -1,3 +1,9 @@
+import { AxiosInstance } from '@r/proxy_server/node_modules/axios'
+import htmlParser from 'node-html-parser'
+
+type dykey<T = any> = {
+  [k: string]: T
+}
 export type RuleBaseConfig = Partial<{
   /**第一页开始数，默认为0*/
   pageNumStart: number
@@ -6,27 +12,39 @@ export type RuleBaseConfig = Partial<{
 }>
 
 type RuleBaseFnProps = {
+  searchString: string
+  pageLimit: number
+  pageNum: number
   /**默认最外层为数组，返回其中单个。如果不是，则需要设置discover.list */
   $item: any
   /**原始最外层数据 */
   $origin: any
   /**相当于css的dom选择器，content.type === 'html' 时可用 */
-  $query: query
+  query: query
+  request: AxiosInstance
+  htmlParser: typeof htmlParser
 }
-type RuleBaseFnOrStringProps<RT> = (props: RuleBaseFnProps) => RT | string
+type RuleBaseFnOrStringProps<RT> =
+  | ((props: RuleBaseFnProps) => RT)
+  | RT
+  | string
 
 type query = (q: string) => {
-  text: () => string
+  list: query[]
+  text: () => string[]
   attr: (key: string) => string[]
 }
-
 type RuleContentFnProps = RuleBaseFnProps & {
+  id: string
   /**相当于css的dom选择器，content.type === 'html' 时可用 */
   $query: query
 }
-type RuleContentFnOrStringProps<RT> = (props: RuleContentFnProps) => RT | string
+type RuleContentFnOrStringProps<RT> =
+  | ((props: RuleContentFnProps) => RT)
+  | RT
+  | string
 
-export type RuleType = {
+type RuleTypeBase = {
   name: string
   host: string
 
@@ -34,6 +52,11 @@ export type RuleType = {
   theme: string
   /**爬虫基本设置 */
   config?: RuleBaseConfig
+}
+
+type RuleGallery = RuleTypeBase & {
+  /**类型 */
+  contentType: 'gallery'
 
   discover: {
     url: string
@@ -53,5 +76,43 @@ export type RuleType = {
     originUrl: string
   }
 }
+
+type RuleManga = RuleTypeBase & {
+  /**类型 */
+  contentType: 'manga'
+
+  discover: {
+    url: string
+    type?: 'html' | 'json'
+    desc: RuleBaseFnOrStringProps<string>
+    title: RuleBaseFnOrStringProps<string>
+    author: RuleBaseFnOrStringProps<string[]>
+    /**返回的值将成为$item */
+    list: RuleBaseFnOrStringProps<any[]>
+    cover: RuleBaseFnOrStringProps<string>
+    tags?: RuleContentFnOrStringProps<{ [k: string]: string[] }>
+  }
+  search: RuleManga['discover']
+  content: {
+    /**如果设置，则单独爬该数据 */
+    url?: RuleContentFnOrStringProps<string>
+    /**默认为json */
+    type?: 'html' | 'json'
+    imageList?: RuleContentFnOrStringProps<string[]>
+    getImg?: (props: {
+      $lastItem: any
+      $contentItem: any
+      $index: number
+      request: AxiosInstance
+    }) => Promise<{
+      img: string
+      isEnd?: boolean
+    }>
+    tags?: RuleContentFnOrStringProps<{ [k: string]: string[] }>
+    reffers?: RuleContentFnOrStringProps<string>
+    originUrl?: string
+  }
+}
+export type RuleType = RuleGallery | RuleManga
 
 // export type RuleResultKeys = DeepLeafKeys<RuleResultKeysMap>

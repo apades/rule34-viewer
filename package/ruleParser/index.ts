@@ -5,6 +5,7 @@ import htmlParser from 'node-html-parser'
 import { get } from 'lodash'
 import { RuleType } from './rules/type'
 import { AxiosInstance } from '@r/proxy_server/node_modules/axios'
+import { _logBox } from '@r/utils/utils'
 
 type baseProps<T> = T &
   Partial<{
@@ -15,8 +16,9 @@ type baseProps<T> = T &
   }>
 let request: AxiosInstance = null
 export let setRequest = (req: AxiosInstance) => (request = req)
-let getRequeset = () => request
+export let getRequeset = () => request
 
+let console = _logBox('getRuleResult')
 let rule: RuleType
 export let setRule = (r: RuleType) => {
   rule = r
@@ -85,29 +87,14 @@ getRuleResult = async function (
     pageLimit: props.pageLimit ?? 20,
     pageNum: (rule.config?.pageNumStart ?? 0) + props.pageNum,
     searchString: props.searchString,
-  }
-
-  // ----content type:'html' init----
-  let $root: ReturnType<typeof htmlParser>,
-    $query = function (queryStr: string) {
-      let els = $root.querySelectorAll(queryStr)
-      return {
-        text: () => els.map((el) => el.text),
-      }
-    }
-  if (
-    key !== 'content.url' &&
-    key.indexOf('content.') === 0 &&
-    get(rule, 'content.type') === 'html'
-  ) {
-    let url = await getRuleResult('content.url', props)
-    let htmlString = (await request(url)) as any as string
-    $root = htmlParser(htmlString)
+    request,
+    htmlParser,
+    ...props,
   }
 
   // ----execute string script----
   function stringRunner(input: string) {
-    if (input[0] === '$') return executeDeepDataStringScript(props, input)
+    if (input[0] === '$') return executeDeepDataStringScript(baseProps, input)
     else return executeAtStringScript(input, baseProps)
   }
   function executeAtStringScript(string: string = ruleScript, obj: dykey = {}) {
@@ -126,27 +113,23 @@ getRuleResult = async function (
     return path.length ? get(dataBase, path) : dataBase
   }
 
-  // ----execute html crawl----
-  function htmlCrawlRunner(htmlString: string) {
-    let root = htmlParser(htmlString)
-  }
-
   switch (key) {
     case 'discover.url':
       return executeAtStringScript(ruleScript, baseProps)
     case 'discover.list': {
-      let url = await getRuleResult('discover.url', props)
+      let url = await getRuleResult('discover.url', baseProps)
 
-      let res = await request(url)
+      let res = (await request(url)).data
+      console.log('res', res)
       let list = []
       if (isString) list = executeDeepDataStringScript(ruleScript, res)
-      if (isFn) list = ruleScript(baseProps)
+      if (isFn) list = await ruleScript(baseProps)
       return list
     }
     case 'discover.cover': {
       let cover = ''
       if (isString) cover = stringRunner(ruleScript)
-      if (isFn) cover = ruleScript(props)
+      if (isFn) cover = await ruleScript(baseProps)
       return cover
     }
     // -----content-----
@@ -156,21 +139,23 @@ getRuleResult = async function (
         isString = typeof ruleScript === 'string'
         isFn = typeof ruleScript === 'function'
       }
-      if (isString) return executeAtStringScript(ruleScript, props)
-      if (isFn) return ruleScript(props)
+      if (isString) return executeAtStringScript(ruleScript, baseProps)
+      if (isFn) return ruleScript(baseProps)
       return ''
     }
     case 'content.image': {
       if (isString) return stringRunner(ruleScript)
-      if (isFn) return ruleScript(props)
+      if (isFn) return ruleScript(baseProps)
       return ''
     }
     case 'content.reffers': {
       return ''
     }
     case 'content.tags': {
-      if (isFn) return ruleScript({ ...props, $root, $query })
-      if (isString) return executeDeepDataStringScript(ruleScript, props.$item)
+      console.log('content.tags')
+      if (isFn) return ruleScript(baseProps)
+      if (isString)
+        return executeDeepDataStringScript(ruleScript, baseProps.$item)
       return {}
     }
     // ----chore----

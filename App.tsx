@@ -5,8 +5,10 @@ import { Provider } from 'react-redux'
 import AppRouter from './AppRouter'
 import Toast from 'react-native-toast-message'
 import store from './reducers/index'
+import { _logBox } from './utils/utils'
 
 LogBox.ignoreLogs(['Remote debugger'])
+_logBox.disable([''])
 
 let theme: typeof DefaultTheme = {
   ...DefaultTheme,

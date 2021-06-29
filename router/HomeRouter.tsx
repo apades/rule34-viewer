@@ -5,6 +5,7 @@ import React, { FC, memo } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 import view_collections from '../views/collections'
 import view_gallery, { rData } from '../views/gallery'
+import Manga_List from '../views/manga/List'
 import Setting from '../views/setting'
 
 let tab = createMaterialBottomTabNavigator<TabStackParamList>()
@@ -27,7 +28,7 @@ let HomeRouter: FC<rProps> = (props) => {
         }}
       />
       <tab.Screen
-        component={view_gallery}
+        component={Manga_List}
         name="homeGallery"
         options={{
           tabBarIcon: 'view-list',

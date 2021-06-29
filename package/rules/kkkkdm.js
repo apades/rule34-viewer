@@ -49,3 +49,5 @@ let config = (() => {
   }
   return config
 })()
+
+export default config

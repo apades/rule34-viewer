@@ -14,14 +14,21 @@ let config = (() => {
       desc: 'test 来自深渊',
       title: '来自深渊',
       list: async ({ xmlParser, request }) => {
-        let html = (await request('https://m.kkkkdm.com/comiclist/2044/')).data
+        let res = await request('http://m.kkkkdm.com/comiclist/2044/', {
+          responseType: 'arraybuffer',
+        })
+        console.log('res', res.data)
+        let html = new TextDecoder('GBK').decode(res.data)
         let $query = xmlParser(html)
-        let idList = $query('#list > li > a')
+        let els = $query('#list li a')
+        let idList = els
           .attr('href')
-          .map((id) => ({
-            id,
-          }))
-        return idList
+          .map((id) => id.match(/^\/comiclist\/(.*)\/1.htm$/)[1])
+        let nameList = els.text()
+        return nameList.map((name, i) => ({
+          name,
+          id: idList[i],
+        }))
       },
     },
     search: null,
@@ -44,3 +51,5 @@ let config = (() => {
   }
   return config
 })()
+
+export default config

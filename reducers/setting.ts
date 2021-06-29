@@ -1,17 +1,25 @@
 import { omitOjbect } from '@r/utils/utils'
-import rule34Text from '@r/package/ruleParser/rules/rule34.text'
+// import rule34Text from '@r/package/ruleParser/rules/rule34.text'
 import { RuleType } from '@r/package/ruleParser/rules/type'
-import { setRule } from '@r/package/ruleParser'
+import kkkdm from '@r/package/rules/kkkkdm'
+// import request from '@r/utils/ruleRequest'
+// ---- rule pack----
+import { setRequest, setRule } from '@r/package/ruleParser'
+import request from '@r/utils/ruleRequest'
 
 export type SettingDstate = typeof init
+// let _setRule = setRule
+// eval(`${rule34Text};_setRule(config)`)
+setRule(kkkdm)
+setRequest(request)
 
 type ruleFile = {
   name: string
   fileName: string
 }
-let rule: RuleType
-eval(`${rule34Text};rule=config`)
-console.log('rule', rule.name)
+let rule: RuleType = kkkdm as RuleType
+// eval(`${rule34Text};rule=config`)
+console.log('rule', rule)
 let init = {
   debugMode: false,
   rule,

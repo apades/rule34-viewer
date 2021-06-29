@@ -1,17 +1,59 @@
 import { StateBase } from '@r/reducers'
 import React, { FC, memo, useState } from 'react'
-import { View, ActivityIndicator } from 'react-native'
-import ImageViewer from 'react-native-image-zoom-viewer'
-import { IImageInfo } from 'react-native-image-zoom-viewer/built/image-viewer.type'
+import { View } from 'react-native'
+import {
+  ActivityIndicator,
+  Button,
+  Dialog,
+  FAB,
+  Portal,
+  Text,
+} from 'react-native-paper'
+import ImageViewer from 'react-native-image-zoom-viewer/src/index'
+import { IImageInfo } from 'react-native-image-zoom-viewer/src/image-viewer.type'
 import { ConnectedProps, connect } from 'react-redux'
+import { useEffect } from 'react'
+import getRuleResult from '@r/package/ruleParser'
+import { RootPageProps } from '@r/types/route'
+import { Image } from 'react-native'
+import { simpleStyle } from '@r/package/react-native-image-viewer/src/image-viewer.style'
 
-export type ViewerProps = {
-  //
-}
+export type ViewerProps = RootPageProps<'mangaViewer'>
 type rProps = ConnectedProps<typeof connector> & ViewerProps
-let Page_MangaViewer: FC = (props) => {
+let Page_MangaViewer: FC<rProps> = (props) => {
+  let { data } = props.route.params
   let [imageUrls, setImageUrls] = useState<IImageInfo[]>([])
-  let [index, setindex] = useState(0)
+  let [viewIndex, setViewIndex] = useState(0)
+  let [loadIndex, setloadIndex] = useState(0)
+  let [isLoadEnd, setLoadEnd] = useState(false)
+  console.log('data', data)
+
+  let loadImg = ($index: number) => {
+    if (isLoadEnd) return
+    getRuleResult('content.getImg', {
+      $item: data,
+      $index,
+    }).then((data) => {
+      console.log(data)
+      setImageUrls((imgs) => {
+        let newImgs = [...imgs]
+        newImgs[$index] = newImgs[$index] ?? ({ url: '' } as IImageInfo)
+        newImgs[$index].url = data.img
+        if (data.isEnd) setLoadEnd(true)
+        return newImgs
+      })
+    })
+  }
+  useEffect(() => {
+    loadImg(0)
+  }, [])
+
+  useEffect(() => {
+    if (viewIndex + 1 === imageUrls.length) {
+      loadImg(++loadIndex)
+      setloadIndex((i) => ++i)
+    }
+  }, [viewIndex, imageUrls.length])
 
   return (
     <View
@@ -23,12 +65,11 @@ let Page_MangaViewer: FC = (props) => {
       <ImageViewer
         // TODO 这里出现了末尾时data正常，但是中间image加载异常，黑屏且没法滑动
         imageUrls={imageUrls}
-        enablePreload={true}
-        key={imageUrls.length}
-        index={index}
+        // enablePreload={true}
+        index={viewIndex}
         onChange={(i) =>
           setTimeout(() => {
-            setindex(i)
+            setViewIndex(i)
           }, 0)
         }
         pageAnimateTime={100}
@@ -38,6 +79,14 @@ let Page_MangaViewer: FC = (props) => {
         style={{
           zIndex: 10,
         }}
+        renderIndicator={(c, a) => (
+          <View style={{ ...simpleStyle.count, flexWrap: 'nowrap' }}>
+            <Text style={simpleStyle.countText}>{`${c}/${a}`}</Text>
+            {isLoadEnd && (
+              <Text style={{ ...simpleStyle.countText }}>load end</Text>
+            )}
+          </View>
+        )}
       />
     </View>
   )

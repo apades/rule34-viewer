@@ -131,7 +131,7 @@ let Page_Viewer: FC<rProps> = (props) => {
           justifyContent: 'center',
         }}
       >
-        <ActivityIndicator animating={true} />
+        {/* <ActivityIndicator animating={true} /> */}
       </View>
       <ImageViewer
         // TODO 这里出现了末尾时data正常，但是中间image加载异常，黑屏且没法滑动

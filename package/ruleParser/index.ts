@@ -1,10 +1,8 @@
-// TODO 临时用的request
-// import request from './request'
-import { Concat, DeepLeafKeys, dykey, omitOjbect } from '../../utils/typeUtils'
-import xmlParser from 'node-html-parser'
-import { get } from 'lodash'
-import { RuleType } from './rules/type'
 import { AxiosInstance } from '@r/proxy_server/node_modules/axios'
+import { get } from 'lodash'
+import xmlParser from 'node-html-parser'
+import { Concat, DeepLeafKeys, dykey } from '../../utils/typeUtils'
+import { RuleType } from './rules/type'
 
 type baseProps<T> = T &
   Partial<{
@@ -112,7 +110,7 @@ getRuleResult = async function (
     else return executeAtStringScript(input, baseProps)
   }
   function executeAtStringScript(string: string = ruleScript, obj: dykey = {}) {
-    let keyArr = string.match(/@\{.*?\}/g) ?? []
+    let keyArr = string?.match?.(/@\{.*?\}/g) ?? []
     keyArr.forEach(
       (key) =>
         (string = string.replace(`${key}`, obj[key.replace(/[\@\{\}]/g, '')])),

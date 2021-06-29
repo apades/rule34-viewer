@@ -20,6 +20,7 @@ export type RootStackParamList = {
   gallery: Partial<{ tags: string; likeList: boolean }>
   viewer: { dataList: rData[]; index: number; page: number; nowTag: string }
   setting: undefined
+  mangaViewer: { data: any }
 }
 export type TabStackParamList = {
   collections: undefined
@@ -92,7 +93,7 @@ let AppRouter: FC<rProps> = (props) => {
 const mapStateToProps = (state: StateBase) => {
   let lastRouter = state.state.lastRouter
   return {
-    canUseDrawer: !['viewer'].includes(lastRouter?.name),
+    canUseDrawer: !['viewer', 'mangaViewer'].includes(lastRouter?.name),
     rule: state.setting.rule,
   }
 }

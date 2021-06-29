@@ -7,6 +7,7 @@ export const _env = {
   NSFW: process.env.NSFW === 'true' || !isDev,
 }
 
+//
 export const ip = process.env.LOCALIP
 let data = Dimensions.get('screen')
 export const _screen = {

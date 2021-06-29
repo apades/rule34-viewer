@@ -95,7 +95,7 @@ type RuleManga = RuleTypeBase & {
     cover: RuleBaseFnOrStringProps<string>
     tags?: RuleContentFnOrStringProps<{ [k: string]: string[] }>
   }
-  // search: RuleManga['discover']
+  search: RuleManga['discover']
   content: {
     /**如果设置，则单独爬该数据 */
     url?: RuleContentFnOrStringProps<string>

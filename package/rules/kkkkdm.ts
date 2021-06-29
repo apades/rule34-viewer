@@ -26,12 +26,15 @@ let config = (() => {
     },
     search: null,
     content: {
-      async getImg({ $lastItem, $contentItem, $index, request }) {
-        let reqUrl = `https://m.kkkkdm.com/comiclist/${$contentItem.id}/${
+      async getImg({ $item, $index, request }) {
+        let reqUrl = `http://m.kkkkdm.com/comiclist/${$item.id}/${
           $index + 1
         }.htm`
         let reg = /<IMG.*?m2007\+\"(.*?)\'>/
-        let resHtml = (await request(reqUrl)).data
+        let res = await request(reqUrl, {
+          responseType: 'arraybuffer',
+        })
+        let resHtml = new TextDecoder('GBK').decode(res.data)
         return {
           img: `https://tu.kukudm.com/${resHtml.match(reg)[1]}`,
           isEnd: resHtml.indexOf('/exit/exit.htm') !== -1,

@@ -7,7 +7,7 @@
     "dev": "concurrently \"sh ./script/run.sh false\" \"yarn proxy_server\" ",
     "dev_a": "concurrently \"sh ./script/run.sh true\" \"yarn proxy_server\" ",
     "dev_origin": "cross-env NSFW=true react-native run-android",
-    "proxy_server": "cd proxy_server && yarn dev",
+    "proxy_server": "cd package/proxy_server && yarn dev",
     "c": "node script/comment.js ",
     "build": "node ./script/addTag && cd android && ./gradlew assembleRelease",
     "redux_test": "set REACT_DEBUGGER=\"unset ELECTRON_RUN_AS_NODE && open -g 'rndebugger://set-debugger-loc?host=localhost&port=19001'\" && yarn dev",

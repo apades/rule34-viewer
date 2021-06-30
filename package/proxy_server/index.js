@@ -1,5 +1,6 @@
 import koa from 'koa'
 import koaLogger from 'koa-logger'
+import config from './project.config'
 
 import 'colors'
 import router from './router'
@@ -21,6 +22,6 @@ app.use(async (ctx, next) => {
   ctx.set('Access-Control-Allow-Origin', '*')
 })
 
-app.listen(3001, () => {
-  console.log(`listen in ${'http://localhost:3001/'.green}`)
+app.listen(config.server_Port, () => {
+  console.log(`listen in ${`http://localhost:${config.server_Port}/`.green}`)
 })

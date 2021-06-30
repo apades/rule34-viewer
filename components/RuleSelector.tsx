@@ -5,7 +5,7 @@ import React, { FC, useState } from 'react'
 import { useEffect } from 'react'
 import { View, Text } from 'react-native'
 import { List, Modal } from 'react-native-paper'
-import rule34Text from '@r/package/ruleParser/rules/rule34.text'
+import rule34Text from '@r/package/rules/rule34.text'
 import fs from 'react-native-fs'
 
 let selectList = ['rule34', 'e621']

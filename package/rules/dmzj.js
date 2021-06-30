@@ -11,7 +11,7 @@ var config = (() => {
     desc: ({ $item }) => `${$item.readergroup}  ${$item.types}`,
     tags: ({ $item }) => ({ 类别: $item.types.split('/') }),
   }
-  /**@type {import('../ruleParser/rules/type').RuleType} */
+  /**@type {import('../ruleParser/type').RuleType} */
   let config = {
     name: '动漫之家',
     host: 'https://m.dmzj.com',

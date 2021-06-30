@@ -7,7 +7,10 @@ describe.each(['rule34'])('%s discover 规则测试', (a) => {
   let list: any[] = [],
     $item: any
   beforeAll(async () => {
-    let ruleText = readFileSync(resolve(__dirname, `../rules/${a}.js`), 'utf-8')
+    let ruleText = readFileSync(
+      resolve(__dirname, `../../rules/${a}.js`),
+      'utf-8',
+    )
     let _setRule = setRule
     eval(`${ruleText};_setRule(config)`)
     setRequest(request)

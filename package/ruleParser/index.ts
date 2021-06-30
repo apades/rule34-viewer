@@ -1,8 +1,8 @@
-import { AxiosInstance } from '@r/proxy_server/node_modules/axios'
+import { AxiosInstance } from 'axios'
 import { get } from 'lodash'
 import xmlParser from 'node-html-parser'
 import { Concat, DeepLeafKeys, dykey } from '../../utils/typeUtils'
-import { RuleType } from './rules/type'
+import { RuleType } from './type'
 
 type baseProps<T> = T &
   Partial<{

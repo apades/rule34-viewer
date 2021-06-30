@@ -1,4 +1,4 @@
-/**@type {import('./type').RuleType} */
+/**@type {import('../ruleParser/type').RuleType} */
 var config = {
   name: 'e621',
   host: 'https://e621.net/',

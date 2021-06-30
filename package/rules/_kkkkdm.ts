@@ -1,4 +1,4 @@
-import { RuleType } from '../ruleParser/rules/type'
+import { RuleType } from '../ruleParser/type'
 
 let config = (() => {
   let config: RuleType = {

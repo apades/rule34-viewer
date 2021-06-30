@@ -1,5 +1,5 @@
 let config = (() => {
-  /**@type {import('../ruleParser/rules/type').RuleType} */
+  /**@type {import('../ruleParser/type').RuleType} */
   let config = {
     contentType: 'manga',
     host: 'http://m.kkkkdm.com/',

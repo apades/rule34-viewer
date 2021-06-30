@@ -1,29 +1,24 @@
+import { setRule } from '@r/package/ruleParser'
+import { RuleType } from '@r/package/ruleParser/type'
+import projectConfig from '@r/project.config'
 import { omitOjbect } from '@r/utils/utils'
-// import rule34Text from '@r/package/ruleParser/rules/rule34.text'
-import { RuleType } from '@r/package/ruleParser/rules/type'
-import kkkdm from '@r/package/rules/kkkkdm'
-// import request from '@r/utils/ruleRequest'
-// ---- rule pack----
-import { setRequest, setRule } from '@r/package/ruleParser'
-import request from '@r/utils/ruleRequest'
 
-export type SettingDstate = typeof init
-// let _setRule = setRule
-// eval(`${rule34Text};_setRule(config)`)
-setRule(kkkdm)
-setRequest(request)
-
-type ruleFile = {
+export type ruleFile = {
   name: string
   fileName: string
 }
-let rule: RuleType = kkkdm as RuleType
-// eval(`${rule34Text};rule=config`)
+export type SettingDstate = {
+  debugMode: boolean
+  rule: RuleType
+  ruleList: ruleFile[]
+}
+let rule = projectConfig.rule_default
 console.log('rule', rule)
-let init = {
+
+let init: SettingDstate = {
   debugMode: false,
   rule,
-  ruleList: [] as ruleFile[],
+  ruleList: [],
 }
 
 export type SettingAction = SettingSet | SettingSetRule

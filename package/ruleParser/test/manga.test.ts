@@ -11,6 +11,7 @@ describe.each(['kkkkdm'])('%s discover 规则测试', (a) => {
       resolve(__dirname, `../../rules/${a}.js`),
       'utf-8',
     )
+    ruleText = ruleText.replace(/export default .*/, '')
     let _setRule = setRule
     eval(`${ruleText};_setRule(config)`)
     setRequest(request)
@@ -53,6 +54,15 @@ describe.each(['kkkkdm'])('%s discover 规则测试', (a) => {
       }).then((data) => {
         console.log(data)
         expect(data.img).not.toBe(undefined)
+      })
+    })
+
+    test('content.getLen', () => {
+      return getRuleResult('content.getLen', {
+        $item,
+      }).then((data) => {
+        console.log(data)
+        expect(data).not.toBe(0)
       })
     })
   })

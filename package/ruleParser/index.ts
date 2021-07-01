@@ -71,6 +71,12 @@ let getRuleResult: {
       $item: any
     },
   ): Promise<{ img: string; isEnd: boolean }>
+  (
+    key: Concat<'content', 'getLen'>,
+    props: {
+      $item: any
+    },
+  ): Promise<number>
   (key: Concat<'content' | 'discover', 'type'>): Promise<'html' | 'json'>
 }
 
@@ -177,6 +183,10 @@ getRuleResult = async function (
     // ----manga----
     case 'content.getImg': {
       if (!isFn) return { img: '', isEnd: true }
+      return ruleScript(baseProps)
+    }
+    case 'content.getLen': {
+      if (!isFn) return 0
       return ruleScript(baseProps)
     }
   }

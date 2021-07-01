@@ -45,6 +45,16 @@ let config = (() => {
           isEnd: resHtml.indexOf('/exit/exit.htm') !== -1,
         }
       },
+      async getLen({ $item, request, xmlParser }) {
+        let reqUrl = `http://m.kkkkdm.com/comiclist/${$item.id}/1.htm`
+        let res = await request(reqUrl, {
+          responseType: 'arraybuffer',
+        })
+        let resHtml = new TextDecoder('GBK').decode(res.data)
+        let $query = xmlParser(resHtml)
+        let els = $query('div.bottom .subNav li')
+        return els.text()[1].match(/(.*?)\/(.*)/)[2]
+      },
     },
   }
   return config

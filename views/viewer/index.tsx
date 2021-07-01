@@ -1,6 +1,5 @@
 import { getContentOriginUrl, getMoreGalleyData } from '@r/actions/ruleAction'
 import { useDp } from '@r/hooks'
-import ImageViewer from 'react-native-image-zoom-viewer/src/index'
 import { IImageInfo } from 'react-native-image-zoom-viewer/src/image-viewer.type'
 import { StateBase } from '@r/reducers'
 import { _style } from '@r/style'
@@ -29,6 +28,7 @@ import Toast from 'react-native-toast-message'
 import { connect, ConnectedProps } from 'react-redux'
 import TagsContainer from '../detail/tagsContainer'
 import { rData } from '../gallery'
+import ImageViewer from '@r/components/ImageViewer'
 export type ViewerProps = RootPageProps<'viewer'>
 type rProps = ConnectedProps<typeof connector> & ViewerProps
 
@@ -143,8 +143,6 @@ let Page_Viewer: FC<rProps> = (props) => {
             setindex(i)
           }, 0)
         }
-        pageAnimateTime={100}
-        useNativeDriver={true}
         onClick={() => {
           console.log('click to hide bottom')
           setCanSlidBottom(true)
@@ -154,7 +152,6 @@ let Page_Viewer: FC<rProps> = (props) => {
             easing: Easing.inOut(Easing.ease),
           }).start()
         }}
-        saveToLocalByLongPress={false}
         onLongPress={() => {
           console.log('onLongPress')
           setSaveModalShow(true)
@@ -184,10 +181,6 @@ let Page_Viewer: FC<rProps> = (props) => {
               </View>
             )
           return <Image source={{ uri: source.uri }} style={{ ...style }} />
-        }}
-        loadingRender={() => <ActivityIndicator animating={true} />}
-        style={{
-          zIndex: 10,
         }}
       />
       <View

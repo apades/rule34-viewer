@@ -1,3 +1,4 @@
+/**@type {import('../ruleParser/type').RuleType} */
 var config = {
   name: 'rule34',
   host: 'https://rule34.xx',
@@ -36,3 +37,5 @@ var config = {
     },
   },
 }
+
+export default config

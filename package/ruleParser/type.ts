@@ -96,6 +96,11 @@ type RuleManga = RuleTypeBase & {
     tags?: RuleContentFnOrStringProps<{ [k: string]: string[] }>
   }
   search: RuleManga['discover']
+  chapter: {
+    list: RuleContentFnOrStringProps<{ id: string; name: string }[]>
+    tags?: RuleContentFnOrStringProps<{ [k: string]: string[] }>
+    desc?: RuleBaseFnOrStringProps<string>
+  }
   content: {
     /**如果设置，则单独爬该数据 */
     url?: RuleContentFnOrStringProps<string>
@@ -110,6 +115,11 @@ type RuleManga = RuleTypeBase & {
       img: string
       isEnd?: boolean
     }>
+    getLen?: (props: {
+      $item: any
+      request: AxiosInstance
+      xmlParser: (xml: string) => query
+    }) => Promise<number>
     tags?: RuleContentFnOrStringProps<{ [k: string]: string[] }>
     reffers?: RuleContentFnOrStringProps<string>
     originUrl?: string

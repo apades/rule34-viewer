@@ -2,6 +2,7 @@ import { AxiosInstance } from 'axios'
 import { get } from 'lodash'
 import xmlParser from 'node-html-parser'
 import { Concat, DeepLeafKeys, dykey } from '../../utils/typeUtils'
+import { mainProps } from './props'
 import { RuleType } from './type'
 
 type baseProps<T> = T &
@@ -24,61 +25,7 @@ let cacheMap = new Map()
 let getCache = (key: string, cb: (val?: any) => void) =>
   cacheMap.has(key) ? cacheMap.get(key) : cb()
 
-let getRuleResult: {
-  (
-    key: Concat<'discover', 'url'>,
-    props: {
-      searchString: string
-      pageLimit: number
-      pageNum: number
-    },
-  ): Promise<string>
-  (
-    key: Concat<'discover', 'list'>,
-    props: {
-      searchString: string
-      pageLimit: number
-      pageNum: number
-    },
-  ): Promise<any[]>
-  (
-    key: Concat<'discover', 'cover'>,
-    props: {
-      $item: any
-    },
-  ): Promise<string>
-  // ---content
-  (
-    key: Concat<'content', 'url' | 'image' | 'reffers'>,
-    props: {
-      id: number | string
-      $item: any
-    },
-  ): Promise<string>
-  (
-    key: Concat<'content', 'tags'>,
-    props: {
-      id: number | string
-      $item: any
-    },
-  ): Promise<{
-    [k: string]: string[]
-  }>
-  (
-    key: Concat<'content', 'getImg'>,
-    props: {
-      $index: number
-      $item: any
-    },
-  ): Promise<{ img: string; isEnd: boolean }>
-  (
-    key: Concat<'content', 'getLen'>,
-    props: {
-      $item: any
-    },
-  ): Promise<number>
-  (key: Concat<'content' | 'discover', 'type'>): Promise<'html' | 'json'>
-}
+let getRuleResult: mainProps
 
 getRuleResult = async function (
   key: DeepLeafKeys<RuleType>,

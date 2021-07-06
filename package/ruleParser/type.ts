@@ -96,7 +96,7 @@ type RuleManga = RuleTypeBase & {
     tags?: RuleContentFnOrStringProps<{ [k: string]: string[] }>
   }
   search: RuleManga['discover']
-  chapter: {
+  chapter?: {
     list: RuleContentFnOrStringProps<{ id: string; name: string }[]>
     tags?: RuleContentFnOrStringProps<{ [k: string]: string[] }>
     desc?: RuleBaseFnOrStringProps<string>

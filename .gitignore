@@ -2,6 +2,7 @@
 #
 .DS_Store
 
+package/**/dist
 # Xcode
 #
 build/

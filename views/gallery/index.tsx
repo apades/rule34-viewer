@@ -4,7 +4,7 @@ import { StateBase } from '@r/reducers'
 import { _style } from '@r/style'
 import { RootPageProps } from '@r/types/route'
 import { _screen } from '@r/utils/env'
-import { genHandlerScrollEnd } from '@r/utils/utils'
+import { genHandlerScrollEnd, _logBox } from '@r/utils/utils'
 import { throttle } from 'lodash'
 import React, { FC, memo, useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
@@ -14,6 +14,7 @@ import { connect, ConnectedProps } from 'react-redux'
 import GalleryHeader from './header'
 import RenderGalleryItem from './item'
 
+let console = _logBox('Gallery')
 type Props = RootPageProps<'gallery'>
 type rProps = ConnectedProps<typeof connector> & Props
 
@@ -47,7 +48,15 @@ const Gallery: FC<rProps> = function (props) {
     initState()
 
     loadData(pidInit)
-  }, [])
+  }, [props.rule])
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     initState()
+
+  //     loadData(pidInit)
+  //   }, 0)
+  // }, [])
 
   function initState() {
     console.log(`--- render ${route?.params?.tags ?? 'home'} gallery ---`)
@@ -92,7 +101,7 @@ const Gallery: FC<rProps> = function (props) {
       console.log('init Gallery')
       setFirstLoad(false)
     }
-    setDataList([...dataList, ...resDataList])
+    setDataList((dataList) => [...dataList, ...resDataList])
     setLoading(false)
     setPid(pid)
   }

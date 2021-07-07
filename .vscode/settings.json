@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        "yarn-error.log": true,
+        "yarn.lock": true,
+        ".buckconfig": true,
+        ".watchmanconfig": true,
+        "jest.config.js": true,
+        "ios/**": true
+    }
+}

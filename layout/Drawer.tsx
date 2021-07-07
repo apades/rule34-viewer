@@ -1,3 +1,4 @@
+import RuleSelector from '@r/components/RuleSelector'
 import { useDp } from '@r/hooks'
 import { StateBase } from '@r/reducers'
 import {
@@ -6,7 +7,14 @@ import {
 } from '@react-navigation/drawer'
 import React, { FC, memo, useState } from 'react'
 import { ScrollView, TouchableNativeFeedback, View } from 'react-native'
-import { Button, Divider, Drawer, Menu, Text } from 'react-native-paper'
+import {
+  Button,
+  Divider,
+  Drawer,
+  Menu,
+  Text,
+  Provider,
+} from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
 
 export type DrawerProps = DrawerContentComponentProps<DrawerContentOptions>
@@ -19,55 +27,36 @@ let Layout_Drawer: FC<rProps> = (props) => {
 
   return (
     <>
-      <ScrollView>
-        <View
-          style={{
-            backgroundColor: '#6cf',
-            height: 50,
-          }}
-        >
-          <Text>this is header</Text>
-          <Menu
-            visible={isMenuVisible}
-            onDismiss={() => setMenuVisible(false)}
-            contentStyle={{
-              top: 30,
-              left: 60,
+      <View>
+        <ScrollView>
+          <View
+            style={{
+              backgroundColor: '#6cf',
             }}
-            anchor={
-              <Button
-                uppercase={false}
-                onPress={() => setMenuVisible(true)}
-                icon="chevron-down"
-              >
-                {props.rule.name}
-              </Button>
-            }
           >
-            {selectList.map((v) => (
-              <Menu.Item
-                key={v}
-                onPress={() => {
-                  setMenuVisible(false)
-                }}
-                title={v}
-                style={{
-                  width: 100,
-                  height: 30,
-                }}
-              />
-            ))}
-          </Menu>
-        </View>
-        <Divider />
-        <Drawer.Section>
-          <Drawer.Item label="favorite"></Drawer.Item>
-        </Drawer.Section>
-        <Divider />
-        <Drawer.Section>
-          <Drawer.Item label="setting"></Drawer.Item>
-        </Drawer.Section>
-      </ScrollView>
+            <Text>this is header</Text>
+            <Button
+              uppercase={false}
+              onPress={() => setMenuVisible(true)}
+              icon="chevron-down"
+            >
+              {props.rule?.name}
+            </Button>
+          </View>
+          <Divider />
+          <Drawer.Section>
+            <Drawer.Item label="favorite"></Drawer.Item>
+          </Drawer.Section>
+          <Divider />
+          <Drawer.Section>
+            <Drawer.Item label="setting"></Drawer.Item>
+          </Drawer.Section>
+        </ScrollView>
+      </View>
+      <RuleSelector
+        onDismiss={() => setMenuVisible(false)}
+        visible={isMenuVisible}
+      />
     </>
   )
 }

@@ -1,21 +1,24 @@
 import { getContentTags } from '@r/actions/ruleAction'
 import ChipList from '@r/components/chipList'
+import getRuleResult from '@r/package/ruleParser'
 import { StateBase } from '@r/reducers'
 import { dykey } from '@r/types'
 import { RootPageProps } from '@r/types/route'
 import { getCache, setCache } from '@r/utils/cache'
+import { _logBox } from '@r/utils/utils'
 import { useNavigation } from '@react-navigation/native'
 import React, { FC, useEffect, useState } from 'react'
 import { ActivityIndicator, View } from 'react-native'
 import { Divider, Text } from 'react-native-paper'
 import { connect, ConnectedProps } from 'react-redux'
 
+let console = _logBox('TagsContainer')
 type rProps = ConnectedProps<typeof connector> & {
   /**orginData */
   data: any
   nowTag: string
+  onLoaded?(): void
 }
-
 let TagsContainer: FC<rProps> = (props) => {
   let { data } = props
   let id = data?.id
@@ -30,7 +33,7 @@ let TagsContainer: FC<rProps> = (props) => {
       setAllTagsMap(Object.entries(obj))
     }
 
-    let url = props.rule.content.url
+    let url = await getRuleResult('content.url', { id, $item: data })
     if (!url) {
       let _tags = await props.getContentTags({
         $item: data,
@@ -55,14 +58,22 @@ let TagsContainer: FC<rProps> = (props) => {
   }
 
   useEffect(() => {
+    let isInit = true
     setLoading(true)
+    console.log('update')
     initTagsMap()
       .catch((err) => {
         console.error('initTagsMap error', err)
       })
       .finally(() => {
-        setLoading(false)
+        if (isInit) {
+          setLoading(false)
+          props.onLoaded?.()
+        }
       })
+    return () => {
+      isInit = false
+    }
   }, [data])
 
   function onPress(tag = '') {

@@ -53,7 +53,7 @@ const GalleryHeader: FC<rProps> = (props) => {
 const mapStateToProps = (state: StateBase) => {
   return {
     getLike: (tag: string) => state.likes.tags[tag],
-    theme: state.setting.rule.theme,
+    theme: state?.setting?.rule?.theme,
   }
 }
 const mapDispatchToProps = {

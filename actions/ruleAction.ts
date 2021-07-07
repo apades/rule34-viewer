@@ -1,15 +1,14 @@
-import getRuleResult, { setRequest, setRule } from '@r/package/ruleParser'
+import getRuleResult from '@r/package/ruleParser'
 // TODO 替换？或者这是个默认的
-import rule34Text from '@r/package/ruleParser/rules/rule34.text'
 import { GalleryItem } from '@r/types/itemType'
 import { Dp, GetState } from '@r/types/redux'
 import { ip, isDev } from '@r/utils/env'
-import request from '@r/utils/request'
 import { rData } from '@r/views/gallery'
 
-let _setRule = setRule
-setRequest(request)
-eval(`${rule34Text};_setRule(config)`)
+// let _setRule = setRule
+// setRule(kkkdm)
+// setRequest(request)
+// eval(`${rule34Text};_setRule(config)`)
 
 export const getImageUrl =
   ($item: any) =>

@@ -3,7 +3,7 @@ import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import request from './request'
 
-describe.each(['rule34'])('%s discover 规则测试', (a) => {
+describe.each(['kkkkdm'])('%s discover 规则测试', (a) => {
   let list: any[] = [],
     $item: any
   beforeAll(async () => {
@@ -11,20 +11,22 @@ describe.each(['rule34'])('%s discover 规则测试', (a) => {
       resolve(__dirname, `../../rules/${a}.js`),
       'utf-8',
     )
+    ruleText = ruleText.replace(/export default .*/, '')
     let _setRule = setRule
     eval(`${ruleText};_setRule(config)`)
     setRequest(request)
 
     list = await getRuleResult('discover.list', {
-      searchString: 'dacad',
+      searchString: 'none',
       pageNum: 0,
       pageLimit: 10,
     })
     $item = list[0]
+    // if (!$item) return Promise.reject('no $item')
   })
   test('discover.url', () => {
     return getRuleResult('discover.url', {
-      searchString: 'dacad',
+      searchString: 'none',
       pageNum: 0,
       pageLimit: 10,
     }).then((url) => expect(url).toMatch(/https?:\/\//))
@@ -32,10 +34,10 @@ describe.each(['rule34'])('%s discover 规则测试', (a) => {
 
   test('discover.list', () => {
     return getRuleResult('discover.list', {
-      searchString: 'dacad',
+      searchString: 'none',
       pageNum: 0,
       pageLimit: 10,
-    }).then((l) => expect(l.length).toBe(10))
+    }).then((l) => expect(l[0]).not.toBe(undefined))
   })
 
   test('discover.cover', () => {
@@ -45,22 +47,22 @@ describe.each(['rule34'])('%s discover 规则测试', (a) => {
   })
 
   describe('content 规则测试', () => {
-    test('content.url', () => {
-      return getRuleResult('content.url', {
-        id: $item.id,
+    test('content.getImg', () => {
+      return getRuleResult('content.getImg', {
         $item,
-      }).then((cover) => expect(cover).toMatch(/https?:\/\//))
+        $index: 26,
+      }).then((data) => {
+        console.log(data)
+        expect(data.img).not.toBe(undefined)
+      })
     })
 
-    test('content.tags', () => {
-      return getRuleResult('content.tags', {
-        id: $item.id,
+    test('content.getLen', () => {
+      return getRuleResult('content.getLen', {
         $item,
-      }).then((tags) => {
-        let keys = Object.keys(tags)
-        return expect(
-          keys.length !== 0 && Array.isArray(tags[keys[0]]),
-        ).toBeTruthy()
+      }).then((data) => {
+        console.log(data)
+        expect(data).not.toBe(0)
       })
     })
   })

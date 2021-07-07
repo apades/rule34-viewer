@@ -36,6 +36,7 @@ let Comp_seachInput: FC<rProps> = (props) => {
   return (
     <View style={styles.container}>
       <TextInput
+        textAlign=""
         autoFocus={props.autoFocus}
         onChangeText={(text) => {
           setText(text)

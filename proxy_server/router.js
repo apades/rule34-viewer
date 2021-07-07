@@ -11,6 +11,7 @@ router
       responseType: 'arraybuffer',
       headers: {
         cookie: ctx.req.headers?.cookie ?? '',
+        Referer: 'https://m.dmzj.com',
       },
     })
 

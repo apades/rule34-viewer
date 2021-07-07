@@ -1,22 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createDrawerNavigator } from '@react-navigation/drawer'
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
-import React, { FC, useEffect } from 'react'
+import React, { FC, memo, useEffect } from 'react'
 import { View } from 'react-native'
 import { connect, ConnectedProps } from 'react-redux'
 import { useDp } from './hooks'
 import Drawer from './layout/Drawer'
 import { StateBase } from './reducers'
+import RootRouter from './router/RootRouter'
 import { GalleryItem } from './types/itemType'
 import { isDev, _env, _screen } from './utils/env'
-import { getRuleList, initAppFolder } from './utils/fs'
-import view_collections from './views/collections'
-import view_gallery, { rData } from './views/gallery'
-import Search from './views/search'
-import Setting from './views/setting'
-import Page_Viewer from './views/viewer'
+import { getBasePath, initAppFolder } from './utils/fs'
+import { rData } from './views/gallery'
 
 export type RootStackParamList = {
   home: undefined
@@ -31,9 +26,6 @@ export type TabStackParamList = {
   homeGallery: undefined
   Setting: undefined
 }
-const RootStack = createStackNavigator<RootStackParamList>()
-
-let tab = createMaterialBottomTabNavigator<TabStackParamList>()
 let drawer = createDrawerNavigator()
 
 export type AppRouterProps = {
@@ -47,75 +39,10 @@ let AppRouter: FC<rProps> = (props) => {
     console.log('init app')
 
     dispatch({ type: 'setting/set', debugMode: isDev })
-    initAppFolder().then(async () => {
-      let list = await getRuleList()
-      dispatch({
-        type: 'setting/set',
-        ruleList: list.map((l) => ({
-          fileName: l,
-          name: l.replace(/(.*)\..*?$/, '$1'),
-        })),
-      })
-    })
+    console.log(getBasePath() + '/r34-views')
+    initAppFolder().catch((err) => console.error('err', err))
     _initStore()
   }, [])
-
-  let HomeComponent = () => (
-    <tab.Navigator
-      barStyle={{ backgroundColor: props.theme }}
-      initialRouteName="homeGallery"
-    >
-      <tab.Screen
-        component={view_collections}
-        name="collections"
-        options={{
-          tabBarIcon: 'heart',
-          tabBarLabel: 'collects',
-        }}
-      />
-      <tab.Screen
-        component={view_gallery}
-        name="homeGallery"
-        options={{
-          tabBarIcon: 'view-list',
-          tabBarLabel: 'gallery',
-        }}
-      />
-      <tab.Screen
-        component={Setting}
-        name="Setting"
-        options={{
-          tabBarIcon: 'account-settings',
-          tabBarLabel: 'setting',
-        }}
-      />
-    </tab.Navigator>
-  )
-
-  let RootRouter = () => (
-    <RootStack.Navigator initialRouteName="home">
-      <RootStack.Screen
-        component={HomeComponent}
-        name="home"
-        options={{ header: () => null }}
-      />
-      <RootStack.Screen
-        component={Search}
-        name="search"
-        options={{ header: () => null }}
-      />
-      <RootStack.Screen
-        component={view_gallery}
-        name="gallery"
-        options={{ header: () => null }}
-      />
-      <RootStack.Screen
-        component={Page_Viewer}
-        name="viewer"
-        options={{ header: () => null }}
-      />
-    </RootStack.Navigator>
-  )
 
   async function _initStore() {
     let [tags, imgs, histories]: [any, any, any] = await Promise.all([
@@ -166,9 +93,9 @@ const mapStateToProps = (state: StateBase) => {
   let lastRouter = state.state.lastRouter
   return {
     canUseDrawer: !['viewer'].includes(lastRouter?.name),
-    theme: state.setting.rule.theme,
+    rule: state.setting.rule,
   }
 }
 const mapDispatchToProps = {}
 let connector = connect(mapStateToProps, mapDispatchToProps)
-export default connector(AppRouter)
+export default connector(memo(AppRouter))

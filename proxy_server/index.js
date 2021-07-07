@@ -8,10 +8,10 @@ let app = new koa()
 
 app.use(koaLogger())
 // cache
-var e2k = require('koa-connect'),
-  cache = require('apicache').middleware
-var midd = e2k(cache('1 hours'))
-app.use(midd)
+// var e2k = require('koa-connect'),
+//   cache = require('apicache').middleware
+// var midd = e2k(cache('1 hours'))
+// app.use(midd)
 // cache
 
 app.use(router.routes())

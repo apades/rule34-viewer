@@ -4,12 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
     "ts-loader": "^9.2.3",
     "webpack": "^5.42.1",
     "webpack-cli": "^4.7.2"
   },
   "scripts": {
-    "build-p": "webpack --config ./parser.build.js --progress",
+    "build-p": "rm dist/bundle.js && webpack --config ./parser.build.js --progress",
     "build-r": "webpack --config ./rule.build.js --progress"
   }
 }

@@ -1,5 +1,8 @@
 let path = require('path')
 let presolve = (...args) => path.resolve(__dirname, ...args)
+
+let HelloWorldPlugin = require('./plugin/injectCode')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 /**@type {import('webpack').Configuration} */
 module.exports = {
   mode: 'production',
@@ -18,4 +21,5 @@ module.exports = {
       },
     ],
   },
+  plugins: [new HelloWorldPlugin({ options: true })],
 }

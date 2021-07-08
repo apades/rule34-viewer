@@ -9,6 +9,7 @@
     "webpack-cli": "^4.7.2"
   },
   "scripts": {
-    "build":"webpack --config ./build.js --progress"
+    "build-p": "webpack --config ./parser.build.js --progress",
+    "build-r": "webpack --config ./rule.build.js --progress"
   }
 }

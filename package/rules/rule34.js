@@ -1,25 +1,32 @@
-export default `
+/**@type {import('../ruleParser/type').RuleType} */
 var config = {
   name: 'rule34',
   host: 'https://rule34.xx',
   theme: '#aae5a4',
+  contentType: 'gallery',
 
   discover: {
     url: 'https://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&tags=@{searchString}&limit=@{pageLimit}&pid=@{pageNum}',
     list: '$',
     cover({ $item }) {
-      return \`https://rule34.xxx/thumbnails/\${
-        \$item.directory
-      }/thumbnail_\${$item.image.replace(/^(.*)\\..*?$/, '$1.jpg')}\`
+      return `https://rule34.xxx/thumbnails/${
+        $item.directory
+      }/thumbnail_${$item.image.replace(/^(.*)\..*?$/, '$1.jpg')}`
     },
   },
   content: {
     url: 'https://rule34.xxx/index.php?page=post&s=view&id=@{id}',
     type: 'html',
     image({ $item }) {
-      return \`https://rule34.xxx/images/\${$item.directory}/\${$item.image}\`
+      return `https://rule34.xxx/images/${$item.directory}/${$item.image}`
     },
-    tags({ $query }) {
+    async tags({ request, xmlParser, $item }) {
+      let res = (
+        await request(
+          `https://rule34.xxx/index.php?page=post&s=view&id=${$item.id}`,
+        )
+      ).data
+      let $query = xmlParser(res)
       return {
         copyright: $query('.tag-type-copyright a').text(),
         character: $query('.tag-type-character a').text(),
@@ -30,4 +37,5 @@ var config = {
     },
   },
 }
-`
+
+export default config

@@ -1,0 +1,3 @@
+[submodule "react-native-image-viewer"]
+	path = package/react-native-image-viewer
+	url = git@github.com:apades/react-native-image-viewer.git

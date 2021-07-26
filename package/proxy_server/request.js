@@ -1,11 +1,12 @@
 import axios from 'axios'
 import HttpsProxyAgent from 'https-proxy-agent'
+import config from './project.config'
 
 let request = axios.create({
-  httpsAgent: new HttpsProxyAgent('http://localhost:10809'),
-  headers: {
-    'user-agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36`,
-  },
+  httpsAgent: config.proxy_Server
+    ? new HttpsProxyAgent(config.proxy_Server)
+    : undefined,
+  headers: config.proxy_DefaultHeaders ?? {},
 })
 
 request.interceptors.response.use(

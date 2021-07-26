@@ -1,13 +1,17 @@
 import Axios from 'axios'
+import { _env, ip, _screen } from './env'
 
+console.log('env', _env, _screen)
 let request = Axios.create({
   // baseURL: _env.baseURL,
-  baseURL: `http://localhost:3001`,
+  baseURL: (_env.proxy_server && `http://${ip}:3001`) || '',
   timeout: 5000,
 })
 
 request.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    return res
+  },
   (err) => {
     console.error('axios error', err)
     throw err
@@ -16,7 +20,7 @@ request.interceptors.response.use(
 
 request.interceptors.request.use(
   (req) => {
-    req.url = `/proxy?url=${encodeURIComponent(req.url)}`
+    if (_env.proxy_server) req.url = `/proxy?url=${encodeURIComponent(req.url)}`
     req.headers['user-agent'] =
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36'
     return req

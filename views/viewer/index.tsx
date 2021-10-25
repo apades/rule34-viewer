@@ -15,8 +15,8 @@ import {
   View,
 } from 'react-native'
 import fs from 'react-native-fs'
-import ImageViewer from 'react-native-image-zoom-viewer'
-import { IImageInfo } from 'react-native-image-zoom-viewer/built/image-viewer.type'
+import ImageViewer from 'react-native-image-zoom-viewer/src/index'
+import { IImageInfo } from 'react-native-image-zoom-viewer/src/image-viewer.type'
 import {
   ActivityIndicator,
   Button,

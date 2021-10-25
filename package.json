@@ -33,7 +33,7 @@
     "react-native-draggable": "^3.3.0",
     "react-native-fs": "^2.18.0",
     "react-native-gesture-handler": "^1.10.3",
-    "react-native-image-zoom-viewer": "^3.0.1",
+    "react-native-image-zoom-viewer": "file:./package/react-native-image-viewer",
     "react-native-paper": "^4.9.1",
     "react-native-reanimated": "^1.13.1",
     "react-native-safe-area-context": "^3.2.0",

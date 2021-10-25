@@ -2,7 +2,7 @@ import { Dimensions } from 'react-native'
 
 export const _env = {
   proxy_server: !!process.env.LOCALIP,
-  NSFW: process.env.NSFW === 'true',
+  NSFW: process.env.NSFW === 'true' || !isDev,
 }
 
 //

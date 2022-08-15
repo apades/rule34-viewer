@@ -9,13 +9,15 @@
     "lib": [
       "es6",
       "es7",
-      "dom"
+      "dom",
+      "es2019"
     ],
     "target": "es5",
     "jsx": "react",
     "allowJs": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "downlevelIteration":true,
     "watch": true
   },
   "include": [

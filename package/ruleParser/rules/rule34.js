@@ -3,6 +3,7 @@ var config = {
   name: 'rule34',
   host: 'https://rule34.xx',
   theme: '#aae5a4',
+  contentType: 'gallery',
 
   discover: {
     url: 'https://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&tags=@{searchString}&limit=@{pageLimit}&pid=@{pageNum}',

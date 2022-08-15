@@ -15,8 +15,8 @@ import {
   View,
 } from 'react-native'
 import fs from 'react-native-fs'
-import ImageViewer from 'react-native-image-zoom-viewer'
-import { IImageInfo } from 'react-native-image-zoom-viewer/built/image-viewer.type'
+import ImageViewer from 'react-native-image-zoom-viewer/src/index'
+import { IImageInfo } from 'react-native-image-zoom-viewer/src/image-viewer.type'
 import {
   ActivityIndicator,
   Button,
@@ -82,7 +82,6 @@ let Page_Viewer: FC<rProps> = (props) => {
     NativeModules.KeyEventLister.audioSwitch(true)
     let listener = DeviceEventEmitter.addListener('keydown', (e) => {
       if (e.keyCode === 24) {
-        console.log('up')
         setindex((i) => (i === 0 ? 0 : --i))
       }
       if (e.keyCode === 25) {
@@ -138,8 +137,9 @@ let Page_Viewer: FC<rProps> = (props) => {
       <ImageViewer
         // TODO 这里出现了末尾时data正常，但是中间image加载异常，黑屏且没法滑动
         imageUrls={imageUrls}
+        enablePreload={true}
         key={imageUrls.length}
-        index={InitIndex}
+        index={index}
         onChange={(i) =>
           setTimeout(() => {
             setindex(i)
@@ -163,7 +163,6 @@ let Page_Viewer: FC<rProps> = (props) => {
         }}
         renderImage={(props) => {
           let { source, style } = props
-          // console.log('props', props)
           if (props.isVideo)
             return (
               <View
